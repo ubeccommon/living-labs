@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**A Living Science Initiative at Freie Waldorfschule Frankfurt (Oder)**
+**A Living Lab Initiative at Erdpuls Müllrose**
 
 *An Anthroposophical Approach to Environmental Monitoring, Citizen Science & Reciprocity*
 
@@ -43,7 +43,7 @@ This project embodies these principles by creating a next-generation platform th
 
 ## 🌍 Overview
 
-**From Seeds to Blockchain** is an innovative integration of environmental science, educational technology, and blockchain-based citizen science. Rooted in anthroposophical principles and hosted at the Freie Waldorfschule Frankfurt (Oder), this project creates a living laboratory where students, educators, and community members engage in real-time environmental monitoring while learning about regenerative systems.
+**From Seeds to Blockchain** is an innovative integration of environmental science, educational technology, and blockchain-based citizen science. Rooted in anthroposophical principles and hosted at Erdpuls Müllrose, this project creates a living laboratory where students, educators, and community members engage in real-time environmental monitoring while learning about regenerative systems.
 
 ### Key Components
 
