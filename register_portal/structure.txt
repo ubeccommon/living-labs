@@ -1,0 +1,25 @@
+registration-portal/
+├── index.html              ← Landing page
+├── register.html           ← Registration portal (HERE!)
+├── config/
+│   └── config.js
+├── scripts/
+│   ├── main.js
+│   ├── services/
+│   │   ├── api.service.js
+│   │   └── debug.service.js
+│   ├── components/
+│   │   ├── sensebox-form.component.js
+│   │   ├── status.component.js
+│   │   └── steward-form.component.js
+│   └── utils/
+│       ├── arduino-config.js
+│       └── validation.js
+├── styles/
+│   ├── base.css
+│   ├── components.css
+│   └── layout.css
+└── deploy/
+    ├── deploy.sh
+    ├── nginx.conf
+    └── README.md

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imprint - Living Labs Initiative</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #4CAF50;
+            --deep-green: #2E7D32;
+            --light-green: #81C784;
+            --text-dark: #212121;
+            --text-light: #757575;
+            --light-bg: #F5F5F5;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            background: var(--light-bg);
+        }
+
+        header {
+            background: white;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--light-green), var(--primary-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            color: var(--deep-green);
+        }
+
+        .logo-text p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 3rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--deep-green);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--light-bg);
+        }
+
+        h2 {
+            color: var(--deep-green);
+            font-size: 1.5rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            color: var(--primary-green);
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .contact-info {
+            background: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .contact-info p {
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-info strong {
+            color: var(--deep-green);
+            display: inline-block;
+            min-width: 150px;
+        }
+
+        a {
+            color: var(--primary-green);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: var(--deep-green);
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-green);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .back-link:hover {
+            background: var(--deep-green);
+            text-decoration: none;
+        }
+
+        .note {
+            background: #FFF9C4;
+            border-left: 4px solid #FBC02D;
+            padding: 1rem;
+            margin: 2rem 0;
+            border-radius: 4px;
+        }
+
+        .note strong {
+            color: #F57C00;
+        }
+
+        footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 2rem;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .attribution {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #D7CCC8;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .contact-info strong {
+                display: block;
+                margin-bottom: 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-icon">🌱</div>
+            <div class="logo-text">
+                <h1>Living Labs Initiative</h1>
+                <p>Imprint / Legal Notice</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Imprint</h1>
+        <p class="subtitle">Information according to § 5 TMG (German Telemedia Act)</p>
+
+        <div class="note">
+            <strong>Note:</strong> Please replace the placeholder information with your actual legal details. A complete imprint is legally required.
+        </div>
+
+        <h2>Website Operator</h2>
+        <div class="contact-info">
+            <p><strong>Organization:</strong> Ubuntu Economic Commons DAO</p>
+            <p><strong>Project Name:</strong> Living Lab Initiative - Erdpuls Müllrose Environmental Education Center</p>
+            <p><strong>Address:</strong> [Street and Number]<br>
+            [Postal Code] [City]<br>
+            Germany</p>
+        </div>
+
+        <h2>Contact</h2>
+        <div class="contact-info">
+            <p><strong>Phone:</strong> [+49 XXX XXXXXXX]</p>
+            <p><strong>Email:</strong> <a href="mailto:hello@ubec.network">hello@ubec.network</a></p>
+            <p><strong>Website:</strong> <a href="/">https://living-labs.ubec.network</a></p>
+        </div>
+
+        <h2>Represented by</h2>
+        <div class="contact-info">
+            <p><strong>DAO Leadership:</strong> [Name of DAO Leader]</p>
+            <p><strong>Project Leadership:</strong> [Name of Project Leader]</p>
+        </div>
+
+        <h2>Register Entry</h2>
+        <div class="contact-info">
+            <p><strong>Registry Court:</strong> [e.g., Amtsgericht Frankfurt/Oder]</p>
+            <p><strong>Registration Number:</strong> [if applicable]</p>
+        </div>
+
+        <h2>VAT ID</h2>
+        <div class="contact-info">
+            <p><strong>VAT Identification Number according to § 27a UStG:</strong><br>
+            [DE XXXXXXXXX] (if available)</p>
+        </div>
+
+        <h2>Supervisory Authority</h2>
+        <div class="contact-info">
+            <p><strong>Responsible Supervisory Authority:</strong><br>
+            [Name of Supervisory Authority]<br>
+            [Address of Authority]</p>
+        </div>
+
+        <h2>Responsible for Content according to § 55 Para. 2 RStV</h2>
+        <div class="contact-info">
+            <p>[Name]<br>
+            [Address]</p>
+        </div>
+
+        <h2>Dispute Resolution</h2>
+        <p>The European Commission provides a platform for online dispute resolution (ODR): <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a></p>
+        <p>Our email address can be found above in the imprint.</p>
+        <p>We are neither willing nor obligated to participate in dispute resolution proceedings before a consumer arbitration board.</p>
+
+        <h2>Liability for Content</h2>
+        <p>As a service provider, we are responsible for our own content on these pages in accordance with § 7 Para. 1 TMG under general laws. According to §§ 8 to 10 TMG, however, we as a service provider are not obligated to monitor transmitted or stored third-party information or to investigate circumstances that indicate illegal activity.</p>
+        <p>Obligations to remove or block the use of information under general laws remain unaffected. However, liability in this regard is only possible from the time of knowledge of a specific legal violation. Upon becoming aware of corresponding legal violations, we will remove this content immediately.</p>
+
+        <h2>Liability for Links</h2>
+        <p>Our website contains links to external third-party websites over whose content we have no control. Therefore, we cannot assume any liability for this external content. The respective provider or operator of the pages is always responsible for the content of the linked pages.</p>
+        <p>The linked pages were checked for possible legal violations at the time of linking. Illegal content was not recognizable at the time of linking. However, permanent monitoring of the content of the linked pages is not reasonable without concrete evidence of a legal violation. Upon becoming aware of legal violations, we will remove such links immediately.</p>
+
+        <h2>Copyright</h2>
+        <p>The content and works created by the site operators on these pages are subject to German copyright law. Reproduction, editing, distribution, and any kind of use outside the limits of copyright law require the written consent of the respective author or creator.</p>
+        <p>Downloads and copies of this page are only permitted for private, non-commercial use. Insofar as the content on this page was not created by the operator, the copyrights of third parties are respected. In particular, third-party content is identified as such. Should you nevertheless become aware of a copyright infringement, please inform us accordingly. Upon becoming aware of legal violations, we will remove such content immediately.</p>
+
+        <h2>Image Credits</h2>
+        <p>Unless otherwise stated, all images and graphic representations are the property of the Living Science Initiative or were used with the appropriate license.</p>
+
+        <h2>Data Protection</h2>
+        <p>Information on the processing of personal data can be found in our <a href="/datenschutz">Privacy Policy</a>.</p>
+
+        <h2>Blockchain & Token Technology</h2>
+        <h3>Notice on UBECrc Tokens</h3>
+        <p>The Living Labs Initiative uses blockchain technology (Stellar Network) to document environmental observations. The issuance of UBECrc tokens (Universal Basic Environmental Contribution) serves as a recognition mechanism for contributions to environmental data collection.</p>
+        <p><strong>Important:</strong> The UBECrc tokens are utility tokens that serve exclusively as a recognition mechanism for contributions to environmental data collection. They do not constitute securities and are not designed as a means of payment. They serve exclusively internal project purposes within the framework of scientific data collection, education, and the citizen science approach.</p>
+
+        <h2>Open Source & Technology Partners</h2>
+        <p>This project uses open-source technologies and was developed using the following services:</p>
+        <ul style="margin-left: 2rem; margin-top: 1rem;">
+            <li>Stellar Blockchain Network (Open-Source Distributed Ledger)</li>
+            <li>SenseBox / OpenSenseMap (Environmental Sensors)</li>
+            <li>Claude (Anthropic PBC) – AI assistance for development and decision support</li>
+        </ul>
+
+        <a href="/" class="back-link">← Back to Homepage</a>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="attribution">
+                <p><strong>Attribution:</strong> This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations. This project was made possible with the assistance of Claude and Anthropic PBC.</p>
+                <p style="margin-top: 1rem;">Living Science Initiative · Erdpuls Müllrose · Freie Waldorfschule Frankfurt (Oder)</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

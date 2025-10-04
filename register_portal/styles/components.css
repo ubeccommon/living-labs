@@ -1,0 +1,509 @@
+/**
+ * Component Styles
+ * 
+ * Reusable UI components following BEM methodology.
+ * Follows Design Principle #1 (Modular Design) and #10 (Separation of Concerns)
+ * 
+ * Attribution: This project uses the services of Claude and Anthropic PBC.
+ */
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn-primary {
+    background: var(--primary-green);
+    color: var(--white);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--deep-green);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-button);
+}
+
+.btn-secondary {
+    background: var(--light-bg);
+    color: var(--text-dark);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--border);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary-green);
+    color: var(--primary-green);
+}
+
+.btn-outline:hover:not(:disabled) {
+    background: var(--primary-green);
+    color: var(--white);
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.btn-lg {
+    padding: 1rem 2.5rem;
+    font-size: 1.125rem;
+}
+
+/* ==========================================
+   FORM COMPONENTS
+   ========================================== */
+.form-grid {
+    display: grid;
+    gap: var(--space-md);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: var(--space-sm);
+    font-weight: 500;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: flex-end;
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border);
+}
+
+/* Form validation states */
+.form-group.has-error input,
+.form-group.has-error select,
+.form-group.has-error textarea {
+    border-color: var(--error);
+}
+
+.form-group.has-error .error-message {
+    display: block;
+    color: var(--error);
+    font-size: 0.875rem;
+    margin-top: var(--space-xs);
+}
+
+.form-group .error-message {
+    display: none;
+}
+
+.form-group.has-success input,
+.form-group.has-success select,
+.form-group.has-success textarea {
+    border-color: var(--success);
+}
+
+/* ==========================================
+   CARDS
+   ========================================== */
+.card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--space-xl);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-md);
+    border-bottom: 2px solid var(--light-bg);
+}
+
+.card-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--light-green);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.card-title h3 {
+    color: var(--deep-green);
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.card-title p {
+    color: var(--text-light);
+    font-size: 0.875rem;
+    margin-bottom: 0;
+}
+
+/* ==========================================
+   STATUS MESSAGES
+   ========================================== */
+.status-message {
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+    display: none;
+    animation: slideDown var(--transition-normal);
+}
+
+.status-message.active {
+    display: block;
+}
+
+.status-message.success {
+    background: #E8F5E9;
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.status-message.error {
+    background: #FFEBEE;
+    color: var(--error);
+    border: 1px solid var(--error);
+}
+
+.status-message.info {
+    background: #E3F2FD;
+    color: var(--info);
+    border: 1px solid var(--info);
+}
+
+.status-message.warning {
+    background: #FFF3E0;
+    color: var(--warning);
+    border: 1px solid var(--warning);
+}
+
+/* ==========================================
+   SENSOR SELECTION
+   ========================================== */
+.sensor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin-top: var(--space-sm);
+}
+
+.sensor-checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    background: var(--white);
+}
+
+.sensor-checkbox:hover {
+    background: var(--light-bg);
+    border-color: var(--primary-green);
+}
+
+.sensor-checkbox.selected {
+    background: rgba(76, 175, 80, 0.1);
+    border-color: var(--primary-green);
+}
+
+.sensor-checkbox input[type="checkbox"] {
+    cursor: pointer;
+    margin: 0;
+}
+
+.sensor-category {
+    margin-top: var(--space-lg);
+}
+
+.sensor-category h4 {
+    color: var(--deep-green);
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--border);
+}
+
+/* ==========================================
+   RESPONSE CONTAINER
+   ========================================== */
+.response-container {
+    background: var(--light-bg);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    margin-top: var(--space-xl);
+    display: none;
+    animation: fadeIn var(--transition-normal);
+}
+
+.response-container.active {
+    display: block;
+}
+
+.response-header {
+    font-weight: 600;
+    color: var(--deep-green);
+    margin-bottom: var(--space-md);
+    font-size: 1.2rem;
+}
+
+.credentials-box {
+    background: var(--white);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    font-family: 'Courier New', monospace;
+    margin-bottom: var(--space-md);
+}
+
+.credential-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-sm);
+    padding: var(--space-sm);
+    background: var(--light-bg);
+    border-radius: var(--radius-sm);
+}
+
+.credential-item:last-child {
+    margin-bottom: 0;
+}
+
+.credential-label {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.credential-value {
+    color: var(--text-light);
+    word-break: break-all;
+    font-size: 0.9rem;
+    text-align: right;
+}
+
+/* ==========================================
+   ARDUINO CONFIG DISPLAY
+   ========================================== */
+.arduino-config {
+    margin-top: var(--space-xl);
+    padding: var(--space-lg);
+    background: #1a1a1a;
+    border-radius: var(--radius-md);
+    color: var(--white);
+    position: relative;
+}
+
+.arduino-config h4 {
+    margin-top: 0;
+    color: var(--light-green);
+    margin-bottom: var(--space-md);
+}
+
+.arduino-config pre {
+    background: #000;
+    padding: var(--space-md);
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.copy-btn {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    background: var(--primary-green);
+    color: var(--white);
+    border: none;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background var(--transition-normal);
+}
+
+.copy-btn:hover {
+    background: var(--deep-green);
+}
+
+/* ==========================================
+   LOADING SPINNER
+   ========================================== */
+.loading {
+    display: none;
+    text-align: center;
+    padding: var(--space-xl);
+}
+
+.loading.active {
+    display: block;
+}
+
+.spinner {
+    border: 3px solid var(--light-bg);
+    border-top: 3px solid var(--primary-green);
+    border-radius: var(--radius-full);
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto var(--space-md);
+}
+
+/* ==========================================
+   TOOLTIPS
+   ========================================== */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    margin-left: var(--space-sm);
+    color: var(--text-light);
+    cursor: help;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: #555;
+    color: var(--white);
+    text-align: center;
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    position: absolute;
+    z-index: var(--z-dropdown);
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+    font-size: 0.75rem;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* ==========================================
+   DEBUG CONSOLE
+   ========================================== */
+.debug-console {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(46, 125, 50, 0.95);
+    color: var(--white);
+    padding: 10px;
+    border-radius: var(--radius-md);
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    max-width: 400px;
+    max-height: 150px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    display: none;
+    z-index: var(--z-toast);
+}
+
+.debug-console.active {
+    display: block;
+}
+
+.debug-console .close-btn {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--white);
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
+}
+
+.debug-console .close-btn:hover {
+    color: var(--light-green);
+}
+
+/* ==========================================
+   RESPONSIVE ADJUSTMENTS
+   ========================================== */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .sensor-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .credential-item {
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+    
+    .credential-value {
+        text-align: left;
+    }
+}

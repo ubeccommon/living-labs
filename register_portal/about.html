@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Living Lab Initiative</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #4CAF50;
+            --deep-green: #2E7D32;
+            --light-green: #81C784;
+            --sage-green: #8BC34A;
+            --warm-brown: #8D6E63;
+            --earth-tone: #795548;
+            --sand: #D7CCC8;
+            --sky-blue: #81D4FA;
+            --white: #FFFFFF;
+            --light-bg: #F5F5F5;
+            --text-dark: #212121;
+            --text-light: #757575;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, 
+                #E8F5E9 0%, 
+                #F1F8E9 25%,
+                #FFF9C4 50%,
+                #F1F8E9 75%,
+                #E8F5E9 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(46, 125, 50, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-100px) translateX(50px); }
+            50% { transform: translateY(-200px) translateX(-30px); }
+            75% { transform: translateY(-150px) translateX(80px); }
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--primary-green) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+        }
+        
+        .hero .tagline {
+            font-size: 1.1rem;
+            font-style: italic;
+            opacity: 0.95;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .content {
+            padding: 3rem 2rem;
+        }
+        
+        .section {
+            margin-bottom: 3rem;
+        }
+        
+        h2 {
+            color: var(--deep-green);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-green);
+        }
+        
+        h3 {
+            color: var(--primary-green);
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+            color: var(--text-dark);
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border-left: 5px solid var(--primary-green);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.15);
+            text-align: center;
+            border-top: 4px solid var(--primary-green);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.2);
+        }
+        
+        .stat-card .number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card .label {
+            font-size: 1rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .achievements-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .achievements-list li {
+            padding: 1rem 1rem 1rem 3rem;
+            margin-bottom: 1rem;
+            background: var(--light-bg);
+            border-radius: 10px;
+            position: relative;
+            border-left: 3px solid var(--light-green);
+            transition: all 0.3s ease;
+        }
+
+        .achievements-list li:hover {
+            background: #E8F5E9;
+            border-left-color: var(--primary-green);
+            transform: translateX(5px);
+        }
+        
+        .achievements-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 1rem;
+            color: var(--primary-green);
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .tech-item {
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--primary-green) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .tech-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        }
+        
+        .attribution {
+            background: linear-gradient(135deg, #FFF9C4 0%, #F1F8E9 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 3rem;
+            border-left: 5px solid var(--warm-brown);
+            font-size: 0.95rem;
+            color: var(--text-dark);
+        }
+        
+        .footer {
+            background: var(--deep-green);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .footer a {
+            color: var(--light-green);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .hero .tagline {
+                font-size: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-stack {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Particles Animation -->
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 2.5s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 4.5s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 1.5s;"></div>
+    </div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>🌱 Living Lab Initiative</h1>
+            <div class="subtitle">Erdpuls Müllrose Environmental Education Center</div>
+            <div class="tagline">
+                "As we learn to think like a plant, we discover that technology and nature are not opposites 
+                but complementary expressions of the same creative forces that shape our world."
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>About Our Project</h2>
+                <p>
+                    The Living Lab Initiative represents a <strong>groundbreaking fusion of environmental science, 
+                    blockchain technology, and anthroposophical education</strong>. Located at Freie Waldorfschule 
+                    Frankfurt (Oder) in Brandenburg, Germany, we have created one of the world's first educational 
+                    environmental monitoring systems that rewards students and stewards with blockchain-based 
+                    reciprocity credits for their contributions to citizen science.
+                </p>
+                
+                <div class="highlight-box">
+                    <h3>🌍 Our Mission</h3>
+                    <p>
+                        To transform school gardens into "Living Laboratories" where students learn environmental 
+                        science, data literacy, and blockchain technology through direct observation and stewardship 
+                        of nature, creating a reciprocal economy that values both ecological data and educational engagement.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>What Makes Us Unique</h2>
+                <p>
+                    We are pioneering a <strong>new model for environmental education</strong> that bridges 
+                    traditional Waldorf pedagogy with cutting-edge Web3 technology:
+                </p>
+                
+                <ul class="achievements-list">
+                    <li><strong>First Waldorf school</strong> with blockchain environmental monitoring</li>
+                    <li><strong>First educational reciprocal token economy</strong> for citizen science</li>
+                    <li><strong>First phenomenological observation system</strong> for IoT sensors</li>
+                    <li><strong>First integration</strong> of Steiner pedagogy with Web3 technology</li>
+                    <li><strong>First school-based reciprocal tokenization system</strong> rewarding environmental data</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Our Living System</h2>
+                
+                <h3>🔬 Environmental Monitoring</h3>
+                <p>
+                    Our senseBox MCU environmental station continuously monitors seven key parameters in the 
+                    school garden, transmitting data every 15 minutes:
+                </p>
+                <ul class="achievements-list">
+                    <li>Air temperature and humidity (HDC1080 sensor)</li>
+                    <li>Soil moisture and temperature (SMT50 sensor)</li>
+                    <li>Atmospheric pressure (BMP280 sensor)</li>
+                    <li>Light intensity for photosynthesis (LTR329 sensor)</li>
+                    <li>UV radiation levels (VEML6070 sensor)</li>
+                    <li>Advanced calculations: VPD, ET0, heat index, dew point</li>
+                    <li>Astronomical data: sunrise/sunset, moon phase, photoperiod</li>
+                </ul>
+                
+                <h3>🪙 UBEC Reciprocity Credits (UBECrc)</h3>
+                <p>
+                    UBEC stands for <strong>Universal Basic Environmental Contribution</strong>. These are utility 
+                    tokens on the Stellar blockchain that recognize and reward the value provided by environmental 
+                    data contributors and infrastructure stewards.
+                </p>
+                
+                <div class="highlight-box">
+                    <p><strong>How It Works:</strong></p>
+                    <ul style="margin-left: 2rem; margin-top: 1rem;">
+                        <li>Students and stewards maintain environmental monitoring equipment</li>
+                        <li>Each valid observation generates 7.14 UBECrc tokens</li>
+                        <li>Tokens represent reciprocal exchange for infrastructure and data provision</li>
+                        <li>System operates on principles of fair recognition and balanced reciprocity</li>
+                        <li>Approximately 714 UBECrc generated per device daily</li>
+                    </ul>
+                </div>
+                
+                <h3>📊 Data Architecture</h3>
+                <p>
+                    Our system implements a sophisticated dual-schema database design separating hardware sensor 
+                    data from phenomenological observations, with blockchain verification and IPFS permanent storage 
+                    ensuring data integrity and immutability.
+                </p>
+            </div>
+            
+            <div class="section">
+                <h2>System Performance</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="number">99.2%</div>
+                        <div class="label">System Uptime</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">2,880</div>
+                        <div class="label">Daily Readings</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">92/100</div>
+                        <div class="label">Data Quality Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">30+</div>
+                        <div class="label">Potential Students</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Technology Stack</h2>
+                
+                <div class="tech-stack">
+                    <div class="tech-item">🔷 Stellar Blockchain</div>
+                    <div class="tech-item">🌐 FastAPI</div>
+                    <div class="tech-item">🗄️ PostgreSQL + TimescaleDB</div>
+                    <div class="tech-item">📦 IPFS via Pinata</div>
+                    <div class="tech-item">🔌 senseBox MCU (ESP32)</div>
+                    <div class="tech-item">🐍 Python (async/await)</div>
+                    <div class="tech-item">🌍 OpenSenseMap</div>
+                    <div class="tech-item">☁️ VPS Cloud Infrastructure</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Anthroposophical Approach</h2>
+                <p>
+                    Following Rudolf Steiner's insights, our project recognizes four essential realms in living systems:
+                </p>
+                
+                <div class="highlight-box">
+                    <h3>🌍 The Physical</h3>
+                    <p>Measurable matter - soil moisture, temperature, tangible data</p>
+                    
+                    <h3>💧 The Etheric</h3>
+                    <p>Life forces - humidity flow, atmospheric pressure, circulation of energy</p>
+                    
+                    <h3>🌬️ The Astral</h3>
+                    <p>Sensitivity and response - light for photosynthesis, UV radiation, plant awareness</p>
+                    
+                    <h3>🔥 The Ego/Spirit</h3>
+                    <p>Organizing principle - warmth as carrier of cosmic will, growth direction</p>
+                </div>
+                
+                <p>
+                    Our sensors don't merely collect data—they observe the interplay of these four realms in 
+                    real-time, helping students develop "living thinking" that grasps wholes rather than parts, 
+                    processes rather than products, relationships rather than isolated facts.
+                </p>
+            </div>
+            
+            <div class="section">
+                <h2>Educational Impact</h2>
+                <p>
+                    The Living Lab engages students across multiple learning domains:
+                </p>
+                
+                <ul class="achievements-list">
+                    <li><strong>Environmental Science:</strong> Direct observation of climate and soil systems</li>
+                    <li><strong>Data Science:</strong> Collection, analysis, and interpretation of real-world data</li>
+                    <li><strong>Blockchain Technology:</strong> Understanding distributed ledgers and tokenomics</li>
+                    <li><strong>IoT & Electronics:</strong> Hands-on experience with sensors and connectivity</li>
+                    <li><strong>Reciprocal Economics:</strong> Value exchange, fair recognition, sustainable systems</li>
+                    <li><strong>Phenomenology:</strong> Goethean observation and holistic understanding</li>
+                </ul>
+                
+                <p>
+                    Our comprehensive curriculum materials are available in both German and English, designed to 
+                    integrate seamlessly with Waldorf pedagogy while meeting STEM education standards.
+                </p>
+            </div>
+            
+            <div class="section">
+                <h2>Design Principles</h2>
+                <p>
+                    Our system is built on 12 foundational design principles ensuring modularity, maintainability, 
+                    and precision:
+                </p>
+                
+                <div class="tech-stack">
+                    <div class="tech-item">Modular Architecture</div>
+                    <div class="tech-item">Service Pattern</div>
+                    <div class="tech-item">Service Registry</div>
+                    <div class="tech-item">Single Source of Truth</div>
+                    <div class="tech-item">Strict Async Operations</div>
+                    <div class="tech-item">No Legacy Code</div>
+                    <div class="tech-item">Per-Asset Monitoring</div>
+                    <div class="tech-item">Centralized Config</div>
+                    <div class="tech-item">Integrated Rate Limiting</div>
+                    <div class="tech-item">Clear Separation</div>
+                    <div class="tech-item">Comprehensive Docs</div>
+                    <div class="tech-item">Method Singularity</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Vision for the Future</h2>
+                
+                <h3>🌱 Immediate Goals (2025)</h3>
+                <ul class="achievements-list">
+                    <li>Full student participation and classroom integration</li>
+                    <li>Enhanced monitoring dashboard and mobile app</li>
+                    <li>Activation of reciprocal token distribution</li>
+                    <li>Expanded sensor network across school grounds</li>
+                </ul>
+                
+                <h3>🌳 Medium-term Vision (2026)</h3>
+                <ul class="achievements-list">
+                    <li>Brandenburg School Garden Network (10+ schools)</li>
+                    <li>Carbon credit marketplace development</li>
+                    <li>Advanced AI analytics and predictions</li>
+                    <li>Educational certification program</li>
+                </ul>
+                
+                <h3>🌍 Long-term Impact (2027+)</h3>
+                <ul class="achievements-list">
+                    <li>International expansion of Living Lab model</li>
+                    <li>EU recognition and funding</li>
+                    <li>Published research and academic partnerships</li>
+                    <li>New paradigm for educational technology</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Open Source & Collaboration</h2>
+                <p>
+                    We believe in the power of open collaboration. Our project uses open-source technologies 
+                    and contributes back to the global commons:
+                </p>
+                
+                <ul class="achievements-list">
+                    <li><strong>Open Data:</strong> All environmental readings shared via OpenSenseMap</li>
+                    <li><strong>Open Source:</strong> Code and documentation available for other schools</li>
+                    <li><strong>Open Standards:</strong> Compatible with existing environmental monitoring networks</li>
+                    <li><strong>Open Education:</strong> Curriculum materials freely shared with educators</li>
+                </ul>
+            </div>
+            
+            <div class="attribution">
+                <p><strong>Attribution & Acknowledgment:</strong></p>
+                <p>
+                    This project uses the services of <strong>Claude and Anthropic PBC</strong> to inform our 
+                    decisions and recommendations. This project was made possible with the assistance of Claude 
+                    and Anthropic PBC.
+                </p>
+                <p style="margin-top: 1rem;">
+                    We also acknowledge the open-source community, the Stellar Development Foundation, OpenSenseMap, 
+                    and all the educators and students who believe in the transformative power of connecting 
+                    nature with technology.
+                </p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Living Lab Initiative · Erdpuls Müllrose</strong></p>
+            <p>Freie Waldorfschule Frankfurt (Oder) · Brandenburg, Germany</p>
+            <p style="margin-top: 1rem;">
+                <a href="/">Home</a> · 
+                <a href="/register">Register</a> · 
+                <a href="/impressum">Impressum</a> · 
+                <a href="/datenschutz">Datenschutz</a>
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                © 2025 Living Lab Initiative · Open Source Project
+            </p>
+        </div>
+    </div>
+</body>
+</html>

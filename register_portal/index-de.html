@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Living Science Initiative - Umwelt-Stewardship-Netzwerk</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #4CAF50;
+            --deep-green: #2E7D32;
+            --light-green: #81C784;
+            --sage-green: #8BC34A;
+            --warm-brown: #8D6E63;
+            --earth-tone: #795548;
+            --sand: #D7CCC8;
+            --sky-blue: #81D4FA;
+            --white: #FFFFFF;
+            --light-bg: #F5F5F5;
+            --text-dark: #212121;
+            --text-light: #757575;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Language Switcher Styles */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 8px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--primary-green);
+            background: white;
+            color: var(--deep-green);
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .lang-btn:hover {
+            background: var(--light-green);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .lang-btn.active {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .hero-background {
+            position: relative;
+            min-height: 100vh;
+            background: linear-gradient(135deg, 
+                #E8F5E9 0%, 
+                #F1F8E9 25%,
+                #FFF9C4 50%,
+                #F1F8E9 75%,
+                #E8F5E9 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-100px) translateX(50px); }
+            50% { transform: translateY(-200px) translateX(-30px); }
+            75% { transform: translateY(-150px) translateX(80px); }
+        }
+
+        header {
+            padding: 2rem;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--light-green), var(--primary-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .logo-text h1 {
+            font-size: 1.8rem;
+            color: var(--deep-green);
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo-text p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            color: var(--deep-green);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--warm-brown);
+            margin-bottom: 3rem;
+            font-weight: 300;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-quote {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-left: 4px solid var(--primary-green);
+            border-radius: 8px;
+            font-style: italic;
+            color: var(--earth-tone);
+            font-size: 1.2rem;
+            animation: fadeInUp 1s ease 0.4s both;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .cta-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .cta-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+            text-align: center;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .cta-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(76, 175, 80, 0.2);
+        }
+
+        .cta-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-card h3 {
+            color: var(--deep-green);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .cta-card p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--primary-green), var(--sage-green));
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .features-section {
+            background: var(--light-bg);
+            padding: 6rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--deep-green);
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-item {
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            color: var(--deep-green);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-text {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--sand);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .attribution {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: var(--sand);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .cta-container {
+                grid-template-columns: 1fr;
+            }
+
+            .logo-text h1 {
+                font-size: 1.3rem;
+            }
+
+            .language-switcher {
+                top: 10px;
+                right: 10px;
+                padding: 6px;
+            }
+
+            .lang-btn {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <a href="/index.html" class="lang-btn">English</a>
+        <a href="/index-de.html" class="lang-btn active">Deutsch</a>
+    </div>
+
+    <header>
+        <div class="logo-section">
+            <div class="logo-icon">🌱</div>
+            <div class="logo-text">
+                <h1>Ubuntu Economic Commons DAO - Living Labs Initiative<</h1>
+                <p>Living Lab · Erdpuls Müllrose</p>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero-background">
+        <div class="particles">
+            <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+            <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+            <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+            <div class="particle" style="left: 40%; animation-delay: 1s;"></div>
+            <div class="particle" style="left: 50%; animation-delay: 3s;"></div>
+            <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+            <div class="particle" style="left: 70%; animation-delay: 2.5s;"></div>
+            <div class="particle" style="left: 80%; animation-delay: 4.5s;"></div>
+            <div class="particle" style="left: 90%; animation-delay: 1.5s;"></div>
+        </div>
+
+        <div class="hero-content">
+            <h2 class="hero-title">Die Zukunft der Umweltbildung gestalten</h2>
+            <p class="hero-subtitle">Wo Technologie und Natur zusammenarbeiten, um unsere lebendige Welt zu verstehen</p>
+
+            <div class="hero-quote">
+                "Wenn wir lernen, wie eine Pflanze zu denken, entdecken wir, dass Technologie und Natur keine Gegensätze sind, sondern komplementäre Ausdrucksformen derselben schöpferischen Kräfte, die unsere Welt gestalten."
+            </div>
+
+            <div class="cta-container">
+                <div class="cta-card">
+                    <div class="cta-icon">🌍</div>
+                    <h3>Werde Steward</h3>
+                    <p>Tritt unserem Netzwerk von Umweltbeobachtern bei und trage zur Bürgerwissenschaft bei</p>
+                    <a href="/steward-de.html" class="cta-button">Jetzt registrieren →</a>
+                </div>
+
+                <div class="cta-card">
+                    <div class="cta-icon">📡</div>
+                    <h3>Verbinde dein Gerät</h3>
+                    <p>Registriere deine senseBox oder deinen Umweltsensor, um Daten zu sammeln</p>
+                    <a href="/sensebox-de.html" class="cta-button">Gerät verbinden →</a>
+                </div>
+
+                <div class="cta-card">
+                    <div class="cta-icon">📊</div>
+                    <h3>Netzwerkstatus</h3>
+                    <p>Sieh dir Echtzeit-Daten aus unserem verteilten Sensornetzwerk an</p>
+                    <a href="/status-de.html" class="cta-button">Status ansehen →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <h2 class="section-title">Warum unserer Initiative beitreten?</h2>
+        
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">👁️</div>
+                <h3 class="feature-title">Phänomenologische Beobachtung</h3>
+                <p class="feature-text">Wir beobachten Phänomene so, wie sie sich zeigen, und ehren sowohl menschliche Wahrnehmung als auch technologische Erfassung.</p>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">🔗</div>
+                <h3 class="feature-title">Blockchain-Integration</h3>
+                <p class="feature-text">Jede Beobachtung wird in der Stellar-Blockchain aufgezeichnet und schafft einen unveränderlichen Datensatz mit UBEC-Token-Belohnungen.</p>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">🤝</div>
+                <h3 class="feature-title">Reziproke Ökonomie</h3>
+                <p class="feature-text">Beitragende erhalten UBEC-Token im Austausch für ihre Beobachtungen und schaffen eine regenerative Datenwirtschaft.</p>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">🎓</div>
+                <h3 class="feature-title">Bildungsfokus</h3>
+                <p class="feature-text">Schüler lernen durch Handeln und entwickeln wissenschaftliche Kompetenz durch echte Umweltüberwachung.</p>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">🌎</div>
+                <h3 class="feature-title">Offene Wissenschaft</h3>
+                <p class="feature-text">Alle Daten sind transparent und zugänglich und tragen zum globalen Verständnis von Umweltmustern bei.</p>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">♻️</div>
+                <h3 class="feature-title">Regenerative Zukunft</h3>
+                <p class="feature-text">Wir bauen Systeme auf, die mehr zurückgeben als sie nehmen und die lebendigen Prozesse unseres Planeten ehren.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-links">
+            <a href="/impressum.html">Impressum</a>
+            <a href="/datenschutz.html">Datenschutz</a>
+            <a href="/docs">API-Dokumentation</a>
+        </div>
+        
+        <div class="attribution">
+            Dieses Projekt nutzt die Dienste von Claude und Anthropic PBC für fundierte Entscheidungen und Empfehlungen.<br>
+            Dieses Projekt wurde mit Unterstützung von Claude und Anthropic PBC ermöglicht.
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,48 @@
+# requirements.txt
+# Python Dependencies for UBEC Blockchain-First Architecture
+# 
+# Installation: pip install -r requirements.txt
+# Or with system packages: pip install -r requirements.txt --break-system-packages
+#
+# Attribution: This project uses the services of Claude and Anthropic PBC
+
+# Core Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-dotenv==1.0.0
+
+# Async HTTP Client (for IPFS/Pinata)
+aiohttp==3.9.1
+aiohttp-retry==2.8.3
+
+# Stellar SDK (existing)
+stellar-sdk==9.1.0
+
+# Database (optional - for caching)
+asyncpg==0.29.0
+
+# Data Validation
+pydantic==2.5.0
+
+# CORS
+fastapi-cors==0.0.6
+
+# Logging (enhanced)
+python-json-logger==2.0.7
+
+# Utilities
+python-dateutil==2.8.2
+
+# Testing (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2  # For testing FastAPI
+
+# Development (optional)
+black==23.11.0  # Code formatting
+flake8==6.1.0   # Code linting
+mypy==1.7.1     # Type checking
+
+# Documentation (optional)
+mkdocs==1.5.3
+mkdocs-material==9.4.14

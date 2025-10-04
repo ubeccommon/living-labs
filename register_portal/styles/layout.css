@@ -1,0 +1,290 @@
+/**
+ * Layout Styles
+ * 
+ * Page structure, header, navigation, and container layouts.
+ * Follows Design Principle #1 (Modular Design) and #10 (Separation of Concerns)
+ * 
+ * Attribution: This project uses the services of Claude and Anthropic PBC.
+ */
+
+/* ==========================================
+   HEADER
+   ========================================== */
+.header {
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-xl);
+}
+
+/* ==========================================
+   LOGO
+   ========================================== */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.logo-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--light-green), var(--primary-green));
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.logo-text h1 {
+    font-size: 1.5rem;
+    color: var(--deep-green);
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.logo-text p {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    margin-bottom: 0;
+}
+
+/* ==========================================
+   NAVIGATION TABS
+   ========================================== */
+.nav-tabs {
+    display: flex;
+    gap: var(--space-md);
+}
+
+.nav-tab {
+    padding: var(--space-sm) var(--space-md);
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all var(--transition-normal);
+    border-bottom: 2px solid transparent;
+    position: relative;
+}
+
+.nav-tab.active {
+    color: var(--primary-green);
+    border-bottom-color: var(--primary-green);
+}
+
+.nav-tab:hover {
+    color: var(--deep-green);
+}
+
+/* ==========================================
+   MAIN CONTAINER
+   ========================================== */
+.container {
+    max-width: 1200px;
+    margin: var(--space-xl) auto;
+    padding: 0 var(--space-xl);
+    flex: 1;
+}
+
+/* ==========================================
+   HERO SECTION
+   ========================================== */
+.hero {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl);
+    margin-bottom: var(--space-xl);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+
+.hero h2 {
+    font-size: 2.5rem;
+    color: var(--deep-green);
+    margin-bottom: var(--space-md);
+}
+
+.hero p {
+    font-size: 1.25rem;
+    color: var(--text-light);
+    max-width: 600px;
+    margin: 0 auto var(--space-md);
+}
+
+.hero-quote {
+    font-style: italic;
+    color: var(--warm-brown);
+    font-size: 1.1rem;
+    margin-top: var(--space-xl);
+    padding: var(--space-md);
+    border-left: 4px solid var(--primary-green);
+    background: rgba(76, 175, 80, 0.05);
+    text-align: left;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ==========================================
+   FORMS CONTAINER
+   ========================================== */
+.forms-container {
+    display: grid;
+    gap: var(--space-xl);
+}
+
+.form-section {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-md);
+    display: none;
+    animation: fadeIn var(--transition-normal);
+}
+
+.form-section.active {
+    display: block;
+}
+
+.form-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-md);
+    border-bottom: 2px solid var(--light-bg);
+}
+
+.form-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--light-green);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.form-title h3 {
+    color: var(--deep-green);
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.form-title p {
+    color: var(--text-light);
+    font-size: 0.875rem;
+    margin-bottom: 0;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+   ========================================== */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 var(--space-md);
+    }
+    
+    .hero {
+        padding: var(--space-xl);
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: var(--space-md);
+        padding: var(--space-md);
+    }
+    
+    .nav-tabs {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .hero h2 {
+        font-size: 1.75rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    .hero-quote {
+        font-size: 0.95rem;
+    }
+    
+    .logo-text h1 {
+        font-size: 1.25rem;
+    }
+    
+    .form-section {
+        padding: var(--space-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 var(--space-md);
+        margin: var(--space-md) auto;
+    }
+    
+    .hero {
+        padding: var(--space-md);
+    }
+    
+    .logo {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .nav-tabs {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .nav-tab {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* ==========================================
+   PRINT STYLES
+   ========================================== */
+@media print {
+    .header,
+    .nav-tabs,
+    .form-actions,
+    .debug-console {
+        display: none !important;
+    }
+    
+    .form-section {
+        display: block !important;
+        page-break-inside: avoid;
+    }
+    
+    body {
+        background: white;
+    }
+}

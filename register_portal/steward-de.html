@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steward-Registrierung - UBEC Living Science Initiative</title>
+    
+    <!-- Attribution -->
+    <meta name="attribution" content="Dieses Projekt nutzt die Dienste von Claude und Anthropic PBC für fundierte Entscheidungen und Empfehlungen. Dieses Projekt wurde mit Unterstützung von Claude und Anthropic PBC ermöglicht.">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #4CAF50;
+            --deep-green: #2E7D32;
+            --light-green: #81C784;
+            --warm-brown: #8D6E63;
+            --light-bg: #F5F5F5;
+            --text-dark: #212121;
+            --text-light: #757575;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            background: var(--light-bg);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: var(--deep-green);
+            text-decoration: none;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            color: var(--primary-green);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 8px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--primary-green);
+            background: white;
+            color: var(--deep-green);
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .lang-btn:hover {
+            background: var(--light-green);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .lang-btn.active {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            color: var(--deep-green);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .info-box {
+            background: #E8F5E9;
+            border-left: 4px solid var(--primary-green);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--deep-green);
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+
+        .hint {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .sensor-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sensor-checkbox:hover {
+            border-color: var(--light-green);
+        }
+
+        .sensor-checkbox.selected {
+            border-color: var(--primary-green);
+            background: #E8F5E9;
+        }
+
+        .sensor-checkbox input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .success-message, .error-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .success-message {
+            background: #E8F5E9;
+            color: var(--deep-green);
+            border: 2px solid var(--primary-green);
+        }
+
+        .error-message {
+            background: #FFEBEE;
+            color: #C62828;
+            border: 2px solid #F44336;
+        }
+
+        .success-message.active, .error-message.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .language-switcher {
+                top: 10px;
+                right: 10px;
+                padding: 6px;
+            }
+
+            .lang-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <a href="/steward.html" class="lang-btn">English</a>
+        <a href="/steward-de.html" class="lang-btn active">Deutsch</a>
+    </div>
+
+    <div class="container">
+        <a href="/index-de.html" class="back-link">← Zurück zur Startseite</a>
+        
+        <div class="header">
+            <div class="logo">🌍</div>
+            <h1>Werde Steward</h1>
+            <p class="subtitle">Tritt unserem Netzwerk von Umweltbeobachtern bei</p>
+        </div>
+
+        <div id="successMessage" class="success-message"></div>
+        <div id="errorMessage" class="error-message"></div>
+
+        <div class="card">
+            <div class="info-box">
+                <strong>Umwelt-Stewardship</strong><br>
+                Als Steward trägst du phänomenologische Beobachtungen zu unserer reziproken Wirtschaft bei. Jede Beobachtung bringt dir UBECrc-Token als Anerkennung deines Beitrags zum Verständnis unserer lebendigen Welt ein.
+            </div>
+
+            <form id="stewardForm">
+                <div class="form-group">
+                    <label for="name">Steward-Name *</label>
+                    <input type="text" id="name" name="name" required placeholder="Dein Name oder gewählte Steward-Identität">
+                    <div class="hint">Dies wird deine Steward-Identität im Netzwerk und für zukünftige Anmeldungen verwendet</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">E-Mail-Adresse *</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="hint">Wir senden dir Updates zu deinen Beobachtungen</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="organization">Organisation/Schule</label>
+                    <input type="text" id="organization" name="organization" placeholder="z.B. Freie Waldorfschule Frankfurt (Oder)">
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Stewardship-Rolle *</label>
+                    <select id="role" name="role" required>
+                        <option value="">Wähle deine Rolle...</option>
+                        <option value="steward">Umwelt-Steward</option>
+                        <option value="guardian">Land-Wächter</option>
+                        <option value="observer">Phänomen-Beobachter</option>
+                        <option value="student">Schüler-Forscher</option>
+                        <option value="teacher">Lehrer-Guide</option>
+                        <option value="researcher">Wissenschaftlicher Forscher</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="stellarWallet">Stellar Wallet-Adresse (Optional)</label>
+                    <input type="text" id="stellarWallet" name="stellar_address" placeholder="G..." pattern="^G[A-Z2-7]{55}$">
+                    <div class="hint">Deine UBECrc-Token werden hierher gesendet. Noch keine? Du kannst sie später hinzufügen.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="landRelationship">Beziehung zum Land</label>
+                    <input type="text" id="landRelationship" name="land_relationship" placeholder="Beschreibe deine Beziehung zum Land">
+                </div>
+
+                <div class="form-group">
+                    <label>Sensorische Fähigkeiten</label>
+                    <div class="hint">Wähle die Sinne aus, die du für Umweltbeobachtungen nutzt</div>
+                    <div class="sensor-grid">
+                        <label class="sensor-checkbox selected">
+                            <input type="checkbox" name="capacities" value="sight" checked>
+                            <span>👁️ Sehen</span>
+                        </label>
+                        <label class="sensor-checkbox selected">
+                            <input type="checkbox" name="capacities" value="hearing" checked>
+                            <span>👂 Hören</span>
+                        </label>
+                        <label class="sensor-checkbox selected">
+                            <input type="checkbox" name="capacities" value="touch" checked>
+                            <span>✋ Fühlen</span>
+                        </label>
+                        <label class="sensor-checkbox selected">
+                            <input type="checkbox" name="capacities" value="smell" checked>
+                            <span>👃 Riechen</span>
+                        </label>
+                        <label class="sensor-checkbox selected">
+                            <input type="checkbox" name="capacities" value="taste" checked>
+                            <span>👅 Schmecken</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="capacities" value="intuition">
+                            <span>✨ Intuition</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Als Steward registrieren</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Toggle sensor checkbox visual state
+        document.querySelectorAll('.sensor-checkbox input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    this.closest('.sensor-checkbox').classList.add('selected');
+                } else {
+                    this.closest('.sensor-checkbox').classList.remove('selected');
+                }
+            });
+        });
+
+        // Form submission
+        document.getElementById('stewardForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                organization: formData.get('organization'),
+                role: formData.get('role'),
+                stellar_address: formData.get('stellar_address'),
+                land_relationship: formData.get('land_relationship'),
+                sensory_capacities: formData.getAll('capacities')
+            };
+
+            try {
+                const response = await fetch('/api/v1/stewards', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('successMessage').textContent = 
+                        `Erfolg! Steward ${result.name} registriert. Du erhältst eine Bestätigungs-E-Mail.`;
+                    document.getElementById('successMessage').classList.add('active');
+                    document.getElementById('errorMessage').classList.remove('active');
+                    this.reset();
+                } else {
+                    throw new Error(result.detail || 'Registrierung fehlgeschlagen');
+                }
+            } catch (error) {
+                document.getElementById('errorMessage').textContent = 
+                    `Fehler: ${error.message}`;
+                document.getElementById('errorMessage').classList.add('active');
+                document.getElementById('successMessage').classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

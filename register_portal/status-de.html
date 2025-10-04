@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netzwerkstatus - Living Science Initiative</title>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-green: #4CAF50;
+            --deep-green: #2E7D32;
+            --light-green: #81C784;
+            --light-bg: #F5F5F5;
+            --text-dark: #212121;
+            --text-light: #757575;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            background: var(--light-bg);
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        .language-switcher {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            display: flex; gap: 10px; background: white; padding: 8px;
+            border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .lang-btn {
+            padding: 8px 16px; border: 2px solid var(--primary-green);
+            background: white; color: var(--deep-green); border-radius: 20px;
+            cursor: pointer; font-weight: 600; transition: all 0.3s;
+            text-decoration: none; font-size: 0.9rem;
+        }
+
+        .lang-btn:hover { background: var(--light-green); color: white; }
+        .lang-btn.active { background: var(--primary-green); color: white; }
+
+        .back-link {
+            display: inline-block; color: var(--deep-green);
+            text-decoration: none; margin-bottom: 2rem; font-weight: 600;
+        }
+
+        .header { text-align: center; margin-bottom: 3rem; }
+        .logo { font-size: 4rem; margin-bottom: 1rem; }
+        h1 { color: var(--deep-green); font-size: 2.5rem; }
+        .subtitle { color: var(--text-light); font-size: 1.2rem; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white; padding: 2rem; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: var(--deep-green); }
+        .stat-label { color: var(--text-light); margin-top: 0.5rem; }
+
+        .card {
+            background: white; padding: 2rem; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 2rem;
+        }
+
+        .device-list { margin-top: 1.5rem; }
+
+        .device-item {
+            padding: 1rem; border-left: 4px solid var(--primary-green);
+            background: var(--light-bg); margin-bottom: 1rem; border-radius: 4px;
+        }
+
+        .device-name { font-weight: 600; color: var(--deep-green); margin-bottom: 0.5rem; }
+        .device-info { font-size: 0.9rem; color: var(--text-light); }
+
+        .status-indicator {
+            display: inline-block; width: 12px; height: 12px;
+            border-radius: 50%; margin-right: 0.5rem;
+        }
+
+        .status-active { background: var(--primary-green); }
+        .status-inactive { background: #F44336; }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="language-switcher">
+        <a href="/status.html" class="lang-btn">English</a>
+        <a href="/status-de.html" class="lang-btn active">Deutsch</a>
+    </div>
+
+    <div class="container">
+        <a href="/index-de.html" class="back-link">← Zurück zur Startseite</a>
+        
+        <div class="header">
+            <div class="logo">📊</div>
+            <h1>Netzwerkstatus</h1>
+            <p class="subtitle">Echtzeit-Überwachung unseres Umweltnetzwerks</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🌍</div>
+                <div class="stat-value" id="totalObservers">--</div>
+                <div class="stat-label">Aktive Beobachter</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📡</div>
+                <div class="stat-value" id="totalDevices">--</div>
+                <div class="stat-label">Verbundene Geräte</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="totalObservations">--</div>
+                <div class="stat-label">Beobachtungen heute</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🪙</div>
+                <div class="stat-value" id="totalTokens">--</div>
+                <div class="stat-label">UBECrc generiert</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Aktive Geräte</h2>
+            <div class="device-list" id="deviceList">
+                <p style="text-align: center; color: var(--text-light); padding: 2rem;">Lade Gerätestatus...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadStatus() {
+            try {
+                const response = await fetch('/api/v2/system/stats');
+                const data = await response.json();
+
+                document.getElementById('totalObservers').textContent = data.total_observers || 0;
+                document.getElementById('totalDevices').textContent = data.total_devices || 0;
+                document.getElementById('totalObservations').textContent = data.total_observations || 0;
+                document.getElementById('totalTokens').textContent = (data.total_ubec || 0).toFixed(2);
+
+                // Load devices (if available)
+                const deviceList = document.getElementById('deviceList');
+                if (data.devices && data.devices.length > 0) {
+                    deviceList.innerHTML = data.devices.map(device => `
+                        <div class="device-item">
+                            <div class="device-name">
+                                <span class="status-indicator status-${device.active ? 'active' : 'inactive'}"></span>
+                                ${device.name}
+                            </div>
+                            <div class="device-info">
+                                Standort: ${device.location} | Sensoren: ${device.sensors || 0} | 
+                                Letzte Aktivität: ${device.last_seen || 'Unbekannt'}
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    deviceList.innerHTML = '<p style="text-align: center; color: var(--text-light);">Keine Geräte registriert</p>';
+                }
+            } catch (error) {
+                console.error('Fehler beim Laden des Status:', error);
+            }
+        }
+
+        loadStatus();
+        setInterval(loadStatus, 30000); // Aktualisierung alle 30 Sekunden
+    </script>
+</body>
+</html>

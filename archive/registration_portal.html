@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environmental Stewardship Registration - UBEC Living Science Initiative</title>
+    <style>
+        /* Reset and Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Color Palette - Natural Earth Tones */
+        :root {
+            --primary-green: #4CAF50;
+            --deep-green: #2E7D32;
+            --light-green: #81C784;
+            --warm-brown: #8D6E63;
+            --earth-tone: #795548;
+            --light-bg: #F5F5F5;
+            --text-dark: #212121;
+            --text-light: #757575;
+            --border: #E0E0E0;
+            --error: #f44336;
+            --success: #4CAF50;
+            --info: #2196F3;
+        }
+
+        /* Typography and Body */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--light-green), var(--primary-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            color: var(--deep-green);
+            font-weight: 600;
+        }
+
+        .logo-text p {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-tab.active {
+            color: var(--primary-green);
+            border-bottom-color: var(--primary-green);
+        }
+
+        .nav-tab:hover {
+            color: var(--deep-green);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            flex: 1;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            color: var(--deep-green);
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto 1rem;
+        }
+
+        .hero-quote {
+            font-style: italic;
+            color: var(--warm-brown);
+            font-size: 1.1rem;
+            margin-top: 2rem;
+            padding: 1rem;
+            border-left: 4px solid var(--primary-green);
+            background: rgba(76, 175, 80, 0.05);
+            text-align: left;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Forms Container */
+        .forms-container {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-bg);
+        }
+
+        .form-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--light-green);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .form-title h3 {
+            color: var(--deep-green);
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .form-title p {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        /* Sensor Grid */
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .sensor-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .sensor-checkbox:hover {
+            background: var(--light-bg);
+            border-color: var(--primary-green);
+        }
+
+        .sensor-checkbox.selected {
+            background: rgba(76, 175, 80, 0.1);
+            border-color: var(--primary-green);
+        }
+
+        .sensor-checkbox input[type="checkbox"] {
+            cursor: pointer;
+        }
+
+        /* Enhanced Sensor Categories */
+        .sensor-category {
+            margin-top: 1.5rem;
+        }
+
+        .sensor-category h4 {
+            color: var(--deep-green);
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Buttons */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--deep-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--light-bg);
+            color: var(--text-dark);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        /* Status Messages */
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .status-message.success {
+            background: #E8F5E9;
+            color: var(--success);
+            border: 1px solid var(--success);
+            display: block;
+        }
+
+        .status-message.error {
+            background: #FFEBEE;
+            color: var(--error);
+            border: 1px solid var(--error);
+            display: block;
+        }
+
+        .status-message.info {
+            background: #E3F2FD;
+            color: var(--info);
+            border: 1px solid var(--info);
+            display: block;
+        }
+
+        /* Response Display */
+        .response-container {
+            background: #F5F5F5;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .response-container.active {
+            display: block;
+        }
+
+        .response-header {
+            font-weight: 600;
+            color: var(--deep-green);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .credentials-box {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 1rem;
+        }
+
+        .credential-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: var(--light-bg);
+            border-radius: 4px;
+        }
+
+        .credential-label {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .credential-value {
+            color: var(--text-light);
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+
+        /* Arduino Config Display */
+        .arduino-config {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #1a1a1a;
+            border-radius: 8px;
+            color: #fff;
+            position: relative;
+        }
+
+        .arduino-config h4 {
+            margin-top: 0;
+            color: var(--light-green);
+        }
+
+        .arduino-config pre {
+            background: #000;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid var(--light-bg);
+            border-top: 3px solid var(--primary-green);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Debug Console */
+        .debug-console {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(46, 125, 50, 0.95);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            max-width: 400px;
+            max-height: 150px;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .debug-console.active {
+            display: block;
+        }
+
+        .debug-console .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-tabs {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h2 {
+                font-size: 1.75rem;
+            }
+
+            .sensor-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 0.5rem;
+            color: var(--text-light);
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 0.5rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🌱</div>
+                <div class="logo-text">
+                    <h1>Environmental Stewardship System</h1>
+                    <p>Living Science Initiative - Freie Waldorfschule Frankfurt (Oder)</p>
+                </div>
+            </div>
+            <nav class="nav-tabs">
+                <button class="nav-tab active" onclick="switchTab('steward')">Become a Steward</button>
+                <button class="nav-tab" onclick="switchTab('sensebox')">Register SenseBox</button>
+                <button class="nav-tab" onclick="switchTab('status')">Network Status</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h2>Welcome to the Living Science Initiative</h2>
+            <p>Join our network of environmental stewards where technology and nature collaborate to understand our living world.</p>
+            <div class="hero-quote">
+                "We are not users of the Earth, we are stewards. We are not farmers of data, we are observers of phenomena. Through conscious observation, we participate in the reciprocal economy of nature."
+            </div>
+        </div>
+
+        <!-- Steward Registration Form -->
+        <div id="steward-form" class="form-section active">
+            <div class="form-header">
+                <div class="form-icon">🌍</div>
+                <div class="form-title">
+                    <h3>Become an Environmental Steward</h3>
+                    <p>Join our phenomenological observation network as a conscious steward of the Earth</p>
+                </div>
+            </div>
+
+            <div id="steward-status" class="status-message"></div>
+
+            <form id="stewardRegistrationForm" class="form-grid">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="steward-name">Full Name *</label>
+                        <input type="text" id="steward-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="steward-email">Email Address *</label>
+                        <input type="email" id="steward-email" name="email" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="steward-organization">Organization/School</label>
+                        <input type="text" id="steward-organization" name="organization" placeholder="e.g., Freie Waldorfschule Frankfurt (Oder)">
+                    </div>
+                    <div class="form-group">
+                        <label for="steward-role">Stewardship Role</label>
+                        <select id="steward-role" name="role">
+                            <option value="steward">Environmental Steward</option>
+                            <option value="guardian">Land Guardian</option>
+                            <option value="observer">Phenomenon Observer</option>
+                            <option value="student">Student Researcher</option>
+                            <option value="teacher">Teacher Guide</option>
+                            <option value="researcher">Scientific Researcher</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="steward-stellar">
+                            Stellar Wallet Address
+                            <span class="tooltip">ℹ
+                            <span class="tooltiptext">For receiving UBEC tokens in reciprocal exchange for your observations</span>
+                            </span>
+                        </label>
+                        <input type="text" id="steward-stellar" name="stellar_address" placeholder="G..." pattern="^G[A-Z2-7]{55}$">
+                    </div>
+                    <div class="form-group">
+                        <label for="steward-land">Land Relationship</label>
+                        <input type="text" id="steward-land" name="land_relationship" placeholder="Describe your relationship with the land">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Sensory Capacities</label>
+                    <div class="sensor-grid">
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="capacities" value="sight" checked>
+                            <span>👁️ Sight</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="capacities" value="hearing" checked>
+                            <span>👂 Hearing</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="capacities" value="touch" checked>
+                            <span>✋ Touch</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="capacities" value="smell" checked>
+                            <span>👃 Smell</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="capacities" value="taste">
+                            <span>👅 Taste</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="capacities" value="intuition" checked>
+                            <span>💭 Intuition</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="clearForm('steward')">
+                        Clear Form
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        🌟 Begin Stewardship Journey
+                    </button>
+                </div>
+            </form>
+
+            <div id="steward-response" class="response-container"></div>
+        </div>
+
+        <!-- SenseBox Registration Form -->
+        <div id="sensebox-form" class="form-section">
+            <div class="form-header">
+                <div class="form-icon">📡</div>
+                <div class="form-title">
+                    <h3>Register SenseBox Device</h3>
+                    <p>Connect your environmental sensor to the stewardship network</p>
+                </div>
+            </div>
+
+            <div id="sensebox-status" class="status-message"></div>
+
+            <form id="senseboxRegistrationForm" class="form-grid">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="sensebox-serial">
+                            SenseBox Serial Number *
+                            <span class="tooltip">ℹ
+                            <span class="tooltiptext">Your OpenSenseMap ID or device serial</span>
+                            </span>
+                        </label>
+                        <input type="text" id="sensebox-serial" name="serial_number" 
+                               placeholder="e.g., 68b11e9c48183d0008742820" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sensebox-name">Device Name *</label>
+                        <input type="text" id="sensebox-name" name="device_name" 
+                               placeholder="e.g., School Garden Monitor" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="location-name">Location Name *</label>
+                        <input type="text" id="location-name" name="location_name" 
+                               placeholder="e.g., School Garden Frankfurt Oder" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="timezone">Timezone</label>
+                        <select id="timezone" name="timezone">
+                            <option value="Europe/Berlin" selected>Europe/Berlin</option>
+                            <option value="UTC">UTC</option>
+                            <option value="Europe/London">Europe/London</option>
+                            <option value="Europe/Paris">Europe/Paris</option>
+                            <option value="America/New_York">America/New York</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="latitude">Latitude *</label>
+                        <input type="number" id="latitude" name="latitude" 
+                               step="0.000001" placeholder="e.g., 52.3476" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="longitude">Longitude *</label>
+                        <input type="number" id="longitude" name="longitude" 
+                               step="0.000001" placeholder="e.g., 14.5506" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="steward-email-device">Steward Email</label>
+                        <input type="email" id="steward-email-device" name="steward_email" 
+                               placeholder="Steward's email address">
+                    </div>
+                    <div class="form-group">
+                        <label for="steward-stellar-device">
+                            Steward Stellar Wallet *
+                            <span class="tooltip">ℹ
+                            <span class="tooltiptext">A unique muxed address will be created for this device</span>
+                            </span>
+                        </label>
+                        <input type="text" id="steward-stellar-device" name="steward_stellar" 
+                               required placeholder="G..." pattern="^G[A-Z2-7]{55}$" 
+                               title="Must be a valid Stellar address starting with G">
+                    </div>
+                </div>
+
+                <!-- Active Sensors Selection -->
+                <div class="sensor-category">
+                    <h4>🌡️ Environmental Sensors</h4>
+                    <div class="sensor-grid">
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="sensors" value="hdc1080" checked>
+                            <span>Temperature & Humidity (HDC1080)</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="sensors" value="bmp280">
+                            <span>Air Pressure (BMP280 - EoL)</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="sensors" value="dps310" checked>
+                            <span>Air Pressure (DPS310)</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="sensors" value="ltr329" checked>
+                            <span>Light Intensity (LTR329)</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="sensors" value="veml6070" checked>
+                            <span>UV Radiation (VEML6070)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="sensor-category">
+                    <h4>🌿 Soil & Water Sensors</h4>
+                    <div class="sensor-grid">
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="sensors" value="smt50" checked>
+                            <span>Soil Moisture & Temp (SMT50)</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="sensors" value="water_temp_5m">
+                            <span>Water Temperature (5m depth)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="sensor-category">
+                    <h4>💨 Air Quality Sensors</h4>
+                    <div class="sensor-grid">
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="sensors" value="sds011">
+                            <span>PM2.5 & PM10 (SDS011)</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="sensors" value="sps30">
+                            <span>PM1.0/2.5/4.0/10 (SPS30)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="sensor-category">
+                    <h4>🌧️ Weather & Location Sensors</h4>
+                    <div class="sensor-grid">
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="sensors" value="rg15">
+                            <span>Rain Sensor (Hydreon RG-15)</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="sensors" value="cam_m8q">
+                            <span>GPS Receiver (CAM-M8Q)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="clearForm('sensebox')">
+                        Clear Form
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        📡 Register Device
+                    </button>
+                </div>
+            </form>
+
+            <div id="sensebox-response" class="response-container"></div>
+        </div>
+
+        <!-- System Status -->
+        <div id="status-form" class="form-section">
+            <div class="form-header">
+                <div class="form-icon">📊</div>
+                <div class="form-title">
+                    <h3>Network Status</h3>
+                    <p>Current state of the stewardship network and phenomenological observations</p>
+                </div>
+            </div>
+
+            <div class="loading" id="status-loading">
+                <div class="spinner"></div>
+                <p>Checking network awareness...</p>
+            </div>
+
+            <div id="status-content"></div>
+        </div>
+    </div>
+
+    <!-- Debug Console -->
+    <div id="debug-console" class="debug-console">
+        <span class="close-btn" onclick="closeDebugConsole()">×</span>
+        <div id="debug-messages"></div>
+    </div>
+
+    <script>
+        // ==========================================
+        // CONFIGURATION - UPDATE THIS SECTION
+        // ==========================================
+        const API_HOST = '92.205.28.58';  // YOUR SERVER IP
+        const API_PORT = '8000';           // API PORT
+        const API_BASE = `http://${API_HOST}:${API_PORT}`;
+        
+        // Debug mode
+        const DEBUG_MODE = true;
+        
+        // ==========================================
+        // DEBUG FUNCTIONS
+        // ==========================================
+        function debugLog(message, type = 'info') {
+            if (!DEBUG_MODE) return;
+            
+            const debugConsole = document.getElementById('debug-console');
+            const debugMessages = document.getElementById('debug-messages');
+            debugConsole.classList.add('active');
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ffcdd2' : type === 'success' ? '#c8e6c9' : '#e1f5fe';
+            debugMessages.innerHTML += `<div style="background: ${color}; padding: 2px 5px; margin: 2px 0; border-radius: 3px;">[${timestamp}] ${message}</div>`;
+            debugMessages.scrollTop = debugMessages.scrollHeight;
+            
+            console.log(`[${type.toUpperCase()}]`, message);
+        }
+
+        function closeDebugConsole() {
+            document.getElementById('debug-console').classList.remove('active');
+        }
+
+        // ==========================================
+        // TAB SWITCHING
+        // ==========================================
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
+            document.getElementById(`${tab}-form`).classList.add('active');
+
+            if (tab === 'status') {
+                loadSystemStatus();
+            }
+        }
+
+        // ==========================================
+        // FORM FUNCTIONS
+        // ==========================================
+        function clearForm(formType) {
+            if (formType === 'steward') {
+                document.getElementById('stewardRegistrationForm').reset();
+                document.getElementById('steward-status').style.display = 'none';
+                document.getElementById('steward-response').classList.remove('active');
+            } else if (formType === 'sensebox') {
+                document.getElementById('senseboxRegistrationForm').reset();
+                document.getElementById('sensebox-status').style.display = 'none';
+                document.getElementById('sensebox-response').classList.remove('active');
+                // Clear sensor selections
+                document.querySelectorAll('.sensor-checkbox').forEach(cb => {
+                    cb.classList.remove('selected');
+                });
+            }
+        }
+
+        // Make sensor checkboxes visually responsive
+        document.querySelectorAll('.sensor-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('click', function() {
+                const input = this.querySelector('input');
+                if (input.checked) {
+                    this.classList.add('selected');
+                } else {
+                    this.classList.remove('selected');
+                }
+            });
+        });
+
+        // ==========================================
+        // SYSTEM STATUS
+        // ==========================================
+        async function loadSystemStatus() {
+            const loadingEl = document.getElementById('status-loading');
+            const contentEl = document.getElementById('status-content');
+            
+            loadingEl.classList.add('active');
+            contentEl.innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/v2/system/stats`);
+                const data = await response.json();
+                
+                contentEl.innerHTML = `
+                    <div style="padding: 1rem;">
+                        <h4 style="color: var(--deep-green); margin-bottom: 1rem;">System Statistics</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div style="background: var(--light-bg); padding: 1rem; border-radius: 8px;">
+                                <div style="font-size: 2rem; color: var(--primary-green); font-weight: bold;">
+                                    ${data.total_observers || 0}
+                                </div>
+                                <div style="color: var(--text-light);">Registered Observers</div>
+                            </div>
+                            <div style="background: var(--light-bg); padding: 1rem; border-radius: 8px;">
+                                <div style="font-size: 2rem; color: var(--primary-green); font-weight: bold;">
+                                    ${data.total_observations || 0}
+                                </div>
+                                <div style="color: var(--text-light);">Total Observations</div>
+                            </div>
+                            <div style="background: var(--light-bg); padding: 1rem; border-radius: 8px;">
+                                <div style="font-size: 2rem; color: var(--primary-green); font-weight: bold;">
+                                    ${data.active_patterns || 0}
+                                </div>
+                                <div style="color: var(--text-light);">Active Patterns</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                contentEl.innerHTML = `
+                    <div class="status-message error">
+                        Failed to load system status: ${error.message}
+                    </div>
+                `;
+            } finally {
+                loadingEl.classList.remove('active');
+            }
+        }
+
+        // ==========================================
+        // STEWARD REGISTRATION
+        // ==========================================
+        document.getElementById('stewardRegistrationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            debugLog('🚀 Starting steward registration...', 'info');
+            
+            const statusEl = document.getElementById('steward-status');
+            const responseEl = document.getElementById('steward-response');
+            
+            try {
+                const formData = new FormData(e.target);
+                const capacities = formData.getAll('capacities');
+                
+                const sensoryCapacities = {
+                    sight: capacities.includes('sight'),
+                    hearing: capacities.includes('hearing'),
+                    touch: capacities.includes('touch'),
+                    smell: capacities.includes('smell'),
+                    taste: capacities.includes('taste'),
+                    intuition: capacities.includes('intuition'),
+                    technological: false
+                };
+
+                const stewardData = {
+                    observer_type: 'human',
+                    external_identity: {
+                        name: formData.get('name'),
+                        email: formData.get('email'),
+                        role: formData.get('role') || 'steward',
+                        type: 'steward'
+                    },
+                    essence: {
+                        organization: formData.get('organization') || 'UBEC',
+                        stellar_address: formData.get('stellar_address') || '',
+                        land_relationship: formData.get('land_relationship') || '',
+                        registered_at: new Date().toISOString()
+                    },
+                    sensory_capacities: sensoryCapacities
+                };
+
+                debugLog(`📡 Sending to: ${API_BASE}/api/v2/observers/register`, 'info');
+                
+                statusEl.className = 'status-message info';
+                statusEl.textContent = 'Connecting to the stewardship network...';
+                statusEl.style.display = 'block';
+
+                const response = await fetch(`${API_BASE}/api/v2/observers/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(stewardData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    debugLog(`✅ Steward registered! ID: ${result.observer_id}`, 'success');
+                    
+                    statusEl.className = 'status-message success';
+                    statusEl.textContent = '✓ Steward registered successfully!';
+                    
+                    responseEl.innerHTML = `
+                        <div class="response-header">🎉 Welcome to the Stewardship Network!</div>
+                        <div class="credentials-box">
+                            <div class="credential-item">
+                                <span class="credential-label">Observer ID:</span>
+                                <span class="credential-value">${result.observer_id}</span>
+                            </div>
+                            <div class="credential-item">
+                                <span class="credential-label">Name:</span>
+                                <span class="credential-value">${formData.get('name')}</span>
+                            </div>
+                            <div class="credential-item">
+                                <span class="credential-label">Role:</span>
+                                <span class="credential-value">${formData.get('role') || 'Environmental Steward'}</span>
+                            </div>
+                            ${result.muxed_wallet ? `
+                            <div class="credential-item">
+                                <span class="credential-label">Muxed Wallet:</span>
+                                <span class="credential-value">${result.muxed_wallet}</span>
+                            </div>` : ''}
+                        </div>
+                        <p style="margin-top: 1rem; color: var(--text-light);">
+                            You are now a recognized steward of the Earth. Your observations contribute to our 
+                            phenomenological understanding of the environment.
+                        </p>
+                    `;
+                    responseEl.classList.add('active');
+                } else {
+                    debugLog(`❌ Registration failed: ${result.detail || result.error}`, 'error');
+                    statusEl.className = 'status-message error';
+                    statusEl.textContent = `Error: ${result.detail || result.error || 'Registration failed'}`;
+                }
+            } catch (error) {
+                debugLog(`💥 Exception: ${error.message}`, 'error');
+                statusEl.className = 'status-message error';
+                statusEl.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // ==========================================
+        // SENSEBOX REGISTRATION
+        // ==========================================
+        document.getElementById('senseboxRegistrationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            debugLog('📡 Starting SenseBox registration...', 'info');
+            
+            const statusEl = document.getElementById('sensebox-status');
+            const responseEl = document.getElementById('sensebox-response');
+            
+            try {
+                const formData = new FormData(e.target);
+                const sensors = formData.getAll('sensors');
+                const stewardStellar = formData.get('steward_stellar');
+                
+                // Validate Stellar address
+                if (!stewardStellar || !stewardStellar.startsWith('G') || stewardStellar.length !== 56) {
+                    statusEl.className = 'status-message error';
+                    statusEl.textContent = 'Please enter a valid Stellar wallet address';
+                    statusEl.style.display = 'block';
+                    return;
+                }
+
+                // Map sensor capabilities
+                const sensorCapabilities = {
+                    temperature: sensors.some(s => ['hdc1080', 'bmp280', 'dps310', 'smt50', 'water_temp_5m'].includes(s)),
+                    humidity: sensors.includes('hdc1080'),
+                    pressure: sensors.some(s => ['bmp280', 'dps310'].includes(s)),
+                    light: sensors.includes('ltr329'),
+                    uv: sensors.includes('veml6070'),
+                    moisture: sensors.includes('smt50'),
+                    particulate: sensors.some(s => ['sds011', 'sps30'].includes(s)),
+                    rain: sensors.includes('rg15'),
+                    gps: sensors.includes('cam_m8q')
+                };
+
+                const senseboxData = {
+                    observer_type: 'device',
+                    external_identity: {
+                        device_id: `SENS_${formData.get('serial_number')}`,
+                        name: formData.get('device_name'),
+                        serial: formData.get('serial_number'),
+                        steward_email: formData.get('steward_email')
+                    },
+                    essence: {
+                        location: {
+                            lat: parseFloat(formData.get('latitude')),
+                            lon: parseFloat(formData.get('longitude'))
+                        },
+                        location_name: formData.get('location_name'),
+                        sensors: sensors,
+                        timezone: formData.get('timezone'),
+                        steward_stellar: stewardStellar,
+                        registered_at: new Date().toISOString()
+                    },
+                    sensory_capacities: {
+                        sight: false,
+                        hearing: false,
+                        touch: false,
+                        smell: false,
+                        taste: false,
+                        intuition: false,
+                        technological: true,
+                        ...sensorCapabilities
+                    }
+                };
+
+                debugLog(`📡 Registering device with ${sensors.length} sensors`, 'info');
+                
+                statusEl.className = 'status-message info';
+                statusEl.textContent = 'Registering SenseBox as environmental observer...';
+                statusEl.style.display = 'block';
+
+                const response = await fetch(`${API_BASE}/api/v2/observers/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(senseboxData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    debugLog(`✅ SenseBox registered! ID: ${result.observer_id}`, 'success');
+                    
+                    statusEl.className = 'status-message success';
+                    statusEl.textContent = '✓ SenseBox registered successfully!';
+                    
+                    // Generate Arduino configuration
+                    const arduinoConfig = generateArduinoConfig(
+                        sensors, 
+                        result.observer_id, 
+                        formData.get('serial_number'),
+                        result.muxed_wallet
+                    );
+                    
+                    responseEl.innerHTML = `
+                        <div class="response-header">📡 Device Registered with ${sensors.length} Sensors!</div>
+                        <div class="credentials-box">
+                            <div class="credential-item">
+                                <span class="credential-label">Observer ID:</span>
+                                <span class="credential-value">${result.observer_id}</span>
+                            </div>
+                            <div class="credential-item">
+                                <span class="credential-label">Device ID:</span>
+                                <span class="credential-value">SENS_${formData.get('serial_number')}</span>
+                            </div>
+                            <div class="credential-item">
+                                <span class="credential-label">API Endpoint:</span>
+                                <span class="credential-value">${API_BASE}/observe</span>
+                            </div>
+                            ${result.muxed_wallet ? `
+                            <div class="credential-item">
+                                <span class="credential-label">Muxed Wallet:</span>
+                                <span class="credential-value">${result.muxed_wallet}</span>
+                            </div>` : ''}
+                        </div>
+                        ${arduinoConfig}
+                        <p style="margin-top: 1rem; color: var(--text-light);">
+                            Your SenseBox is now part of the stewardship network. Each observation 
+                            contributes 7.14 UBECrc to the reciprocal economy.
+                        </p>
+                    `;
+                    responseEl.classList.add('active');
+                } else {
+                    debugLog(`❌ Registration failed: ${result.detail}`, 'error');
+                    statusEl.className = 'status-message error';
+                    statusEl.textContent = `Error: ${result.detail || 'Registration failed'}`;
+                }
+            } catch (error) {
+                debugLog(`💥 Exception: ${error.message}`, 'error');
+                statusEl.className = 'status-message error';
+                statusEl.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // ==========================================
+        // ARDUINO CONFIG GENERATION
+        // ==========================================
+        function generateArduinoConfig(sensors, observerId, serialNumber, muxedWallet) {
+            let config = `
+<div class="arduino-config">
+    <h4>📋 Arduino Configuration</h4>
+    <button class="copy-btn" onclick="copyConfig()">📋 Copy</button>
+    <pre id="arduino-config">
+// ---------- Phenomenological Observer Configuration ----------
+const char* PHENO_API_HOST = "${API_HOST}";
+const int PHENO_API_PORT = ${API_PORT};
+const char* OBSERVER_ID = "${observerId}";
+const char* DEVICE_ID = "SENS_${serialNumber}";
+const char* API_ENDPOINT = "/observe";
+const unsigned long OBSERVATION_INTERVAL = 900000UL;  // 15 minutes
+${muxedWallet ? `const char* MUXED_WALLET = "${muxedWallet}";` : ''}
+
+// Active Sensors Configuration
+`;
+            // Add sensor defines
+            if (sensors.includes('hdc1080')) config += `#define USE_HDC1080    // Temperature & Humidity\n`;
+            if (sensors.includes('bmp280')) config += `#define USE_BMP280     // Pressure & Temperature (EoL)\n`;
+            if (sensors.includes('dps310')) config += `#define USE_DPS310     // Pressure & Temperature (New)\n`;
+            if (sensors.includes('ltr329')) config += `#define USE_LTR329     // Light Intensity\n`;
+            if (sensors.includes('veml6070')) config += `#define USE_VEML6070   // UV Radiation\n`;
+            if (sensors.includes('smt50')) config += `#define USE_SMT50      // Soil Moisture & Temperature\n`;
+            if (sensors.includes('sds011')) config += `#define USE_SDS011     // PM2.5 & PM10\n`;
+            if (sensors.includes('sps30')) config += `#define USE_SPS30      // Advanced Particulate Matter\n`;
+            if (sensors.includes('cam_m8q')) config += `#define USE_GPS        // CAM-M8Q GPS Receiver\n`;
+            if (sensors.includes('rg15')) config += `#define USE_RG15       // Hydreon Rain Sensor\n`;
+            if (sensors.includes('water_temp_5m')) config += `#define USE_WATER_TEMP // 5m Water Thermometer\n`;
+            
+            config += `</pre></div>`;
+            return config;
+        }
+
+        function copyConfig() {
+            const configText = document.getElementById('arduino-config').textContent;
+            navigator.clipboard.writeText(configText).then(() => {
+                const btn = event.target;
+                btn.textContent = '✓ Copied!';
+                setTimeout(() => {
+                    btn.textContent = '📋 Copy';
+                }, 2000);
+            });
+        }
+
+        // ==========================================
+        // API CONNECTION TEST
+        // ==========================================
+        window.addEventListener('load', async () => {
+            debugLog(`🔌 Testing API connection to ${API_BASE}...`, 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/v2/health`);
+                if (response.ok) {
+                    debugLog(`✅ API is healthy!`, 'success');
+                } else {
+                    debugLog(`⚠️ API returned status ${response.status}`, 'error');
+                }
+            } catch (error) {
+                debugLog(`❌ Cannot reach API: ${error.message}`, 'error');
+            }
+        });
+
+        console.log('%c🌱 Environmental Stewardship Portal', 'color: #4CAF50; font-size: 16px; font-weight: bold;');
+        console.log('Attribution: This project uses the services of Claude and Anthropic PBC.');
+    </script>
+</body>
+</html>
