@@ -3,180 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - Ubuntu Economic Commons DAO - Living Labs Initiative</title>
+    <title>Privacy Policy - UBEC Living Science Initiative</title>
+    
+    <meta name="attribution" content="This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations. This project was made possible with the assistance of Claude and Anthropic PBC.">
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
-            --primary-green: #4CAF50;
-            --deep-green: #2E7D32;
-            --light-green: #81C784;
-            --sand: #D7CCC8;
-            --light-bg: #F5F5F5;
-            --text-dark: #212121;
-            --text-light: #757575;
+            --primary: #2c5f2d;
+            --secondary: #97bc62;
+            --accent: #ffd700;
+            --background: #f8f9fa;
+            --surface: #ffffff;
+            --text: #2c3e50;
+            --text-light: #6c757d;
+            --border: #dee2e6;
+            --success: #28a745;
+            --warning: #ffc107;
+            --error: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--text-dark);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
             line-height: 1.6;
-            background: var(--light-bg);
         }
 
-        /* Header Navigation */
-        header {
-            background: white;
-            padding: 1.5rem 2rem;
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem 1rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: relative;
         }
 
         .header-content {
             max-width: 1200px;
             margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
         }
 
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
         }
 
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--light-green), var(--primary-green));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-        }
-
-        .logo-text h1 {
-            font-size: 1.5rem;
-            color: var(--deep-green);
-            margin-bottom: 0.25rem;
-        }
-
-        .logo-text p {
-            color: var(--text-light);
-            font-size: 0.9rem;
+        .header p {
+            opacity: 0.95;
+            font-size: 1rem;
         }
 
         .language-switcher {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
             display: flex;
-            gap: 10px;
-            background: white;
-            padding: 8px;
-            border-radius: 25px;
-            border: 1px solid #E0E0E0;
+            gap: 0.5rem;
         }
 
         .lang-btn {
-            padding: 8px 20px;
-            border: 2px solid var(--primary-green);
-            background: white;
-            color: var(--deep-green);
-            border-radius: 20px;
-            font-weight: 600;
-            transition: all 0.3s;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
             text-decoration: none;
-            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
         }
 
         .lang-btn:hover {
-            background: var(--light-green);
-            color: white;
+            background: rgba(255,255,255,0.3);
         }
 
         .lang-btn.active {
-            background: var(--primary-green);
-            color: white;
+            background: var(--accent);
+            color: var(--primary);
+            font-weight: 600;
         }
 
         .container {
-            max-width: 900px; margin: 0 auto; padding: 0 2rem 4rem;
-            background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 2rem; padding: 3rem; margin-top: 3rem;
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 3rem;
+            background: var(--surface);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        h1 { color: var(--deep-green); font-size: 2.5rem; margin-bottom: 1rem; }
-        h2 { color: var(--deep-green); margin-top: 2.5rem; margin-bottom: 1rem; }
-        h3 { color: var(--deep-green); margin-top: 1.5rem; margin-bottom: 0.75rem; }
-        .subtitle { color: var(--text-light); font-size: 1.1rem; margin-bottom: 2rem; }
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            color: var(--secondary);
+            font-size: 1.3rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+        }
 
         .info-box {
-            background: #FFF3E0; border-left: 4px solid #FF9800;
-            padding: 1.5rem; margin: 2rem 0; border-radius: 4px;
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+
+        .info-box strong {
+            color: var(--warning);
         }
 
         .contact-info {
-            background: var(--light-bg); padding: 1.5rem; border-radius: 8px;
-            margin: 1.5rem 0; border-left: 4px solid var(--primary-green);
+            background: var(--background);
+            border-left: 4px solid var(--secondary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
         }
 
-        ul { margin-left: 2rem; margin-top: 1rem; line-height: 1.8; }
+        .contact-info strong {
+            color: var(--primary);
+        }
+
+        ul, ol {
+            margin-left: 2rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
 
         table {
-            width: 100%; border-collapse: collapse; margin: 1.5rem 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #E0E0E0; }
-        th { background: var(--deep-green); color: white; }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
 
         a {
-            color: var(--primary-green);
+            color: var(--primary);
             text-decoration: none;
-            transition: color 0.3s;
+            transition: color 0.3s ease;
         }
 
         a:hover {
-            color: var(--deep-green);
+            color: var(--secondary);
             text-decoration: underline;
         }
 
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+        .footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
+            margin-top: 3rem;
+        }
+
+        .nav-links {
             margin-top: 2rem;
-            padding: 0.75rem 1.5rem;
-            background: var(--primary-green);
-            color: white;
-            border-radius: 8px;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            color: var(--primary);
             text-decoration: none;
-            transition: background 0.3s;
+            transition: color 0.3s ease;
         }
 
-        .back-link:hover {
-            background: var(--deep-green);
-            text-decoration: none;
-        }
-
-        footer {
-            background: var(--text-dark); color: white;
-            padding: 3rem 2rem; text-align: center; margin-top: 4rem;
-        }
-
-        .attribution {
-            margin-top: 1rem; padding-top: 1rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: var(--sand); font-size: 0.9rem;
+        .nav-links a:hover {
+            color: var(--secondary);
         }
 
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
+            .header h1 {
+                font-size: 1.5rem;
             }
-
+            
             .container {
                 margin: 1rem;
                 padding: 1.5rem;
@@ -185,25 +227,30 @@
             h1 {
                 font-size: 2rem;
             }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
+    <div class="language-switcher">
+        <a href="/datenschutz-en.html" class="lang-btn active">English</a>
+        <a href="/datenschutz-de.html" class="lang-btn">Deutsch</a>
+        <a href="/datenschutz-pl.html" class="lang-btn">Polski</a>
+    </div>
+
+    <div class="header">
         <div class="header-content">
-            <div class="logo-section">
-                <div class="logo-icon">🌱</div>
-                <div class="logo-text">
-                    <h1>Ubuntu Bioregional Economic Commons DAO</h1>
-                    <p>· Living Labs Initiative ·</p>
-                </div>
-            </div>
-            <div class="language-switcher">
-                <a href="/datenschutz-en.html" class="lang-btn active">English</a>
-                <a href="/datenschutz-de.html" class="lang-btn">Deutsch</a>
-            </div>
+            <h1>📋 Privacy Policy - Living Science Initiative</h1>
+            <p>Ubuntu Bioregional Economic Commons DAO</p>
         </div>
-    </header>
+    </div>
 
     <div class="container">
         <h1>Privacy Policy</h1>
@@ -220,37 +267,54 @@
 
         <h3>Data Collection on This Website</h3>
         <p><strong>Who is responsible for data collection on this website?</strong></p>
-        <p>Data processing on this website is carried out by the website operator. Contact details can be found in the <a href="/impressum-en.html">imprint</a> of this website.</p>
+        <p>Data processing on this website is carried out by the website operator. Contact details can be found in the imprint of this website.</p>
 
-        <h2>2. General Information and Mandatory Information</h2>
-
-        <h3>Data Protection</h3>
-        <p>The operators of this website take the protection of your personal data very seriously. We treat your personal data confidentially and in accordance with legal data protection regulations and this privacy policy.</p>
-
-        <h3>Controller According to GDPR</h3>
+        <h2>2. Controller According to GDPR</h2>
         <div class="contact-info">
-            <strong>Living Labs Initiative – Erdpuls Müllrose</strong><br>
-            [Address]<br>
-            Germany<br><br>
-            <strong>Email:</strong> hello@ubec.network<br>
-            <strong>Phone:</strong> [To be provided]
+            <p><strong>Responsible under GDPR:</strong></p>
+            <p>Living Labs Initiative – Erdpuls Müllrose<br>
+            [Street and Number]<br>
+            [Postal Code] [City]<br>
+            Germany</p>
+            <p><strong>Email:</strong> privacy@living-science-initiative.org</p>
+            <p><strong>Phone:</strong> [To be provided]</p>
         </div>
 
-        <h2>3. Data Collection on This Website</h2>
+        <h2>3. How We Collect Your Data</h2>
+        <p>Your data is collected in two ways: by you providing it to us (e.g., through contact forms or steward registration) and automatically by our IT systems when you visit the website (e.g., browser type, operating system, time of page visit).</p>
 
-        <h3>Server Log Files</h3>
-        <p>The provider of the pages automatically collects and stores information in so-called server log files, which your browser automatically transmits to us. These are:</p>
+        <h2>4. What We Use Your Data For</h2>
+        <p>Some data is collected to ensure error-free provision of the website. Other data may be used to analyze your user behavior with your consent.</p>
+        <p>Within the Living Science Initiative, data is used for:</p>
         <ul>
-            <li>Browser type and version</li>
-            <li>Operating system used</li>
-            <li>Referrer URL</li>
-            <li>Hostname of the accessing computer</li>
-            <li>Time of the server request</li>
-            <li>IP address</li>
+            <li>Registration of environmental stewards</li>
+            <li>Management of environmental sensors (SenseBox)</li>
+            <li>Recording and managing environmental observations</li>
+            <li>Blockchain-based documentation (anonymized)</li>
+            <li>Management of UBEC token allocations</li>
         </ul>
+
+        <h2>5. Your Rights Regarding Your Data</h2>
+        <p>You have the following rights at any time:</p>
+        <ul>
+            <li><strong>Right to access (Art. 15 GDPR)</strong></li>
+            <li><strong>Right to rectification (Art. 16 GDPR)</strong></li>
+            <li><strong>Right to erasure (Art. 17 GDPR)</strong></li>
+            <li><strong>Right to restriction of processing (Art. 18 GDPR)</strong></li>
+            <li><strong>Right to data portability (Art. 20 GDPR)</strong></li>
+            <li><strong>Right to object (Art. 21 GDPR)</strong></li>
+            <li><strong>Right to lodge a complaint (Art. 77 GDPR)</strong></li>
+        </ul>
+
+        <h2>6. Hosting and Servers</h2>
+        <p>This website is hosted on the following servers:</p>
+        <div class="contact-info">
+            <p><strong>Hosting Provider:</strong> [Provider Name]</p>
+            <p><strong>Server Location:</strong> [e.g., Germany/EU]</p>
+        </div>
         <p><strong>Legal Basis:</strong> Art. 6 para. 1 lit. f GDPR (legitimate interest in secure and efficient provision of our website)</p>
 
-        <h2>4. Steward Registration</h2>
+        <h2>7. Steward Registration Data Processing</h2>
         <p>When registering as an environmental steward, we collect the following data:</p>
         <table>
             <thead>
@@ -265,74 +329,55 @@
                 <tr>
                     <td>Name, Email</td>
                     <td>User identification, contact</td>
-                    <td>Art. 6 para. 1 lit. a GDPR</td>
-                    <td>Until revocation</td>
+                    <td>Art. 6 para. 1 lit. b GDPR</td>
+                    <td>Until account deletion</td>
                 </tr>
                 <tr>
-                    <td>Organization/School</td>
-                    <td>Network assignment</td>
+                    <td>Location data (optional)</td>
+                    <td>Assignment of observations to geographic locations</td>
                     <td>Art. 6 para. 1 lit. a GDPR</td>
                     <td>Until revocation</td>
                 </tr>
                 <tr>
                     <td>Stellar Wallet Address</td>
-                    <td>UBECrc token distribution</td>
+                    <td>UBEC token allocation</td>
                     <td>Art. 6 para. 1 lit. b GDPR</td>
-                    <td>Until revocation</td>
+                    <td>Until account deletion</td>
                 </tr>
                 <tr>
-                    <td>Observation Data</td>
-                    <td>Scientific research</td>
-                    <td>Art. 6 para. 1 lit. a, f GDPR</td>
-                    <td>Anonymized retention</td>
+                    <td>Observation data</td>
+                    <td>Scientific analysis</td>
+                    <td>Art. 6 para. 1 lit. a GDPR</td>
+                    <td>Permanent (anonymized on blockchain)</td>
                 </tr>
             </tbody>
         </table>
 
-        <h2>5. Device Registration (senseBox)</h2>
-        <p>When registering environmental sensors:</p>
+        <h2>8. Blockchain Technology and UBEC Tokens</h2>
+        <div class="info-box">
+            <strong>Important Notice on Blockchain Data:</strong> Data stored on the Stellar blockchain cannot be deleted due to the technical nature of blockchain systems. We only store anonymized or pseudonymized data on the blockchain.
+        </div>
+
+        <h3>What data is stored on the blockchain?</h3>
         <ul>
-            <li>Device serial number</li>
-            <li>Geographic location (latitude/longitude)</li>
-            <li>Sensor types</li>
+            <li>Anonymized environmental observation data (without personal reference)</li>
+            <li>Observation timestamps</li>
+            <li>Geographic coordinates (rounded/imprecise)</li>
+            <li>UBEC token transactions (public wallet addresses, no names)</li>
+        </ul>
+
+        <h2>9. SenseBox and Sensor Data</h2>
+        <p>When registering an environmental sensor (SenseBox), the following data is collected:</p>
+        <ul>
+            <li>SenseBox ID</li>
+            <li>Sensor location data</li>
+            <li>Measurement parameters (temperature, humidity, air pressure, etc.)</li>
             <li>Measurement timestamps</li>
             <li>Assignment to registered steward (optional)</li>
         </ul>
         <p><strong>Legal Basis:</strong> Art. 6 para. 1 lit. a GDPR (consent) and Art. 6 para. 1 lit. f GDPR (legitimate interest in scientific research)</p>
 
-        <h2>6. Blockchain Integration</h2>
-        <p>This project uses the Stellar blockchain for:</p>
-        <ul>
-            <li>Distribution of UBEC Reciprocity Credits (UBECrc)</li>
-            <li>Verification of data contributions</li>
-            <li>Transparent documentation of reciprocal exchanges</li>
-        </ul>
-
-        <div class="info-box">
-            <strong>Important:</strong> Data stored on the blockchain is immutable and publicly accessible. We only store hashes and transaction IDs on the blockchain, not personal data.
-        </div>
-
-        <h2>7. Your Rights Regarding Your Data</h2>
-        <p>You have the following rights at any time:</p>
-        <ul>
-            <li><strong>Right to access (Art. 15 GDPR)</strong></li>
-            <li><strong>Right to rectification (Art. 16 GDPR)</strong></li>
-            <li><strong>Right to erasure (Art. 17 GDPR)</strong></li>
-            <li><strong>Right to restriction of processing (Art. 18 GDPR)</strong></li>
-            <li><strong>Right to data portability (Art. 20 GDPR)</strong></li>
-            <li><strong>Right to object (Art. 21 GDPR)</strong></li>
-            <li><strong>Right to lodge a complaint (Art. 77 GDPR)</strong></li>
-        </ul>
-
-        <h2>8. Third-Party Services</h2>
-        <p>We may share data with:</p>
-        <ul>
-            <li>OpenSenseMap (for senseBox integration)</li>
-            <li>Stellar Network (for blockchain transactions)</li>
-            <li>Research institutions (anonymized data only for scientific purposes)</li>
-        </ul>
-
-        <h2>9. Data Security</h2>
+        <h2>10. Data Security</h2>
         <p>We protect your data through technical and organizational measures:</p>
         <ul>
             <li>Encrypted data transmission (HTTPS)</li>
@@ -342,26 +387,34 @@
             <li>Pseudonymization/anonymization where possible</li>
         </ul>
 
-        <h2>10. Contact for Privacy Matters</h2>
+        <h2>11. Third-Party Data Sharing</h2>
+        <p>We may share data with:</p>
+        <ul>
+            <li>OpenSenseMap (for SenseBox integration)</li>
+            <li>Stellar Network (for blockchain transactions)</li>
+            <li>Research institutions (anonymized data only for scientific purposes)</li>
+        </ul>
+
+        <h2>12. Contact for Privacy Matters</h2>
         <p>For questions about data protection, please contact:</p>
         <div class="contact-info">
-            <strong>Data Protection Officer</strong><br>
-            Living Science Initiative<br>
-            Email: privacy@living-science-initiative.org
+            <p><strong>Data Protection Officer:</strong> [Name]</p>
+            <p><strong>Email:</strong> privacy@living-science-initiative.org</p>
+            <p><strong>Phone:</strong> [To be provided]</p>
         </div>
 
-        <p style="margin-top: 2rem; color: var(--text-light); font-style: italic;">Last updated: October 2025</p>
+        <p style="margin-top: 2rem; color: var(--text-light); font-style: italic;"><strong>Last updated:</strong> October 2025</p>
 
-        <a href="/" class="back-link">← Back to Homepage</a>
+        <div class="nav-links">
+            <a href="/index-en.html">← Back to Home</a>
+            <a href="/impressum-en.html">Impressum</a>
+            <a href="/steward-en.html">Register as Steward</a>
+        </div>
     </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="attribution">
-                This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations.<br>
-                This project was made possible with the assistance of Claude and Anthropic PBC.
-            </div>
-        </div>
-    </footer>
+    <div class="footer">
+        <p><strong>Attribution:</strong> This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations. This project was made possible with the assistance of Claude and Anthropic PBC.</p>
+        <p style="margin-top: 1rem;">Living Science Initiative · Erdpuls Müllrose · Freie Waldorfschule Frankfurt (Oder)</p>
+    </div>
 </body>
 </html>

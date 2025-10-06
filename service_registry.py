@@ -10,6 +10,7 @@ Attribution: This project uses the services of Claude and Anthropic PBC.
 """
 
 import logging
+import asyncio
 from typing import Any, Optional, Dict
 
 logger = logging.getLogger(__name__)
@@ -140,7 +141,89 @@ class ServiceRegistry:
         return f"ServiceRegistry(services={list(self._services.keys())})"
 
 
+# ============================================================
+# Service Initialization Functions
+# ============================================================
+
+async def initialize_stellar_onboarding(config):
+    """
+    Initialize Stellar Onboarding Service for automatic wallet creation.
+    
+    This service creates and funds new Stellar wallets for stewards who don't have one,
+    automatically funding them with minimum XLM and adding UBECrc trustlines.
+    
+    Args:
+        config: Configuration object with stellar_onboarding settings
+        
+    Returns:
+        StellarOnboardingService instance or None if not configured
+    """
+    # Check if onboarding is enabled and configured
+    if not config.stellar_onboarding.enabled:
+        logger.info("Stellar Onboarding service disabled (STELLAR_ONBOARDING_ENABLED=false)")
+        return None
+    
+    if not config.stellar_onboarding.is_configured:
+        logger.warning("Stellar Onboarding enabled but not fully configured - missing credentials")
+        return None
+    
+    try:
+        # Import here to avoid circular dependencies
+        from stellar_onboarding_service import StellarOnboardingService
+        
+        # Build configuration for onboarding service
+        onboarding_config = {
+            'stellar_horizon_url': config.stellar.horizon_url,
+            'stellar_network': config.stellar.network,
+            'funding_source_public': config.stellar_onboarding.funding_public,
+            'funding_source_secret': config.stellar_onboarding.funding_secret,
+            'ubecrc_asset_code': 'UBECrc',
+            'ubecrc_issuer': config.stellar.ubecrc_issuer_public
+        }
+        
+        # Create service instance
+        service = StellarOnboardingService(onboarding_config)
+        
+        # Check funding account status
+        status = await service.check_funding_account_balance()
+        
+        if status.get('configured'):
+            xlm_balance = status.get('xlm_balance', 0)
+            accounts_possible = status.get('accounts_possible', 0)
+            
+            logger.info(
+                f"✅ Stellar Onboarding service initialized: "
+                f"{xlm_balance} XLM available, can create {accounts_possible} wallets"
+            )
+            
+            # Log warning if balance is low
+            if status.get('warning'):
+                logger.warning(f"⚠️  {status['warning']}")
+            
+            # Log critical alert if very low
+            if accounts_possible < 5:
+                logger.error(
+                    f"❌ CRITICAL: Funding account almost depleted! "
+                    f"Only {accounts_possible} wallets can be created. Please add XLM."
+                )
+        else:
+            logger.error(f"Failed to check funding account: {status.get('error', 'Unknown error')}")
+            return None
+        
+        return service
+        
+    except ImportError as e:
+        logger.error(f"Failed to import StellarOnboardingService: {e}")
+        logger.error("Make sure stellar_onboarding_service.py is in the Python path")
+        return None
+    except Exception as e:
+        logger.error(f"Failed to initialize Stellar Onboarding service: {e}", exc_info=True)
+        return None
+
+
+# ============================================================
 # Global registry instance
+# ============================================================
 registry = ServiceRegistry()
 
 

@@ -13,7 +13,7 @@ Design Principles Applied:
 
 Attribution: This project uses the services of Claude and Anthropic PBC.
 
-Version: 3.0.4 (Added Polish Language Support)
+Version: 3.0.6 (Fixed Multilingual Routing - Exact Files Only)
 """
 
 import os
@@ -21,7 +21,7 @@ import sys
 import asyncio
 import uvicorn
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
@@ -68,7 +68,7 @@ async def lifespan(app: FastAPI):
     logger.info("║" + "    Freie Waldorfschule Frankfurt (Oder)".center(58) + "║")
     logger.info("║" + "    Living Science Initiative".center(58) + "║")
     logger.info("║" + " "*58 + "║")
-    logger.info("║" + "    Single Entry Point Architecture v3.0.4".center(58) + "║")
+    logger.info("║" + "    Single Entry Point Architecture v3.0.6".center(58) + "║")
     logger.info("║" + "    🌍 EN + 🇩🇪 DE + 🇵🇱 PL Support".center(58) + "║")
     logger.info("║" + " "*58 + "║")
     logger.info("╚" + "═"*58 + "╝")
@@ -135,10 +135,10 @@ async def lifespan(app: FastAPI):
                     logger.info("✓ Stellar network connected (view only mode)")
             except Exception as e:
                 logger.warning(f"Stellar initialization failed: {e}")
-                logger.info("⚠ Continuing without Stellar integration")
+                logger.info("⚠  Continuing without Stellar integration")
                 app.state.stellar = None
         else:
-            logger.info("⚠ Stellar integration disabled (no distributor key)")
+            logger.info("⚠  Stellar integration disabled (no distributor key)")
         
         # 3. IPFS Service
         app.state.ipfs = None
@@ -171,10 +171,10 @@ async def lifespan(app: FastAPI):
                     
             except Exception as e:
                 logger.warning(f"IPFS initialization failed: {e}")
-                logger.info("⚠ Continuing without IPFS")
+                logger.info("⚠  Continuing without IPFS")
                 app.state.ipfs = None
         else:
-            logger.info("⚠ IPFS disabled (no configuration)")
+            logger.info("⚠  IPFS disabled (no configuration)")
         
         # 4. Observation Service
         logger.info("Initializing observation service...")
@@ -188,7 +188,48 @@ async def lifespan(app: FastAPI):
         )
         logger.info("✓ Observation service initialized")
         
-        # 5. Pattern Recognition
+        # 5. Stellar Onboarding Service (Wallet Creation)
+        app.state.stellar_onboarding = None
+        if hasattr(config, 'stellar_onboarding') and config.stellar_onboarding.is_configured:
+            try:
+                logger.info("Initializing Stellar onboarding service...")
+                from stellar_onboarding_service import StellarOnboardingService
+                
+                # Check if we have a funding account
+                funding_account = config.stellar_onboarding.funding_public
+                funding_secret = config.stellar_onboarding.funding_secret
+                
+                if not funding_account or not funding_secret:
+                    # Fallback to distributor account if funding account not configured
+                    logger.info("  Using distributor account for funding")
+                    funding_account = config.stellar.distributor_public
+                    funding_secret = config.stellar.distributor_secret
+                
+                # Initialize onboarding service
+                app.state.stellar_onboarding = StellarOnboardingService(
+                    stellar_service=app.state.stellar,
+                    funding_account_public=funding_account,
+                    funding_account_secret=funding_secret,
+                    ubecrc_asset_code='UBECrc',
+                    ubecrc_issuer=config.stellar.ubecrc_issuer_public,
+                    min_funding_amount=config.stellar_onboarding.total_funding_amount,
+                    database=app.state.db
+                )
+                
+                # Check funding capacity
+                capacity = await app.state.stellar_onboarding.check_funding_capacity()
+                logger.info(f"✓ Stellar onboarding service initialized")
+                logger.info(f"  Funding balance: {capacity['xlm_balance']} XLM")
+                logger.info(f"  Can create: {capacity['wallets_can_create']} wallets")
+                
+            except Exception as e:
+                logger.warning(f"Stellar onboarding initialization failed: {e}")
+                logger.info("⚠  Continuing without onboarding service")
+                app.state.stellar_onboarding = None
+        else:
+            logger.info("⚠  Stellar onboarding disabled (no funding account)")
+        
+        # 6. Pattern Recognition
         app.state.pattern_engine = None
         logger.info("✓ Pattern recognition ready")
         
@@ -199,6 +240,8 @@ async def lifespan(app: FastAPI):
         if app.state.ipfs:
             registry.register("ipfs", app.state.ipfs)
         registry.register("observation_service", app.state.observation_service)
+        if app.state.stellar_onboarding:
+            registry.register("stellar_onboarding", app.state.stellar_onboarding)
         
         logger.info("")
         logger.info("="*60)
@@ -236,8 +279,10 @@ async def lifespan(app: FastAPI):
         logger.info(f"    - Database: {'✓' if app.state.db else '✗'}")
         logger.info(f"    - Stellar: {'✓' if app.state.stellar else '✗'}")
         logger.info(f"    - IPFS: {'✓' if app.state.ipfs else '✗'}")
+        logger.info(f"    - Wallet Creation: {'✓' if app.state.stellar_onboarding else '✗'}")
         logger.info(f"    - Multilingual: ✓")
         logger.info(f"    - Legal Pages: ✓")
+        logger.info(f"    - Favicon Support: ✓")
         logger.info("")
         logger.info("="*60)
         
@@ -257,6 +302,10 @@ async def lifespan(app: FastAPI):
     if hasattr(app.state, 'stellar') and app.state.stellar:
         await app.state.stellar.close()
         logger.info("✓ Stellar connection closed")
+    
+    if hasattr(app.state, 'stellar_onboarding') and app.state.stellar_onboarding:
+        await app.state.stellar_onboarding.close()
+        logger.info("✓ Stellar onboarding service closed")
     
     logger.info("System shutdown complete")
 
@@ -279,18 +328,25 @@ app = FastAPI(
     - Data as reciprocal value exchange
     - Blockchain verification of contributions
     - UBECrc token distribution for stewardship
+    - **Automated wallet creation for new users**
     
     ### Multilingual Support:
     - 🌍 English (Primary)
     - 🇩🇪 Deutsch (German)
     - 🇵🇱 Polski (Polish)
     
+    ### Features:
+    - Automatic Stellar wallet generation
+    - Account funding with 5+ XLM
+    - UBECrc trustline creation
+    - Secure credential delivery
+    
     ### Legal Compliance:
     - EU GDPR compliant
     - German TMG § 5 compliant (Impressum)
     - Blockchain data protection considerations
     """,
-    version="3.0.4",
+    version="3.0.6",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json",
@@ -320,7 +376,7 @@ if portal_path.exists():
     app.mount("/portal", StaticFiles(directory="register_portal"), name="portal")
     logger.info(f"✓ Registration portal mounted at /portal")
 else:
-    logger.warning(f"⚠ Registration portal not found at {portal_path}")
+    logger.warning(f"⚠  Registration portal not found at {portal_path}")
 
 # ==================================================
 # IMPORT AND MOUNT ROUTERS
@@ -332,157 +388,76 @@ from phenomenological_api import pheno_router
 # Mount the phenomenological API router
 app.include_router(pheno_router)
 
-logger.info("✓ Legal compliance routes defined in main.py")
+# Import and mount Stellar onboarding routes
+try:
+    from stellar_onboarding_routes import router as onboarding_router
+    app.include_router(onboarding_router)
+    logger.info("✓ Stellar onboarding routes mounted")
+except ImportError as e:
+    logger.info(f"⚠  Stellar onboarding routes not available: {e}")
+
+logger.info("✓ Multilingual routes loaded")
 
 # ==================================================
-# CORE ENDPOINTS - ENGLISH PAGES
+# FAVICON ROUTES (ONLY FOR EXISTING FILES)
+# ==================================================
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon_ico():
+    """Serve favicon.ico"""
+    return FileResponse("register_portal/favicon.ico", media_type="image/x-icon")
+
+@app.get("/favicon.svg", include_in_schema=False)
+async def favicon_svg():
+    """Serve favicon.svg"""
+    return FileResponse("register_portal/favicon.svg", media_type="image/svg+xml")
+
+@app.get("/favicon-{size}.png", include_in_schema=False)
+async def favicon_png(size: str):
+    """Serve PNG favicons (16x16, 32x32, 192x192, 180x180)"""
+    valid_sizes = ["16x16", "32x32", "192x192", "180x180"]
+    if size in valid_sizes:
+        return FileResponse(f"register_portal/favicon-{size}.png", media_type="image/png")
+    return Response(status_code=404)
+
+# ==================================================
+# ENGLISH PAGES (PRIMARY)
 # ==================================================
 
 @app.get("/")
-async def root():
-    """Landing page - Beautiful animated home page (English)"""
-    # Try English version first
-    index_path = Path("register_portal/index-en.html")
-    if index_path.exists():
-        return FileResponse("register_portal/index-en.html")
-    
-    # Fallback to simple HTML if landing page not found
-    return HTMLResponse(content="""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Ubuntu Economic Commons DAO - Living Labs Initiative - Environmental Monitoring API</title>
-        <style>
-            body { 
-                font-family: Arial, sans-serif; 
-                max-width: 1200px; 
-                margin: 0 auto; 
-                padding: 40px 20px;
-                background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
-            }
-            h1 { color: #2E7D32; }
-            h2 { color: #388E3C; }
-            .container {
-                background: white;
-                border-radius: 10px;
-                padding: 30px;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                margin-bottom: 20px;
-            }
-            .endpoints {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 20px;
-                margin-top: 20px;
-            }
-            .endpoint-card {
-                background: #F5F5F5;
-                border: 1px solid #E0E0E0;
-                border-radius: 8px;
-                padding: 15px;
-                transition: transform 0.2s;
-            }
-            .endpoint-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            }
-            .endpoint-card h3 {
-                margin-top: 0;
-                color: #43A047;
-            }
-            a {
-                color: #1976D2;
-                text-decoration: none;
-            }
-            a:hover { text-decoration: underline; }
-            .footer {
-                margin-top: 40px;
-                padding-top: 20px;
-                border-top: 1px solid #E0E0E0;
-                text-align: center;
-                font-size: 0.9rem;
-                color: #757575;
-            }
-            .footer a {
-                margin: 0 10px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>🌱 Ubuntu Economic Commons DAO - Living Labs Initiative - Environmental Monitoring API</h1>
-            <h2>Quick Links</h2>
-            <div class="endpoints">
-                <div class="endpoint-card">
-                    <h3>🌍 Become a Steward</h3>
-                    <a href="/steward">Register Now →</a>
-                </div>
-                <div class="endpoint-card">
-                    <h3>📡 Register Device</h3>
-                    <a href="/sensebox">Connect Device →</a>
-                </div>
-                <div class="endpoint-card">
-                    <h3>📊 Network Status</h3>
-                    <a href="/network-status">View Status →</a>
-                </div>
-            </div>
-            <div class="footer">
-                <a href="/impressum">Impressum</a>
-                <a href="/datenschutz">Datenschutz</a>
-                <a href="/docs">API Documentation</a>
-            </div>
-        </div>
-    </body>
-    </html>
-    """)
+@app.get("/index.html")
+@app.get("/index-en.html")
+async def index_en():
+    """English landing page"""
+    return FileResponse("register_portal/index-en.html")
 
 @app.get("/steward")
-async def steward_registration():
-    """Steward/Observer registration page (English)"""
-    steward_en_path = Path("register_portal/steward-en.html")
-    if steward_en_path.exists():
-        return FileResponse("register_portal/steward-en.html")
-    
-    steward_path = Path("register_portal/steward.html")
-    if steward_path.exists():
-        return FileResponse("register_portal/steward.html")
-    
-    return HTMLResponse(
-        content="<h1>Steward Registration Page Not Found</h1><p>Please ensure steward-en.html or steward.html exists in register_portal/</p>",
-        status_code=404
-    )
+@app.get("/steward-en.html")
+async def steward_en():
+    """English steward registration"""
+    return FileResponse("register_portal/steward-en.html")
 
 @app.get("/sensebox")
-async def sensebox_registration():
-    """SenseBox/Device registration page (English)"""
-    sensebox_en_path = Path("register_portal/sensebox-en.html")
-    if sensebox_en_path.exists():
-        return FileResponse("register_portal/sensebox-en.html")
-    
-    sensebox_path = Path("register_portal/sensebox.html")
-    if sensebox_path.exists():
-        return FileResponse("register_portal/sensebox.html")
-    
-    return HTMLResponse(
-        content="<h1>Device Registration Page Not Found</h1><p>Please ensure sensebox-en.html exists in register_portal/</p>",
-        status_code=404
-    )
+@app.get("/sensebox-en.html")
+async def sensebox_en():
+    """English device registration"""
+    return FileResponse("register_portal/sensebox-en.html")
 
 @app.get("/network-status")
-async def network_status():
-    """Network status dashboard page (English)"""
-    status_en_path = Path("register_portal/status-en.html")
-    if status_en_path.exists():
-        return FileResponse("register_portal/status-en.html")
-    
-    status_path = Path("register_portal/status.html")
-    if status_path.exists():
-        return FileResponse("register_portal/status.html")
-    
-    return HTMLResponse(
-        content="<h1>Network Status Page Not Found</h1><p>Please ensure status-en.html exists in register_portal/</p>",
-        status_code=404
-    )
+@app.get("/status-en.html")
+async def status_en():
+    """English network status"""
+    return FileResponse("register_portal/status-en.html")
+
+@app.get("/impressum-en.html")
+async def impressum_en():
+    """English imprint page"""
+    return FileResponse("register_portal/impressum-en.html")
+
+@app.get("/datenschutz-en.html")
+async def datenschutz_en():
+    """English privacy policy"""
+    return FileResponse("register_portal/datenschutz-en.html")
 
 # ==================================================
 # GERMAN PAGES (DEUTSCHE SEITEN)
@@ -490,55 +465,35 @@ async def network_status():
 
 @app.get("/index-de.html")
 async def index_de():
-    """Startseite - Deutsche Version"""
-    index_de_path = Path("register_portal/index-de.html")
-    
-    if index_de_path.exists():
-        return FileResponse("register_portal/index-de.html")
-    else:
-        return HTMLResponse(
-            content="<h1>Deutsche Startseite nicht gefunden</h1><p>Bitte stellen Sie sicher, dass index-de.html im Verzeichnis register_portal/ existiert</p>",
-            status_code=404
-        )
+    """Deutsche Startseite"""
+    return FileResponse("register_portal/index-de.html")
 
 @app.get("/steward-de.html")
 async def steward_de():
-    """Steward-Registrierung - Deutsche Version"""
-    steward_de_path = Path("register_portal/steward-de.html")
-    
-    if steward_de_path.exists():
-        return FileResponse("register_portal/steward-de.html")
-    else:
-        return HTMLResponse(
-            content="<h1>Steward-Registrierungsseite nicht gefunden</h1><p>Bitte stellen Sie sicher, dass steward-de.html im Verzeichnis register_portal/ existiert</p>",
-            status_code=404
-        )
+    """Deutsche Steward-Registrierung"""
+    return FileResponse("register_portal/steward-de.html")
 
 @app.get("/sensebox-de.html")
 async def sensebox_de():
-    """Geräteregistrierung - Deutsche Version"""
-    sensebox_de_path = Path("register_portal/sensebox-de.html")
-    
-    if sensebox_de_path.exists():
-        return FileResponse("register_portal/sensebox-de.html")
-    else:
-        return HTMLResponse(
-            content="<h1>Geräteregistrierungsseite nicht gefunden</h1><p>Bitte stellen Sie sicher, dass sensebox-de.html im Verzeichnis register_portal/ existiert</p>",
-            status_code=404
-        )
+    """Deutsche Geräteregistrierung"""
+    return FileResponse("register_portal/sensebox-de.html")
 
 @app.get("/status-de.html")
 async def status_de():
-    """Netzwerkstatus - Deutsche Version"""
-    status_de_path = Path("register_portal/status-de.html")
-    
-    if status_de_path.exists():
-        return FileResponse("register_portal/status-de.html")
-    else:
-        return HTMLResponse(
-            content="<h1>Netzwerkstatus-Seite nicht gefunden</h1><p>Bitte stellen Sie sicher, dass status-de.html im Verzeichnis register_portal/ existiert</p>",
-            status_code=404
-        )
+    """Deutscher Netzwerkstatus"""
+    return FileResponse("register_portal/status-de.html")
+
+@app.get("/impressum")
+@app.get("/impressum-de.html")
+async def impressum_de():
+    """Deutsches Impressum (Primary Legal Page)"""
+    return FileResponse("register_portal/impressum-de.html")
+
+@app.get("/datenschutz")
+@app.get("/datenschutz-de.html")
+async def datenschutz_de():
+    """Deutsche Datenschutzerklärung (Primary Privacy Page)"""
+    return FileResponse("register_portal/datenschutz-de.html")
 
 # ==================================================
 # POLISH PAGES (POLSKIE STRONY)
@@ -546,175 +501,46 @@ async def status_de():
 
 @app.get("/index-pl.html")
 async def index_pl():
-    """Strona główna - Polska wersja"""
-    index_pl_path = Path("register_portal/index-pl.html")
-    
-    if index_pl_path.exists():
-        return FileResponse("register_portal/index-pl.html")
-    else:
-        return HTMLResponse(
-            content="<h1>Polska strona główna nie została znaleziona</h1><p>Upewnij się, że index-pl.html istnieje w katalogu register_portal/</p>",
-            status_code=404
-        )
+    """Polska strona główna"""
+    return FileResponse("register_portal/index-pl.html")
 
 @app.get("/steward-pl.html")
 async def steward_pl():
-    """Rejestracja Zarządcy - Polska wersja"""
-    steward_pl_path = Path("register_portal/steward-pl.html")
-    
-    if steward_pl_path.exists():
-        return FileResponse("register_portal/steward-pl.html")
-    else:
-        return HTMLResponse(
-            content="<h1>Strona rejestracji zarządcy nie została znaleziona</h1><p>Upewnij się, że steward-pl.html istnieje w katalogu register_portal/</p>",
-            status_code=404
-        )
+    """Polska rejestracja zarządcy"""
+    return FileResponse("register_portal/steward-pl.html")
 
 @app.get("/sensebox-pl.html")
 async def sensebox_pl():
-    """Rejestracja Urządzenia - Polska wersja"""
-    sensebox_pl_path = Path("register_portal/sensebox-pl.html")
-    
-    if sensebox_pl_path.exists():
-        return FileResponse("register_portal/sensebox-pl.html")
-    else:
-        return HTMLResponse(
-            content="<h1>Strona rejestracji urządzenia nie została znaleziona</h1><p>Upewnij się, że sensebox-pl.html istnieje w katalogu register_portal/</p>",
-            status_code=404
-        )
+    """Polska rejestracja urządzenia"""
+    return FileResponse("register_portal/sensebox-pl.html")
 
 @app.get("/status-pl.html")
 async def status_pl():
-    """Status Sieci - Polska wersja"""
-    status_pl_path = Path("register_portal/status-pl.html")
-    
-    if status_pl_path.exists():
-        return FileResponse("register_portal/status-pl.html")
-    else:
-        return HTMLResponse(
-            content="<h1>Strona statusu sieci nie została znaleziona</h1><p>Upewnij się, że status-pl.html istnieje w katalogu register_portal/</p>",
-            status_code=404
-        )
+    """Polski status sieci"""
+    return FileResponse("register_portal/status-pl.html")
 
 @app.get("/impressum-pl.html")
 async def impressum_pl():
-    """Stopka Prawna (Impressum) - Polska wersja"""
-    impressum_pl_path = Path("register_portal/impressum-pl.html")
-    
-    if impressum_pl_path.exists():
-        return FileResponse("register_portal/impressum-pl.html")
-    else:
-        return HTMLResponse(
-            content="<h1>Stopka prawna nie została znaleziona</h1><p>Upewnij się, że impressum-pl.html istnieje w katalogu register_portal/</p>",
-            status_code=404
-        )
+    """Polska stopka prawna"""
+    return FileResponse("register_portal/impressum-pl.html")
 
 @app.get("/datenschutz-pl.html")
 async def datenschutz_pl():
-    """Polityka Prywatności - Polska wersja"""
-    datenschutz_pl_path = Path("register_portal/datenschutz-pl.html")
-    
-    if datenschutz_pl_path.exists():
-        return FileResponse("register_portal/datenschutz-pl.html")
-    else:
-        return HTMLResponse(
-            content="<h1>Polityka prywatności nie została znaleziona</h1><p>Upewnij się, że datenschutz-pl.html istnieje w katalogu register_portal/</p>",
-            status_code=404
-        )
+    """Polska polityka prywatności"""
+    return FileResponse("register_portal/datenschutz-pl.html")
 
 # ==================================================
-# LEGAL PAGES - GERMAN (PRIMARY)
-# ==================================================
-
-@app.get("/impressum-de.html")
-async def impressum():
-    """Impressum (German legal requirement) - German version"""
-    impressum_path = Path("register_portal/impressum-de.html")
-    if impressum_path.exists():
-        return FileResponse("register_portal/impressum-de.html")
-    
-    return HTMLResponse(
-        content="<h1>Impressum nicht gefunden</h1><p>Please ensure impressum-de.html exists in register_portal/</p>",
-        status_code=404
-    )
-
-@app.get("/datenschutz-de.html")
-async def datenschutz():
-    """Datenschutzerklärung (Privacy Policy) - German version"""
-    datenschutz_path = Path("register_portal/datenschutz-de.html")
-    if datenschutz_path.exists():
-        return FileResponse("register_portal/datenschutz-de.html")
-    
-    return HTMLResponse(
-        content="<h1>Datenschutzerklärung nicht gefunden</h1><p>Please ensure datenschutz-de.html exists in register_portal/</p>",
-        status_code=404
-    )
-
-# ==================================================
-# ENGLISH LEGAL PAGES
-# ==================================================
-
-@app.get("/impressum-en.html")
-async def impressum_en():
-    """Imprint page (English version)"""
-    impressum_en_path = Path("register_portal/impressum-en.html")
-    
-    if impressum_en_path.exists():
-        return FileResponse("register_portal/impressum-en.html")
-    else:
-        return HTMLResponse(
-            content="<h1>Imprint Page Not Found</h1><p>Please ensure impressum-en.html exists in register_portal/</p>",
-            status_code=404
-        )
-
-@app.get("/datenschutz-en.html")
-async def datenschutz_en():
-    """Privacy Policy page (English version)"""
-    datenschutz_en_path = Path("register_portal/datenschutz-en.html")
-    
-    if datenschutz_en_path.exists():
-        return FileResponse("register_portal/datenschutz-en.html")
-    else:
-        return HTMLResponse(
-            content="<h1>Privacy Policy Page Not Found</h1><p>Please ensure datenschutz-en.html exists in register_portal/</p>",
-            status_code=404
-        )
-
-# ==================================================
-# DIRECT HTML FILE ROUTES (for .html requests)
-# ==================================================
-
-@app.get("/index-en.html")
-async def index_en_html():
-    """Direct HTML file request for English index page"""
-    return await root()
-
-@app.get("/steward-en.html")
-async def steward_en_html():
-    """Direct HTML file request for steward page"""
-    return await steward_registration()
-
-@app.get("/sensebox-en.html")
-async def sensebox_en_html():
-    """Direct HTML file request for sensebox page"""
-    return await sensebox_registration()
-
-@app.get("/status-en.html")
-async def status_html():
-    """Direct HTML file request for status page"""
-    return await network_status()
-
-# ==================================================
-# LEGACY/COMPATIBILITY ENDPOINTS
+# LEGACY COMPATIBILITY
 # ==================================================
 
 @app.get("/register")
 async def old_registration_redirect():
-    """
-    Legacy /register endpoint - redirects to steward registration
-    Maintains backward compatibility
-    """
-    return await steward_registration()
+    """Legacy /register endpoint"""
+    return await steward_en()
+
+# ==================================================
+# SYSTEM STATUS ENDPOINTS
+# ==================================================
 
 @app.get("/status")
 async def status():
@@ -731,7 +557,7 @@ async def status():
         "api": {
             "host": config.API_HOST,
             "port": config.API_PORT,
-            "version": "3.0.4"
+            "version": "3.0.6"
         },
         "database": {
             "schema": PHENOMENOLOGICAL_SCHEMA,
@@ -743,6 +569,11 @@ async def status():
             "asset_code": "UBECrc",
             "issuer": config.stellar.ubecrc_issuer_public,
             "distributor_configured": config.stellar.is_configured
+        },
+        "stellar_onboarding": {
+            "enabled": hasattr(app.state, 'stellar_onboarding') and app.state.stellar_onboarding is not None,
+            "funding_available": hasattr(app.state, 'stellar_onboarding') and 
+                                app.state.stellar_onboarding is not None
         },
         "ipfs": {
             "configured": ipfs_configured,
@@ -780,9 +611,11 @@ async def awareness_check():
         "ipfs_storage": "connected" if hasattr(app.state, 'ipfs') and app.state.ipfs else "ephemeral",
         "reciprocal_economy": "active",
         "stewardship": "engaged",
+        "wallet_creation": "enabled" if hasattr(app.state, 'stellar_onboarding') and app.state.stellar_onboarding else "disabled",
         "multilingual": "enabled",
         "languages": ["en", "de", "pl"],
         "legal_compliance": "enabled",
+        "favicon_support": "enabled",
         "timestamp": datetime.utcnow().isoformat()
     }
 
@@ -809,7 +642,7 @@ async def get_system_stats():
         
         db = app.state.db
         
-        # FIXED: Use asyncpg connection pool pattern
+        # Use asyncpg connection pool pattern
         async with db.pool.acquire() as conn:
             # Count total observers (both human and device)
             observer_query = """
@@ -892,7 +725,8 @@ async def diagnostics():
         "services": {
             "stellar": False,
             "ipfs": False,
-            "observation_service": False
+            "observation_service": False,
+            "stellar_onboarding": False
         },
         "multilingual": {
             "enabled": True,
@@ -907,7 +741,7 @@ async def diagnostics():
             diagnostics_result["database"]["connected"] = True
             db = app.state.db
             
-            # FIXED: Use asyncpg connection pool pattern
+            # Use asyncpg connection pool pattern
             async with db.pool.acquire() as conn:
                 # Check if tables exist
                 table_check_query = """
@@ -985,6 +819,7 @@ async def diagnostics():
     diagnostics_result["services"]["stellar"] = hasattr(app.state, 'stellar') and app.state.stellar is not None
     diagnostics_result["services"]["ipfs"] = hasattr(app.state, 'ipfs') and app.state.ipfs is not None
     diagnostics_result["services"]["observation_service"] = hasattr(app.state, 'observation_service')
+    diagnostics_result["services"]["stellar_onboarding"] = hasattr(app.state, 'stellar_onboarding') and app.state.stellar_onboarding is not None
     
     return diagnostics_result
 
@@ -1000,7 +835,7 @@ async def test_db_query():
     try:
         db = app.state.db
         
-        # FIXED: Use asyncpg connection pool pattern
+        # Use asyncpg connection pool pattern
         async with db.pool.acquire() as conn:
             # Test basic connectivity
             test_query = "SELECT 1 as test"
@@ -1108,7 +943,9 @@ def main():
     ║        through Reciprocal Value Exchange"               ║
     ║                                                          ║
     ║      🌍 English + 🇩🇪 Deutsch + 🇵🇱 Polski Support        ║
+    ║              + Automated Wallet Creation                 ║
     ║              + EU Legal Compliance                       ║
+    ║              + Exact File Routing                        ║
     ║                                                          ║
     ╚══════════════════════════════════════════════════════════╝
     
@@ -1118,9 +955,11 @@ def main():
     - Blockchain Verification
     - Single Entry Point Architecture
     - Multilingual Support (EN/DE/PL)
+    - Automated Stellar Wallet Creation
     - EU GDPR & German TMG Compliance
+    - EXACT routes for existing files only
     
-    Version: 3.0.4 (Added Polish Language Support)
+    Version: 3.0.6 (Fixed Multilingual Routing - Exact Files Only)
     
     Starting system...
     """)

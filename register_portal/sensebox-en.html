@@ -5,129 +5,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SenseBox Registration - UBEC Living Science Initiative</title>
     
-    <meta name="attribution" content="This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations.">
+    <meta name="attribution" content="This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations. This project was made possible with the assistance of Claude and Anthropic PBC.">
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
-            --primary-green: #4CAF50;
-            --deep-green: #2E7D32;
-            --light-green: #81C784;
-            --light-bg: #F5F5F5;
-            --text-dark: #212121;
-            --text-light: #757575;
-            --error-red: #f44336;
+            --primary: #2c5f2d;
+            --secondary: #97bc62;
+            --accent: #ffd700;
+            --background: #f8f9fa;
+            --surface: #ffffff;
+            --text: #2c3e50;
+            --text-light: #6c757d;
+            --border: #dee2e6;
+            --success: #28a745;
+            --warning: #ffc107;
+            --error: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--text-dark);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
             line-height: 1.6;
-            background: var(--light-bg);
         }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.95;
+            font-size: 1rem;
+        }
 
         .language-switcher {
-            position: fixed; top: 20px; right: 20px; z-index: 1000;
-            display: flex; gap: 10px; background: white; padding: 8px;
-            border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
         }
 
         .lang-btn {
-            padding: 8px 16px; border: 2px solid var(--primary-green);
-            background: white; color: var(--deep-green); border-radius: 20px;
-            cursor: pointer; font-weight: 600; transition: all 0.3s;
-            text-decoration: none; display: inline-block; font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
         }
 
-        .lang-btn:hover { background: var(--light-green); color: white; transform: translateY(-2px); }
-        .lang-btn.active { background: var(--primary-green); color: white; }
-
-        .back-link {
-            display: inline-block; color: var(--deep-green);
-            text-decoration: none; margin-bottom: 2rem; font-weight: 600;
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.3);
         }
 
-        .header { text-align: center; margin-bottom: 3rem; }
-        .logo { font-size: 4rem; margin-bottom: 1rem; }
-        h1 { color: var(--deep-green); font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .subtitle { color: var(--text-light); font-size: 1.2rem; }
+        .lang-btn.active {
+            background: var(--accent);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
 
         .card {
-            background: white; padding: 2.5rem; border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 2rem;
-        }
-
-        .info-box {
-            background: #E8F5E9; border-left: 4px solid var(--primary-green);
-            padding: 1.5rem; margin-bottom: 2rem; border-radius: 4px;
-        }
-
-        .warning-box {
-            background: #FFF3E0; border-left: 4px solid #FF9800;
-            padding: 1.5rem; margin-bottom: 2rem; border-radius: 4px;
-        }
-
-        .error-box {
-            background: #FFEBEE; border-left: 4px solid var(--error-red);
-            padding: 1.5rem; margin-bottom: 2rem; border-radius: 4px;
-            display: none;
-        }
-
-        .form-group { margin-bottom: 1.5rem; }
-
-        label {
-            display: block; margin-bottom: 0.5rem;
-            color: var(--deep-green); font-weight: 600;
-        }
-
-        input, select {
-            width: 100%; padding: 12px; border: 2px solid #E0E0E0;
-            border-radius: 8px; font-size: 1rem; transition: border-color 0.3s;
-        }
-
-        input:focus, select:focus {
-            outline: none; border-color: var(--primary-green);
-        }
-
-        .hint { font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem; }
-
-        /* Auto-fetch section */
-        .fetch-section {
-            display: flex; gap: 1rem; align-items: flex-start;
-        }
-
-        .fetch-section input {
-            flex: 1;
-        }
-
-        .fetch-btn {
-            padding: 12px 24px;
-            background: var(--primary-green);
-            color: white; border: none; border-radius: 8px;
-            font-weight: 600; cursor: pointer; transition: all 0.3s;
-            white-space: nowrap;
-        }
-
-        .fetch-btn:hover {
-            background: var(--deep-green);
-            transform: translateY(-2px);
-        }
-
-        .fetch-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Device info display */
-        .device-info {
-            background: #F5F5F5;
-            padding: 1.5rem;
+            background: var(--surface);
             border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: var(--primary);
             margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 0.25rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+        }
+
+        .btn:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .device-info {
+            background: var(--background);
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin: 1.5rem 0;
             display: none;
         }
 
@@ -136,7 +172,7 @@
         }
 
         .device-info h3 {
-            color: var(--deep-green);
+            color: var(--primary);
             margin-bottom: 1rem;
         }
 
@@ -144,458 +180,399 @@
             display: grid;
             grid-template-columns: 150px 1fr;
             gap: 0.5rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .device-detail strong {
-            color: var(--text-light);
+            color: var(--text);
         }
 
-        /* Sensor selection */
         .sensor-grid {
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1rem; 
-            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
         }
 
         .sensor-checkbox {
-            display: flex; 
-            align-items: flex-start; 
-            gap: 0.75rem;
-            padding: 1rem; 
-            border: 2px solid #E0E0E0; 
-            border-radius: 8px;
-            cursor: pointer; 
-            transition: all 0.3s;
-            background: white;
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: var(--background);
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .sensor-checkbox:hover { 
-            border-color: var(--light-green); 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        .sensor-checkbox:hover {
+            border-color: var(--secondary);
         }
 
-        .sensor-checkbox.selected { 
-            border-color: var(--primary-green); 
-            background: #E8F5E9; 
+        .sensor-checkbox.selected {
+            border-color: var(--primary);
+            background: rgba(44, 95, 45, 0.05);
         }
 
-        .sensor-checkbox input[type="checkbox"] {
-            margin-top: 0.25rem;
-            width: auto;
+        .sensor-checkbox input {
+            margin-right: 0.75rem;
+            cursor: pointer;
         }
 
-        .sensor-info {
-            flex: 1;
+        .sensor-checkbox label {
+            cursor: pointer;
+            margin: 0;
+            font-weight: 500;
         }
 
-        .sensor-title {
-            font-weight: 600;
-            color: var(--text-dark);
-            display: block;
-            margin-bottom: 0.25rem;
+        .error {
+            background: rgba(220, 53, 69, 0.1);
+            border-left: 4px solid var(--error);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+            color: var(--error);
         }
 
-        .sensor-meta {
-            font-size: 0.85rem;
+        .loading {
+            text-align: center;
+            padding: 2rem;
             color: var(--text-light);
         }
 
-        .sensor-id {
-            font-family: monospace;
-            background: #f0f0f0;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 0.75rem;
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
         }
 
-        .location-group { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 1rem; 
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
         }
 
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--primary-green);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
+        .footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .nav-links {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
-        .submit-btn {
-            width: 100%; padding: 15px;
-            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
-            color: white; border: none; border-radius: 25px;
-            font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
+        .nav-links a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
         }
 
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-        }
-
-        .submit-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
+        .nav-links a:hover {
+            color: var(--secondary);
         }
 
         @media (max-width: 768px) {
-            .location-group { grid-template-columns: 1fr; }
-            .fetch-section { flex-direction: column; }
-            .fetch-btn { width: 100%; }
-            .sensor-grid { grid-template-columns: 1fr; }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+
+            .device-detail {
+                grid-template-columns: 1fr;
+            }
+
+            .sensor-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="language-switcher">
-        <a href="/sensebox.html" class="lang-btn active">English</a>
+        <a href="/sensebox-en.html" class="lang-btn active">English</a>
         <a href="/sensebox-de.html" class="lang-btn">Deutsch</a>
+        <a href="/sensebox-pl.html" class="lang-btn">Polski</a>
+    </div>
+
+    <div class="header">
+        <div class="header-content">
+            <h1>🌱 SenseBox Registration - Living Science Initiative</h1>
+            <p>Ubuntu Bioregional Economic Commons DAO</p>
+        </div>
     </div>
 
     <div class="container">
-        <a href="/index.html" class="back-link">← Back to Home</a>
-        
-        <div class="header">
-            <div class="logo">📡</div>
-            <h1>Register SenseBox Device</h1>
-            <p class="subtitle">Connect your environmental sensor to our network</p>
-        </div>
-
         <div class="card">
-            <div class="info-box">
-                <strong>🚀 Auto-Import from OpenSenseMap</strong><br>
-                Enter your OpenSenseMap Box ID below, and we'll automatically fetch your device configuration including all registered sensors. You can then select which sensors to register with our UBEC network.
-            </div>
-
-            <div class="error-box" id="errorBox"></div>
-
-            <form id="deviceForm">
-                <!-- Step 1: Fetch from OpenSenseMap -->
+            <h2>📡 Register Your SenseBox Device</h2>
+            
+            <form id="senseboxForm">
                 <div class="form-group">
-                    <label for="boxId">OpenSenseMap Box ID *</label>
-                    <div class="fetch-section">
-                        <input 
-                            type="text" 
-                            id="boxId" 
-                            name="box_id" 
-                            required 
-                            placeholder="e.g., 68b11e9c48183d0008742820"
-                        >
-                        <button type="button" class="fetch-btn" id="fetchBtn">
-                            🔍 Fetch Device
-                        </button>
-                    </div>
-                    <div class="hint">Your 24-character OpenSenseMap Box ID</div>
+                    <label for="senseboxId">SenseBox ID *</label>
+                    <input 
+                        type="text" 
+                        id="senseboxId" 
+                        name="sensebox_id" 
+                        required 
+                        placeholder="e.g. 5c5c9d8f81b3f80011d0b17a"
+                        pattern="[a-fA-F0-9]{24}"
+                    >
+                    <small>24-character HEX identifier from opensensemap.org</small>
                 </div>
 
-                <!-- Device Information (populated after fetch) -->
-                <div class="device-info" id="deviceInfo">
-                    <h3>📋 Device Information</h3>
-                    <div class="device-detail">
-                        <strong>Name:</strong>
-                        <span id="deviceName">-</span>
-                    </div>
-                    <div class="device-detail">
-                        <strong>Location:</strong>
-                        <span id="deviceLocation">-</span>
-                    </div>
-                    <div class="device-detail">
-                        <strong>Coordinates:</strong>
-                        <span id="deviceCoords">-</span>
-                    </div>
-                    <div class="device-detail">
-                        <strong>Created:</strong>
-                        <span id="deviceCreated">-</span>
-                    </div>
-                    <div class="device-detail">
-                        <strong>Total Sensors:</strong>
-                        <span id="deviceSensorCount">-</span>
+                <button type="button" class="btn" id="fetchBtn">Fetch Device Data</button>
+
+                <div id="deviceInfo" class="device-info">
+                    <h3>Device Information</h3>
+                    <div id="deviceDetails"></div>
+                    
+                    <h3 style="margin-top: 1.5rem;">Select Sensors to Register</h3>
+                    <div id="sensorsSection" style="display: none;">
+                        <div id="sensorsList" class="sensor-grid"></div>
                     </div>
                 </div>
 
-                <!-- Step 2: Select Sensors -->
-                <div class="form-group" id="sensorsSection" style="display: none;">
-                    <label>Available Sensors</label>
-                    <div class="hint">Select the sensors you want to register with our UBEC network</div>
-                    <div class="sensor-grid" id="sensorGrid">
-                        <!-- Dynamically populated -->
-                    </div>
-                </div>
-
-                <!-- Step 3: Additional Configuration -->
                 <div id="additionalConfig" style="display: none;">
                     <div class="form-group">
-                        <label for="stewardEmail">Steward Email (Optional)</label>
+                        <label for="stewardEmail">Steward Email (optional)</label>
                         <input 
                             type="email" 
                             id="stewardEmail" 
-                            name="steward_email" 
+                            name="steward_email"
                             placeholder="steward@example.com"
                         >
-                        <div class="hint">Email of the responsible steward for this device</div>
+                        <small>Link this device to an existing steward account</small>
                     </div>
 
                     <div class="form-group">
-                        <label for="stellarAddress">Stellar Wallet Address (Optional)</label>
+                        <label for="stellarAddress">Stellar Address (optional)</label>
                         <input 
                             type="text" 
                             id="stellarAddress" 
-                            name="stellar_address" 
-                            placeholder="GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                            name="stellar_address"
+                            placeholder="G..."
                             pattern="G[A-Z0-9]{55}"
                         >
-                        <div class="hint">Your Stellar public address for UBEC rewards (56 characters starting with G)</div>
+                        <small>Receive UBECrc rewards to your Stellar wallet</small>
                     </div>
 
-                    <button type="submit" class="submit-btn" id="submitBtn" disabled>
-                        Register Selected Sensors
-                    </button>
+                    <button type="submit" class="btn">🌿 Register SenseBox</button>
                 </div>
             </form>
+
+            <div class="nav-links">
+                <a href="/index-en.html">← Back to Home</a>
+                <a href="/steward-en.html">Register as Steward</a>
+                <a href="/status-en.html">Network Status</a>
+            </div>
         </div>
     </div>
 
+    <div class="footer">
+        <p><strong>Attribution:</strong> This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations. This project was made possible with the assistance of Claude and Anthropic PBC.</p>
+        <p style="margin-top: 1rem;">
+            <a href="/impressum-en.html" style="color: var(--text-light); text-decoration: none;">Impressum</a> | 
+            <a href="/datenschutz-en.html" style="color: var(--text-light); text-decoration: none;">Privacy Policy</a>
+        </p>
+    </div>
+
     <script>
-        const OPENSENSEMAP_API = 'https://api.opensensemap.org';
         let fetchedBoxData = null;
-
-        // Sensor icon mapping
-        const sensorIcons = {
-            'temperature': '🌡️',
-            'humidity': '💧',
-            'pressure': '🌀',
-            'illuminance': '💡',
-            'uv': '☀️',
-            'pm10': '🌫️',
-            'pm25': '🌫️',
-            'soil_moisture': '🌱',
-            'soil_temperature': '🌱',
-            'default': '📊'
-        };
-
-        function getSensorIcon(title, unit) {
-            const lowerTitle = title.toLowerCase();
-            if (lowerTitle.includes('temp')) return sensorIcons.temperature;
-            if (lowerTitle.includes('humid')) return sensorIcons.humidity;
-            if (lowerTitle.includes('pressure') || lowerTitle.includes('druck')) return sensorIcons.pressure;
-            if (lowerTitle.includes('light') || lowerTitle.includes('lux') || lowerTitle.includes('illumin')) return sensorIcons.illuminance;
-            if (lowerTitle.includes('uv')) return sensorIcons.uv;
-            if (lowerTitle.includes('pm10') || lowerTitle.includes('particulate')) return sensorIcons.pm10;
-            if (lowerTitle.includes('pm2.5') || lowerTitle.includes('pm25')) return sensorIcons.pm25;
-            if (lowerTitle.includes('soil') && lowerTitle.includes('moist')) return sensorIcons.soil_moisture;
-            if (lowerTitle.includes('soil') && lowerTitle.includes('temp')) return sensorIcons.soil_temperature;
-            return sensorIcons.default;
-        }
 
         // Fetch device data from OpenSenseMap
         document.getElementById('fetchBtn').addEventListener('click', async function() {
-            const boxId = document.getElementById('boxId').value.trim();
+            const senseboxId = document.getElementById('senseboxId').value.trim();
             
-            if (!boxId || boxId.length !== 24) {
-                showError('Please enter a valid 24-character Box ID');
+            if (!senseboxId || !senseboxId.match(/^[a-fA-F0-9]{24}$/)) {
+                showError('Please enter a valid 24-character SenseBox ID');
                 return;
             }
 
-            // Show loading state
             this.disabled = true;
-            this.innerHTML = '⏳ Fetching... <span class="loading-spinner"></span>';
-            hideError();
+            this.textContent = 'Fetching data...';
 
             try {
-                const response = await fetch(`${OPENSENSEMAP_API}/boxes/${boxId}`);
+                const response = await fetch(`https://api.opensensemap.org/boxes/${senseboxId}`);
                 
                 if (!response.ok) {
-                    throw new Error(`Box not found (HTTP ${response.status})`);
+                    throw new Error('SenseBox not found or API unavailable');
                 }
 
-                const boxData = await response.json();
-                fetchedBoxData = boxData;
-
-                // Display device information
-                displayDeviceInfo(boxData);
-
-                // Display sensors
-                displaySensors(boxData.sensors);
-
-                // Show additional configuration
-                document.getElementById('additionalConfig').style.display = 'block';
-
-                // Enable submit button after at least one sensor is selected
-                enableSubmitWhenSensorsSelected();
-
+                fetchedBoxData = await response.json();
+                displayDeviceInfo(fetchedBoxData);
+                
+                this.textContent = 'Fetch Device Data';
             } catch (error) {
-                showError(`Failed to fetch device: ${error.message}`);
-                console.error('Fetch error:', error);
+                showError(`Failed to fetch device data: ${error.message}`);
+                this.textContent = 'Fetch Device Data';
             } finally {
                 this.disabled = false;
-                this.innerHTML = '🔍 Fetch Device';
             }
         });
 
         function displayDeviceInfo(boxData) {
-            const infoDiv = document.getElementById('deviceInfo');
-            
-            document.getElementById('deviceName').textContent = boxData.name || 'Unknown';
-            
-            // Location
-            const loc = boxData.currentLocation;
-            if (loc && loc.coordinates) {
-                const [lon, lat, height] = loc.coordinates;
-                document.getElementById('deviceLocation').textContent = 
-                    `${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E`;
-                document.getElementById('deviceCoords').textContent = 
-                    `Lat: ${lat.toFixed(6)}, Lon: ${lon.toFixed(6)}${height ? `, Height: ${height}m` : ''}`;
-            } else {
-                document.getElementById('deviceLocation').textContent = 'Not specified';
-                document.getElementById('deviceCoords').textContent = 'Not specified';
-            }
-            
-            // Created date
-            if (boxData.createdAt) {
-                const date = new Date(boxData.createdAt);
-                document.getElementById('deviceCreated').textContent = date.toLocaleDateString();
-            }
-            
-            // Sensor count
-            document.getElementById('deviceSensorCount').textContent = 
-                boxData.sensors ? boxData.sensors.length : 0;
-            
-            infoDiv.classList.add('active');
-        }
-
-        function displaySensors(sensors) {
-            const sensorGrid = document.getElementById('sensorGrid');
+            const deviceInfo = document.getElementById('deviceInfo');
+            const deviceDetails = document.getElementById('deviceDetails');
             const sensorsSection = document.getElementById('sensorsSection');
-            
-            sensorGrid.innerHTML = '';
-            
-            if (!sensors || sensors.length === 0) {
-                sensorGrid.innerHTML = '<p class="hint">No sensors found for this device.</p>';
-                return;
-            }
+            const sensorsList = document.getElementById('sensorsList');
+            const additionalConfig = document.getElementById('additionalConfig');
 
-            sensors.forEach((sensor, index) => {
-                const sensorDiv = document.createElement('label');
-                sensorDiv.className = 'sensor-checkbox';
-                
-                const icon = getSensorIcon(sensor.title, sensor.unit);
-                
-                sensorDiv.innerHTML = `
-                    <input 
-                        type="checkbox" 
-                        name="sensors" 
-                        value="${sensor._id}"
-                        data-sensor-info='${JSON.stringify({
-                            id: sensor._id,
-                            title: sensor.title,
-                            unit: sensor.unit,
-                            sensorType: sensor.sensorType
-                        })}'
-                    >
-                    <div class="sensor-info">
-                        <span class="sensor-title">${icon} ${sensor.title}</span>
-                        <div class="sensor-meta">
-                            ${sensor.unit ? `Unit: ${sensor.unit}` : ''}
-                            ${sensor.sensorType ? `<br>Type: ${sensor.sensorType}` : ''}
-                            <br><span class="sensor-id">${sensor._id}</span>
-                        </div>
-                    </div>
-                `;
-                
-                sensorGrid.appendChild(sensorDiv);
-            });
+            // Display basic device information
+            deviceDetails.innerHTML = `
+                <div class="device-detail">
+                    <strong>Name:</strong>
+                    <span>${boxData.name || 'Not specified'}</span>
+                </div>
+                <div class="device-detail">
+                    <strong>Model:</strong>
+                    <span>${boxData.model || 'Not specified'}</span>
+                </div>
+                <div class="device-detail">
+                    <strong>Location:</strong>
+                    <span>${boxData.currentLocation ? 
+                        `${boxData.currentLocation.coordinates[1].toFixed(6)}, ${boxData.currentLocation.coordinates[0].toFixed(6)}` : 
+                        'Not specified'}</span>
+                </div>
+                <div class="device-detail">
+                    <strong>Exposure:</strong>
+                    <span>${boxData.exposure || 'Not specified'}</span>
+                </div>
+                <div class="device-detail">
+                    <strong>Group:</strong>
+                    <span>${boxData.grouptag || 'None'}</span>
+                </div>
+                <div class="device-detail">
+                    <strong>Sensors:</strong>
+                    <span>${boxData.sensors ? boxData.sensors.length : 0} sensors</span>
+                </div>
+            `;
 
-            sensorsSection.style.display = 'block';
+            // Display sensors for selection
+            if (boxData.sensors && boxData.sensors.length > 0) {
+                sensorsList.innerHTML = '';
+                boxData.sensors.forEach((sensor, index) => {
+                    const sensorDiv = document.createElement('div');
+                    sensorDiv.className = 'sensor-checkbox';
+                    sensorDiv.innerHTML = `
+                        <input type="checkbox" id="sensor_${index}" name="sensor" value="${sensor._id}" checked>
+                        <label for="sensor_${index}">
+                            ${sensor.title || sensor.phenomenon || 'Sensor ' + (index + 1)}<br>
+                            <small style="font-weight: normal; color: var(--text-light);">${sensor.unit || ''}</small>
+                        </label>
+                    `;
+                    
+                    // Add click handler for visual feedback
+                    sensorDiv.addEventListener('click', function(e) {
+                        if (e.target.type !== 'checkbox') {
+                            const checkbox = this.querySelector('input[type="checkbox"]');
+                            checkbox.checked = !checkbox.checked;
+                        }
+                        this.classList.toggle('selected', this.querySelector('input[type="checkbox"]').checked);
+                    });
 
-            // Add event listeners for visual feedback
-            document.querySelectorAll('.sensor-checkbox input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    this.closest('.sensor-checkbox').classList.toggle('selected', this.checked);
-                    updateSubmitButton();
+                    sensorsList.appendChild(sensorDiv);
                 });
-            });
-        }
 
-        function enableSubmitWhenSensorsSelected() {
-            updateSubmitButton();
-        }
+                // Initialize selected state
+                document.querySelectorAll('.sensor-checkbox').forEach(div => {
+                    div.classList.add('selected');
+                });
 
-        function updateSubmitButton() {
-            const checkedSensors = document.querySelectorAll('.sensor-checkbox input[type="checkbox"]:checked');
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = checkedSensors.length === 0;
-            
-            if (checkedSensors.length > 0) {
-                submitBtn.textContent = `Register ${checkedSensors.length} Selected Sensor${checkedSensors.length > 1 ? 's' : ''}`;
-            } else {
-                submitBtn.textContent = 'Select at least one sensor';
+                sensorsSection.style.display = 'block';
             }
+
+            deviceInfo.classList.add('active');
+            additionalConfig.style.display = 'block';
         }
 
         function showError(message) {
-            const errorBox = document.getElementById('errorBox');
-            errorBox.textContent = '❌ ' + message;
-            errorBox.style.display = 'block';
-        }
+            const existingError = document.querySelector('.error');
+            if (existingError) {
+                existingError.remove();
+            }
 
-        function hideError() {
-            document.getElementById('errorBox').style.display = 'none';
-        }
-
-        // Form submission
-        document.getElementById('deviceForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
             
+            const form = document.getElementById('senseboxForm');
+            form.insertBefore(errorDiv, form.firstChild);
+
+            setTimeout(() => errorDiv.remove(), 5000);
+        }
+
+        // Handle form submission
+        document.getElementById('senseboxForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
             if (!fetchedBoxData) {
                 showError('Please fetch device data first');
                 return;
             }
 
-            const formData = new FormData(this);
-            const selectedSensors = Array.from(
-                document.querySelectorAll('.sensor-checkbox input[type="checkbox"]:checked')
-            ).map(checkbox => JSON.parse(checkbox.dataset.sensorInfo));
+            // Get selected sensors
+            const selectedSensorIds = Array.from(document.querySelectorAll('input[name="sensor"]:checked'))
+                .map(cb => cb.value);
 
-            if (selectedSensors.length === 0) {
+            if (selectedSensorIds.length === 0) {
                 showError('Please select at least one sensor');
                 return;
             }
 
-            // Build registration data
-            const loc = fetchedBoxData.currentLocation;
-            const [lon, lat, height] = loc ? loc.coordinates : [0, 0, 0];
+            // Build sensors array with details
+            const selectedSensors = fetchedBoxData.sensors
+                .filter(s => selectedSensorIds.includes(s._id))
+                .map(s => ({
+                    sensor_id: s._id,
+                    title: s.title || s.phenomenon || 'Sensor',
+                    unit: s.unit || '',
+                    phenomenon: s.phenomenon || s.title || 'unknown'
+                }));
 
+            // Get form data
+            const formData = new FormData(this);
+
+            // Extract coordinates
+            let latitude = null;
+            let longitude = null;
+            let height = null;
+
+            if (fetchedBoxData.currentLocation && fetchedBoxData.currentLocation.coordinates) {
+                longitude = fetchedBoxData.currentLocation.coordinates[0];
+                latitude = fetchedBoxData.currentLocation.coordinates[1];
+                
+                if (fetchedBoxData.currentLocation.coordinates.length > 2) {
+                    height = fetchedBoxData.currentLocation.coordinates[2];
+                }
+            }
+
+            // Build registration payload
             const registrationData = {
-                observer_type: 'environmental_sensor',
-                external_identity: {
-                    device_id: `SENS_${fetchedBoxData._id}`,
-                    opensensemap_id: fetchedBoxData._id,
-                    name: fetchedBoxData.name,
-                    serial: fetchedBoxData._id
-                },
                 essence: {
-                    location: {
-                        lat: lat,
-                        lon: lon,
-                        height: height || null
-                    },
-                    location_name: fetchedBoxData.name,
-                    sensors: selectedSensors,
-                    exposure: fetchedBoxData.exposure,
-                    model: fetchedBoxData.model,
-                    grouptag: fetchedBoxData.grouptag
+                    name: `SenseBox: ${fetchedBoxData.name || fetchedBoxData._id}`,
+                    description: `Automated observation from SenseBox ${fetchedBoxData._id}`,
+                    observer_type: 'device',
+                    technical_metadata: {
+                        sensebox_id: fetchedBoxData._id,
+                        location: {
+                            latitude: latitude,
+                            longitude: longitude,
+                            height: height || null
+                        },
+                        location_name: fetchedBoxData.name,
+                        sensors: selectedSensors,
+                        exposure: fetchedBoxData.exposure,
+                        model: fetchedBoxData.model,
+                        grouptag: fetchedBoxData.grouptag
+                    }
                 },
                 sensory_capacities: {
                     sight: false,
@@ -629,7 +606,7 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    alert(`✅ Success! Device "${fetchedBoxData.name}" registered with ${selectedSensors.length} sensor${selectedSensors.length > 1 ? 's' : ''}.`);
+                    alert(`✅ Success! Device "${fetchedBoxData.name}" registered with ${selectedSensors.length} sensor${selectedSensors.length === 1 ? '' : 's'}.`);
                     this.reset();
                     document.getElementById('deviceInfo').classList.remove('active');
                     document.getElementById('sensorsSection').style.display = 'none';
@@ -642,6 +619,13 @@
                 showError(`Registration failed: ${error.message}`);
                 console.error('Registration error:', error);
             }
+        });
+
+        // Initialize selected state for sensor checkboxes
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.sensor-checkbox input:checked').forEach(input => {
+                input.closest('.sensor-checkbox').classList.add('selected');
+            });
         });
     </script>
 </body>

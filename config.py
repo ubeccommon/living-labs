@@ -170,6 +170,57 @@ class StellarConfig:
         return f"<StellarConfig network={self.network} configured={self.is_configured}>"
 
 
+class StellarOnboardingConfig:
+    """
+    Stellar Onboarding configuration for automatic wallet creation.
+    
+    This service creates and funds new Stellar wallets for stewards who don't have one,
+    automatically funding them with minimum XLM and adding UBECrc trustlines.
+    """
+    
+    def __init__(self):
+        # Feature toggle
+        self.enabled = os.getenv('STELLAR_ONBOARDING_ENABLED', 'false').lower() in ('true', '1', 'yes')
+        
+        # Funding account (can be same as distributor or dedicated account)
+        self.funding_public = os.getenv('STELLAR_FUNDING_PUBLIC', '')
+        self.funding_secret = os.getenv('STELLAR_FUNDING_SECRET', '')
+        
+        # If not specified, fall back to distributor account
+        if not self.funding_public:
+            self.funding_public = os.getenv('STELLAR_DISTRIBUTOR_PUBLIC', '')
+        if not self.funding_secret:
+            self.funding_secret = os.getenv('STELLAR_DISTRIBUTOR_SECRET', '')
+        
+        # Funding settings
+        self.min_funding_amount = float(os.getenv('STELLAR_MIN_FUNDING_AMOUNT', '5.5'))
+        self.trustline_reserve = float(os.getenv('STELLAR_TRUSTLINE_RESERVE', '0.5'))
+        
+        # Low balance warning threshold
+        self.low_balance_threshold = float(os.getenv('STELLAR_FUNDING_LOW_BALANCE_THRESHOLD', '50.0'))
+        
+        # Rate limiting for wallet creation
+        self.rate_limit_per_hour = int(os.getenv('STELLAR_ONBOARDING_RATE_LIMIT', '10'))
+    
+    @property
+    def is_configured(self) -> bool:
+        """Check if onboarding service is properly configured"""
+        return bool(
+            self.enabled and 
+            self.funding_public and 
+            self.funding_secret
+        )
+    
+    @property
+    def total_funding_amount(self) -> float:
+        """Total XLM needed per account creation"""
+        return self.min_funding_amount + self.trustline_reserve
+    
+    def __repr__(self):
+        """Return string representation"""
+        return f"<StellarOnboardingConfig enabled={self.enabled} configured={self.is_configured}>"
+
+
 class Config:
     """
     Configuration class for the UBEC system.
@@ -216,6 +267,9 @@ class Config:
         # Stellar Configuration (nested object)
         self.stellar = StellarConfig()
         
+        # Stellar Onboarding Configuration (nested object)
+        self.stellar_onboarding = StellarOnboardingConfig()
+        
         # ============================================================
         # Legacy flat attributes for backward compatibility
         # ============================================================
@@ -254,7 +308,8 @@ class Config:
             f"log_level={self.LOG_LEVEL} "
             f"db={self.database.is_configured} "
             f"ipfs={self.ipfs.is_configured} "
-            f"stellar={self.stellar.is_configured}"
+            f"stellar={self.stellar.is_configured} "
+            f"onboarding={self.stellar_onboarding.is_configured}"
             f">"
         )
 
@@ -309,6 +364,15 @@ def validate_config():
             warnings.append("⚠️  STELLAR_DISTRIBUTOR_SECRET not set - UBECrc payments will not work")
         if not config.stellar.distributor_public:
             warnings.append("⚠️  STELLAR_DISTRIBUTOR_PUBLIC not set - UBECrc payments will not work")
+    
+    # Stellar Onboarding validation
+    if config.stellar_onboarding.enabled:
+        if not config.stellar_onboarding.funding_public:
+            errors.append("❌ STELLAR_FUNDING_PUBLIC not set but onboarding is enabled")
+        elif not config.stellar_onboarding.funding_secret:
+            errors.append("❌ STELLAR_FUNDING_SECRET not set but onboarding is enabled")
+        else:
+            print(f"✅ Stellar Onboarding configured: {config.stellar_onboarding.total_funding_amount} XLM per wallet")
     
     # Print results
     if errors:
@@ -366,6 +430,12 @@ if __name__ == "__main__":
     print(f"  - Configured: {config.stellar.is_configured}")
     print(f"  - Network: {config.stellar.network}")
     print(f"  - Horizon: {config.stellar.horizon_url}")
+    
+    print(f"\nStellar Onboarding:")
+    print(f"  - Enabled: {config.stellar_onboarding.enabled}")
+    print(f"  - Configured: {config.stellar_onboarding.is_configured}")
+    print(f"  - Funding per wallet: {config.stellar_onboarding.total_funding_amount} XLM")
+    print(f"  - Rate limit: {config.stellar_onboarding.rate_limit_per_hour} wallets/hour")
     
     print("\nExample: Get qualified table names")
     print(f"  - Devices: {config.database.get_qualified_table('devices')}")

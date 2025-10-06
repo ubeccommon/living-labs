@@ -5,135 +5,260 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Steward Registration - UBEC Living Science Initiative</title>
     
-    <meta name="attribution" content="This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations.">
+    <meta name="attribution" content="This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations. This project was made possible with the assistance of Claude and Anthropic PBC.">
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
-            --primary-green: #4CAF50;
-            --deep-green: #2E7D32;
-            --light-green: #81C784;
-            --warm-brown: #8D6E63;
-            --light-bg: #F5F5F5;
-            --text-dark: #212121;
-            --text-light: #757575;
+            --primary: #2c5f2d;
+            --secondary: #97bc62;
+            --accent: #ffd700;
+            --background: #f8f9fa;
+            --surface: #ffffff;
+            --text: #2c3e50;
+            --text-light: #6c757d;
+            --border: #dee2e6;
+            --success: #28a745;
+            --warning: #ffc107;
+            --error: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--text-dark);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
             line-height: 1.6;
-            background: var(--light-bg);
         }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 2rem; }
-
-        .back-link {
-            display: inline-block; color: var(--deep-green);
-            text-decoration: none; margin-bottom: 2rem; font-weight: 600;
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        /* Language Switcher */
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.95;
+            font-size: 1rem;
+        }
+
         .language-switcher {
-            position: fixed; top: 20px; right: 20px; z-index: 1000;
-            display: flex; gap: 10px; background: white; padding: 8px;
-            border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
         }
 
         .lang-btn {
-            padding: 8px 16px; border: 2px solid var(--primary-green);
-            background: white; color: var(--deep-green); border-radius: 20px;
-            cursor: pointer; font-weight: 600; transition: all 0.3s;
-            text-decoration: none; display: inline-block; font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
         }
 
-        .lang-btn:hover { background: var(--light-green); color: white; transform: translateY(-2px); }
-        .lang-btn.active { background: var(--primary-green); color: white; }
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
 
-        .header { text-align: center; margin-bottom: 3rem; }
-        .logo { font-size: 4rem; margin-bottom: 1rem; }
-        h1 { color: var(--deep-green); font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .subtitle { color: var(--text-light); font-size: 1.2rem; }
+        .lang-btn.active {
+            background: var(--accent);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
 
         .card {
-            background: white; padding: 2.5rem; border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 2rem;
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
         }
 
         .info-box {
-            background: #E8F5E9; border-left: 4px solid var(--primary-green);
-            padding: 1.5rem; margin-bottom: 2rem; border-radius: 4px;
+            background: rgba(151, 188, 98, 0.1);
+            border-left: 4px solid var(--secondary);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
         }
 
-        .form-group { margin-bottom: 1.5rem; }
-
-        label {
-            display: block; margin-bottom: 0.5rem;
-            color: var(--deep-green); font-weight: 600;
+        .form-group {
+            margin-bottom: 1.5rem;
         }
 
-        input, select, textarea {
-            width: 100%; padding: 12px; border: 2px solid #E0E0E0;
-            border-radius: 8px; font-size: 1rem; transition: border-color 0.3s;
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
         }
 
-        input:focus, select:focus, textarea:focus {
-            outline: none; border-color: var(--primary-green);
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
         }
 
-        .hint { font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem; }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 0.25rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
 
         .sensor-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem; margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
         }
 
         .sensor-checkbox {
-            display: flex; align-items: center; gap: 0.5rem;
-            padding: 0.75rem; border: 2px solid #E0E0E0; border-radius: 8px;
-            cursor: pointer; transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--background);
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .sensor-checkbox:hover { border-color: var(--light-green); }
-        .sensor-checkbox.selected { border-color: var(--primary-green); background: #E8F5E9; }
-        .sensor-checkbox input[type="checkbox"] { width: auto; margin: 0; }
-
-        .submit-btn {
-            width: 100%; padding: 15px;
-            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
-            color: white; border: none; border-radius: 25px;
-            font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
+        .sensor-checkbox:hover {
+            border-color: var(--secondary);
         }
 
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        .sensor-checkbox.selected {
+            border-color: var(--primary);
+            background: rgba(44, 95, 45, 0.05);
+        }
+
+        .sensor-checkbox input {
+            margin-right: 0.5rem;
+            cursor: pointer;
+        }
+
+        .sensor-checkbox label {
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .nav-links {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary);
         }
 
         @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            h1 { font-size: 2rem; }
-            .card { padding: 1.5rem; }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+
+            .sensor-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="language-switcher">
-        <a href="/steward.html" class="lang-btn active">English</a>
+        <a href="/steward-en.html" class="lang-btn active">English</a>
         <a href="/steward-de.html" class="lang-btn">Deutsch</a>
+        <a href="/steward-pl.html" class="lang-btn">Polski</a>
+    </div>
+
+    <div class="header">
+        <div class="header-content">
+            <h1>🌍 Steward Registration - Living Science Initiative</h1>
+            <p>Ubuntu Bioregional Economic Commons DAO</p>
+        </div>
     </div>
 
     <div class="container">
-        <a href="/index.html" class="back-link">← Back to Home</a>
-        
-        <div class="header">
-            <div class="logo">🌍</div>
-            <h1>Become a Steward</h1>
-            <p class="subtitle">Join our network of environmental observers</p>
-        </div>
-
         <div class="card">
+            <h2>📝 Become a Steward</h2>
+            
             <div class="info-box">
                 <strong>Environmental Stewardship</strong><br>
                 As a steward, you contribute phenomenological observations to our reciprocal economy. Each observation earns you UBECrc tokens as recognition of your contribution to understanding our living world.
@@ -143,13 +268,13 @@
                 <div class="form-group">
                     <label for="name">Steward Name *</label>
                     <input type="text" id="name" name="name" required placeholder="Your name or chosen steward identity">
-                    <div class="hint">This will be your steward identity in the network</div>
+                    <small>This will be your steward identity in the network</small>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email Address *</label>
-                    <input type="email" id="email" name="email" required>
-                    <div class="hint">We'll send you updates about your observations</div>
+                    <input type="email" id="email" name="email" required placeholder="steward@example.com">
+                    <small>We'll send you updates about your observations</small>
                 </div>
 
                 <div class="form-group">
@@ -173,7 +298,7 @@
                 <div class="form-group">
                     <label for="stellarWallet">Stellar Wallet Address (Optional)</label>
                     <input type="text" id="stellarWallet" name="stellar_address" placeholder="G..." pattern="^G[A-Z2-7]{55}$">
-                    <div class="hint">Your UBECrc tokens will be sent here. You can add this later.</div>
+                    <small>Your UBECrc tokens will be sent here. You can add this later.</small>
                 </div>
 
                 <div class="form-group">
@@ -183,7 +308,7 @@
 
                 <div class="form-group">
                     <label>Sensory Capacities</label>
-                    <div class="hint">Select the senses you use for environmental observation</div>
+                    <small>Select the senses you use for environmental observation</small>
                     <div class="sensor-grid">
                         <label class="sensor-checkbox selected">
                             <input type="checkbox" name="capacities" value="sight" checked>
@@ -212,34 +337,61 @@
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn">Register as Steward</button>
+                <button type="submit" class="btn">🌿 Register as Steward</button>
             </form>
+
+            <div class="nav-links">
+                <a href="/index-en.html">← Back to Home</a>
+                <a href="/sensebox-en.html">Register Device</a>
+                <a href="/status-en.html">Network Status</a>
+            </div>
         </div>
     </div>
 
+    <div class="footer">
+        <p><strong>Attribution:</strong> This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations. This project was made possible with the assistance of Claude and Anthropic PBC.</p>
+        <p style="margin-top: 1rem;">
+            <a href="/impressum-en.html" style="color: var(--text-light); text-decoration: none;">Impressum</a> | 
+            <a href="/datenschutz-en.html" style="color: var(--text-light); text-decoration: none;">Privacy Policy</a>
+        </p>
+    </div>
+
     <script>
+        // Toggle sensor checkbox visual state
         document.querySelectorAll('.sensor-checkbox input[type="checkbox"]').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 this.closest('.sensor-checkbox').classList.toggle('selected', this.checked);
             });
         });
 
+        // Form submission
         document.getElementById('stewardForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
             const data = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                organization: formData.get('organization'),
-                role: formData.get('role'),
-                stellar_address: formData.get('stellar_address'),
-                land_relationship: formData.get('land_relationship'),
-                sensory_capacities: formData.getAll('capacities')
+                essence: {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    observer_type: 'human',
+                    organization: formData.get('organization'),
+                    role: formData.get('role'),
+                    stellar_address: formData.get('stellar_address'),
+                    land_relationship: formData.get('land_relationship')
+                },
+                sensory_capacities: {
+                    sight: formData.getAll('capacities').includes('sight'),
+                    hearing: formData.getAll('capacities').includes('hearing'),
+                    touch: formData.getAll('capacities').includes('touch'),
+                    smell: formData.getAll('capacities').includes('smell'),
+                    taste: formData.getAll('capacities').includes('taste'),
+                    intuition: formData.getAll('capacities').includes('intuition'),
+                    technological: false
+                }
             };
 
             try {
-                const response = await fetch('/api/v1/stewards', {
+                const response = await fetch('/api/v2/observers/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -248,8 +400,13 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    alert(`Success! Steward ${result.name} registered. You'll receive a confirmation email.`);
+                    alert(`✅ Success! Steward ${formData.get('name')} registered. You'll receive a confirmation email.`);
                     this.reset();
+                    // Reset visual state of checkboxes
+                    document.querySelectorAll('.sensor-checkbox').forEach(cb => {
+                        const input = cb.querySelector('input[type="checkbox"]');
+                        cb.classList.toggle('selected', input.checked);
+                    });
                 } else {
                     throw new Error(result.detail || 'Registration failed');
                 }
