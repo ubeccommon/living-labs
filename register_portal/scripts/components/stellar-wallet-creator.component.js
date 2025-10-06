@@ -6,7 +6,7 @@
  * 
  * Attribution: This project uses the services of Claude and Anthropic PBC.
  * 
- * Version: 1.0.1 (Fixed API endpoint path)
+ * Version: 2.0.0 (Enhanced UX with Modal & Safety Confirmations)
  */
 
 class StellarWalletCreator {
@@ -17,6 +17,7 @@ class StellarWalletCreator {
         this.currentStep = 'initial';
         this.walletData = null;
         this.errorMessage = null;
+        this.credentialsDownloaded = false;
     }
     
     /**
@@ -63,17 +64,7 @@ class StellarWalletCreator {
                 break;
         }
         
-        container.innerHTML = `
-            <div class="wallet-creator">
-                <div class="wallet-creator-header">
-                    <h3>🔐 Stellar Wallet Setup</h3>
-                    <p>Don't have a Stellar wallet? We'll create one for you!</p>
-                </div>
-                <div class="wallet-creator-body">
-                    ${content}
-                </div>
-            </div>
-        `;
+        container.innerHTML = content;
     }
     
     /**
@@ -81,37 +72,45 @@ class StellarWalletCreator {
      */
     renderInitial() {
         return `
-            <div class="wallet-initial">
-                <h4>What is a Stellar Wallet?</h4>
-                <p>A Stellar wallet lets you receive UBECrc tokens for your environmental stewardship contributions.</p>
-                
-                <div class="wallet-features">
-                    <div class="feature">
-                        <span class="feature-icon">💰</span>
-                        <span class="feature-text">We'll fund it with 5 XLM</span>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">🎫</span>
-                        <span class="feature-text">UBECrc trustline already set up</span>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">🔐</span>
-                        <span class="feature-text">Secure keypair generation</span>
-                    </div>
+            <div class="wallet-creator">
+                <div class="wallet-creator-header">
+                    <h3>🔐 Stellar Wallet Setup</h3>
+                    <p>Don't have a Stellar wallet? We'll create one for you!</p>
                 </div>
-                
-                <div class="wallet-actions">
-                    <button id="btn-create-wallet" class="btn btn-primary">
-                        ✨ Create My Wallet
-                    </button>
-                    <button id="btn-have-wallet" class="btn btn-secondary">
-                        I Already Have a Wallet
-                    </button>
-                </div>
-                
-                <div class="wallet-info">
-                    <p class="text-muted"><strong>What you'll receive:</strong></p>
-                    <p class="text-muted">A public key (like an email address) and a secret key (like a password) that you'll need to save securely.</p>
+                <div class="wallet-creator-body">
+                    <div class="wallet-initial">
+                        <h4>What is a Stellar Wallet?</h4>
+                        <p>A Stellar wallet lets you receive UBECrc tokens for your environmental stewardship contributions.</p>
+                        
+                        <div class="wallet-features">
+                            <div class="feature">
+                                <span class="feature-icon">💰</span>
+                                <span class="feature-text">We'll fund it with 5 XLM</span>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">🎫</span>
+                                <span class="feature-text">UBECrc trustline already set up</span>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">🔒</span>
+                                <span class="feature-text">Secure keypair generation</span>
+                            </div>
+                        </div>
+                        
+                        <div class="wallet-actions">
+                            <button id="btn-create-wallet" class="btn btn-primary">
+                                ✨ Create My Wallet
+                            </button>
+                            <button id="btn-have-wallet" class="btn btn-secondary">
+                                I Already Have a Wallet
+                            </button>
+                        </div>
+                        
+                        <div class="wallet-info">
+                            <p class="text-muted"><strong>What you'll receive:</strong></p>
+                            <p class="text-muted">A public key (like an email address) and a secret key (like a password) that you'll need to save securely.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -122,81 +121,125 @@ class StellarWalletCreator {
      */
     renderCreating() {
         return `
-            <div class="wallet-creating">
-                <div class="loading-spinner"></div>
-                <h4>Creating Your Wallet...</h4>
-                <div class="creation-steps">
-                    <div class="step completed">✓ Generating secure keypair</div>
-                    <div class="step active">⏳ Funding account with 5 XLM</div>
-                    <div class="step">⏳ Adding UBECrc trustline</div>
-                    <div class="step">⏳ Finalizing setup</div>
+            <div class="wallet-creator">
+                <div class="wallet-creator-body">
+                    <div class="wallet-creating">
+                        <div class="loading-spinner"></div>
+                        <h4>Creating Your Wallet...</h4>
+                        <div class="creation-steps">
+                            <div class="step completed">✓ Generating secure keypair</div>
+                            <div class="step active">⏳ Funding account with 5 XLM</div>
+                            <div class="step">⏳ Adding UBECrc trustline</div>
+                            <div class="step">⏳ Finalizing setup</div>
+                        </div>
+                        <p class="text-muted">This may take a few seconds...</p>
+                    </div>
                 </div>
-                <p class="text-muted">This may take a few seconds...</p>
             </div>
         `;
     }
     
     /**
-     * Render success screen with wallet credentials
+     * Render success screen with wallet credentials - NOW AS MODAL
      */
     renderSuccess() {
         if (!this.walletData) return '';
         
         return `
-            <div class="wallet-success">
-                <div class="success-icon">🎉</div>
-                <h4>Your Wallet is Ready!</h4>
-                
-                <div class="credentials-box critical">
-                    <div class="credential-item">
-                        <span class="credential-label">Public Key (Share this):</span>
-                        <div class="credential-value-container">
-                            <code class="credential-value" id="wallet-public">${this.walletData.public_key}</code>
-                            <button class="btn-copy" onclick="walletCreator.copyToClipboard('wallet-public')">📋</button>
+            <div class="wallet-modal-overlay" id="wallet-modal-overlay">
+                <div class="wallet-modal">
+                    <div class="modal-header">
+                        <div class="success-icon-large">🎉</div>
+                        <h2>Your Wallet is Ready!</h2>
+                        <div class="warning-pulse">
+                            ⚠️ ONE-TIME VIEW ONLY ⚠️
                         </div>
                     </div>
                     
-                    <div class="credential-item critical-item">
-                        <span class="credential-label">Secret Key (NEVER share this!):</span>
-                        <div class="credential-value-container">
-                            <code class="credential-value secret-blur" id="wallet-secret">${this.walletData.secret_key}</code>
-                            <button class="btn-toggle" onclick="walletCreator.toggleSecretVisibility()">👁️</button>
-                            <button class="btn-copy" onclick="walletCreator.copyToClipboard('wallet-secret')">📋</button>
+                    <div class="modal-body">
+                        <div class="credentials-box">
+                            <div class="credential-item">
+                                <label class="credential-label">
+                                    <span class="label-icon">✅</span>
+                                    Public Key (Safe to Share)
+                                </label>
+                                <div class="credential-value-container">
+                                    <code class="credential-value public-key" id="wallet-public">${this.walletData.public_key}</code>
+                                    <button class="btn-icon btn-copy" onclick="walletCreator.copyToClipboard('wallet-public')" title="Copy">
+                                        📋
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="credential-item critical-item">
+                                <label class="credential-label critical-label">
+                                    <span class="label-icon">🔐</span>
+                                    Secret Key (NEVER SHARE!)
+                                </label>
+                                <div class="credential-value-container">
+                                    <code class="credential-value secret-key secret-blur" id="wallet-secret">${this.walletData.secret_key}</code>
+                                    <button class="btn-icon btn-toggle" onclick="walletCreator.toggleSecretVisibility()" title="Show/Hide">
+                                        👁️
+                                    </button>
+                                    <button class="btn-icon btn-copy" onclick="walletCreator.copyToClipboard('wallet-secret')" title="Copy">
+                                        📋
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="wallet-info-grid">
+                            <div class="info-item">
+                                <span class="info-icon">💰</span>
+                                <div class="info-content">
+                                    <span class="info-label">XLM Balance</span>
+                                    <strong>${this.walletData.xlm_balance} XLM</strong>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-icon">🎫</span>
+                                <div class="info-content">
+                                    <span class="info-label">UBECrc Trustline</span>
+                                    <strong>${this.walletData.trustline_created ? '✓ Active' : '⏳ Pending'}</strong>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-icon">🌐</span>
+                                <div class="info-content">
+                                    <span class="info-label">Network</span>
+                                    <strong>${this.walletData.network}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="critical-warning-box">
+                            <div class="warning-icon-large">⚠️</div>
+                            <div class="warning-content">
+                                <h3>CRITICAL: Save Your Keys NOW!</h3>
+                                <p>This is the <strong>ONLY TIME</strong> you'll see your secret key.</p>
+                                <p>If you lose it, you will <strong>PERMANENTLY LOSE ACCESS</strong> to your wallet and funds.</p>
+                                <p class="warning-emphasis">There is NO way to recover a lost secret key!</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="wallet-info">
-                    <div class="info-row">
-                        <span>💰 XLM Balance:</span>
-                        <strong>${this.walletData.xlm_balance} XLM</strong>
+                    
+                    <div class="modal-actions">
+                        <button id="btn-download-keys" class="btn btn-primary btn-large" onclick="walletCreator.downloadCredentials()">
+                            📥 Download Credentials File
+                        </button>
+                        
+                        <button id="btn-continue" class="btn btn-success btn-large" disabled>
+                            ✓ I've Saved My Keys - Continue
+                        </button>
+                        
+                        <p class="action-hint" id="download-hint">
+                            ⬆️ Please download your credentials first
+                        </p>
                     </div>
-                    <div class="info-row">
-                        <span>🎫 UBECrc Trustline:</span>
-                        <strong>${this.walletData.trustline_created ? '✓ Active' : '⏳ Pending'}</strong>
+                    
+                    <div class="modal-footer">
+                        <p class="footer-text">After clicking continue, you'll complete the registration form to become a steward.</p>
                     </div>
-                    <div class="info-row">
-                        <span>🌐 Network:</span>
-                        <strong>${this.walletData.network}</strong>
-                    </div>
-                </div>
-                
-                <div class="security-warning">
-                    <strong>⚠️ CRITICAL: Save Your Keys Now!</strong>
-                    <p>This is the ONLY time you'll see your secret key. Save it securely or you'll lose access to your funds forever.</p>
-                </div>
-                
-                <div class="wallet-actions">
-                    <button id="btn-download-keys" class="btn btn-primary">
-                        📥 Download Credentials
-                    </button>
-                    <button id="btn-downloaded" class="btn btn-success" disabled>
-                        ✓ I've Saved My Keys, Continue
-                    </button>
-                </div>
-                
-                <div class="wallet-next-steps">
-                    <p class="text-muted">Once you've saved your secret key, complete the registration form to become a steward!</p>
                 </div>
             </div>
         `;
@@ -207,13 +250,17 @@ class StellarWalletCreator {
      */
     renderError() {
         return `
-            <div class="wallet-error">
-                <div class="error-icon">❌</div>
-                <h4>Wallet Creation Failed</h4>
-                <p>${this.errorMessage || 'An unexpected error occurred. Please try again.'}</p>
-                <button id="btn-retry" class="btn btn-primary">
-                    Try Again
-                </button>
+            <div class="wallet-creator">
+                <div class="wallet-creator-body">
+                    <div class="wallet-error">
+                        <div class="error-icon">❌</div>
+                        <h4>Wallet Creation Failed</h4>
+                        <p>${this.errorMessage || 'An unexpected error occurred. Please try again.'}</p>
+                        <button id="btn-retry" class="btn btn-primary">
+                            🔄 Try Again
+                        </button>
+                    </div>
+                </div>
             </div>
         `;
     }
@@ -222,7 +269,6 @@ class StellarWalletCreator {
      * Attach event listeners
      */
     attachEventListeners() {
-        // Delegate events from container
         const container = document.getElementById(this.containerId);
         
         container.addEventListener('click', async (e) => {
@@ -232,33 +278,101 @@ class StellarWalletCreator {
                 this.closeCreator();
             } else if (e.target.id === 'btn-retry') {
                 this.currentStep = 'initial';
+                this.errorMessage = null;
                 this.render();
                 this.attachEventListeners();
-            } else if (e.target.id === 'btn-download-keys') {
-                this.downloadCredentials();
-            } else if (e.target.id === 'btn-downloaded') {
-                this.fillFormAndClose();
+            } else if (e.target.id === 'btn-continue') {
+                await this.confirmAndContinue();
             }
         });
         
-        // Enable "I've saved" button after delay
-        setTimeout(() => {
-            const btn = document.getElementById('btn-downloaded');
+        // For success modal, enable continue button after download
+        if (this.currentStep === 'success') {
+            // Prevent modal close by clicking overlay
+            const overlay = document.getElementById('wallet-modal-overlay');
+            if (overlay) {
+                overlay.addEventListener('click', (e) => {
+                    if (e.target.id === 'wallet-modal-overlay') {
+                        this.showWarning('You must save your credentials before continuing!');
+                    }
+                });
+            }
+            
+            // Enable continue button after 8 seconds AND download
+            setTimeout(() => {
+                this.enableContinueIfDownloaded();
+            }, 8000);
+        }
+    }
+    
+    /**
+     * Enable continue button if credentials were downloaded
+     */
+    enableContinueIfDownloaded() {
+        if (this.credentialsDownloaded) {
+            const btn = document.getElementById('btn-continue');
+            const hint = document.getElementById('download-hint');
             if (btn) {
                 btn.disabled = false;
+                btn.classList.add('btn-pulse');
             }
-        }, 5000); // 5 second delay to encourage reading
+            if (hint) {
+                hint.textContent = '✓ Credentials downloaded - you may continue';
+                hint.style.color = '#10b981';
+            }
+        }
+    }
+    
+    /**
+     * Show warning message
+     */
+    showWarning(message) {
+        alert(message);
+    }
+    
+    /**
+     * Confirm before continuing
+     */
+    async confirmAndContinue() {
+        // First confirmation
+        const confirmed1 = confirm(
+            '⚠️ FINAL WARNING ⚠️\n\n' +
+            'Have you saved your secret key?\n\n' +
+            'If you continue without saving it, you will PERMANENTLY LOSE ACCESS to your wallet.\n\n' +
+            'Click CANCEL to go back and save your keys.\n' +
+            'Click OK only if you have saved them.'
+        );
+        
+        if (!confirmed1) {
+            return;
+        }
+        
+        // Second confirmation (extra safety)
+        const confirmed2 = confirm(
+            '⚠️ LAST CHANCE ⚠️\n\n' +
+            'Are you ABSOLUTELY SURE you saved your secret key?\n\n' +
+            'Did you:\n' +
+            '✓ Download the credentials file?\n' +
+            '✓ OR write down the secret key?\n' +
+            '✓ OR save it to a password manager?\n\n' +
+            'This is your LAST opportunity to see it!\n\n' +
+            'Click CANCEL to go back.\n' +
+            'Click OK to proceed (you cannot go back).'
+        );
+        
+        if (confirmed2) {
+            this.fillFormAndClose();
+        }
     }
     
     /**
      * Create new wallet via API
-     * FIXED: Now uses correct endpoint /api/v2/stellar/onboarding/create
      */
     async createWallet() {
         // Get steward info from main form
         const stewardForm = document.getElementById('stewardForm');
         if (!stewardForm) {
-            alert('Please fill in your name and email in the registration form first.');
+            this.showWarning('Please fill in your name and email in the registration form first.');
             return;
         }
         
@@ -267,7 +381,7 @@ class StellarWalletCreator {
         const email = formData.get('email');
         
         if (!name || !email) {
-            alert('Please fill in your name and email in the registration form first.');
+            this.showWarning('Please fill in your name and email in the registration form first.');
             return;
         }
         
@@ -276,16 +390,16 @@ class StellarWalletCreator {
         this.render();
         
         try {
-            // FIXED: Correct endpoint path
-            const response = await this.apiService.post('/api/v2/stellar/onboarding/create', {
+            const response = await this.apiService.post('/api/v2/stellar/create-wallet', {
                 steward_email: email,
                 steward_name: name
             });
             
             // Store wallet data
             this.walletData = response;
+            this.credentialsDownloaded = false;
             
-            // Emit custom event that wallet was created
+            // Emit custom event
             const event = new CustomEvent('walletCreated', { 
                 detail: { 
                     publicKey: response.public_key,
@@ -294,10 +408,13 @@ class StellarWalletCreator {
             });
             document.dispatchEvent(event);
             
-            // Show success
+            // Show success modal
             this.currentStep = 'success';
             this.render();
             this.attachEventListeners();
+            
+            // Scroll to top to ensure modal is visible
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             
             this.debugService.log('✓ Wallet created successfully', 'success');
             
@@ -324,13 +441,18 @@ class StellarWalletCreator {
             this.debugService.log('📋 Copied to clipboard', 'success');
             
             // Visual feedback
-            const originalText = element.parentElement.querySelector('.btn-copy').textContent;
-            element.parentElement.querySelector('.btn-copy').textContent = '✓';
+            const btn = element.parentElement.querySelector('.btn-copy');
+            const originalText = btn.textContent;
+            btn.textContent = '✓';
+            btn.style.background = '#10b981';
+            
             setTimeout(() => {
-                element.parentElement.querySelector('.btn-copy').textContent = originalText;
+                btn.textContent = originalText;
+                btn.style.background = '';
             }, 2000);
         }).catch(err => {
             console.error('Failed to copy:', err);
+            this.showWarning('Failed to copy. Please manually select and copy the text.');
         });
     }
     
@@ -374,17 +496,33 @@ SECURITY REMINDERS:
 - Never share your secret key with anyone
 - This key cannot be recovered if lost
 - Use only the public key to receive tokens
+
+HOW TO USE YOUR WALLET:
+- Public Key: Share this to receive UBECrc tokens
+- Secret Key: Keep this private - needed to send tokens
+- Recommended: Store in a password manager or encrypted storage
+
+For support, contact: support@ubec.earth
 `;
         
         const blob = new Blob([content], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `stellar-wallet-${this.walletData.public_key.substring(0, 8)}.txt`;
+        a.download = `stellar-wallet-${this.walletData.public_key.substring(0, 8)}-${Date.now()}.txt`;
         a.click();
         URL.revokeObjectURL(url);
         
+        // Mark as downloaded
+        this.credentialsDownloaded = true;
+        this.enableContinueIfDownloaded();
+        
         this.debugService.log('📥 Credentials downloaded', 'success');
+        
+        // Show confirmation
+        setTimeout(() => {
+            alert('✓ Credentials file downloaded!\n\nPlease store it in a secure location.\n\nYou can now click "Continue" to complete registration.');
+        }, 500);
     }
     
     /**
@@ -400,6 +538,12 @@ SECURITY REMINDERS:
         }
         
         this.closeCreator();
+        
+        // Scroll to the stellar input field
+        if (stellarInput) {
+            stellarInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            stellarInput.focus();
+        }
     }
     
     /**
@@ -410,6 +554,10 @@ SECURITY REMINDERS:
         if (container) {
             container.style.display = 'none';
         }
+        
+        // Reset state
+        this.currentStep = 'initial';
+        this.credentialsDownloaded = false;
     }
 }
 
