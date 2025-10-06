@@ -35,10 +35,12 @@
             background: var(--light-bg);
         }
 
+        /* Header Navigation */
         header {
             background: white;
-            padding: 2rem;
+            padding: 1.5rem 2rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
         }
 
         .header-content {
@@ -46,28 +48,66 @@
             margin: 0 auto;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
             gap: 1rem;
         }
 
         .logo-icon {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             background: linear-gradient(135deg, var(--light-green), var(--primary-green));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 2rem;
         }
 
         .logo-text h1 {
             font-size: 1.5rem;
             color: var(--deep-green);
+            margin-bottom: 0.25rem;
         }
 
         .logo-text p {
             color: var(--text-light);
             font-size: 0.9rem;
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 8px;
+            border-radius: 25px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .lang-btn {
+            padding: 8px 20px;
+            border: 2px solid var(--primary-green);
+            background: white;
+            color: var(--deep-green);
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .lang-btn:hover {
+            background: var(--light-green);
+            color: white;
+        }
+
+        .lang-btn.active {
+            background: var(--primary-green);
+            color: white;
         }
 
         .container {
@@ -192,6 +232,11 @@
         }
 
         @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
             .container {
                 margin: 1rem;
                 padding: 1.5rem;
@@ -211,10 +256,16 @@
 <body>
     <header>
         <div class="header-content">
-            <div class="logo-icon">🌱</div>
-            <div class="logo-text">
-                <h1>Living Labs Initiative</h1>
-                <p>Impressum / Legal Notice</p>
+            <div class="logo-section">
+                <div class="logo-icon">🌱</div>
+                <div class="logo-text">
+                    <h1>Ubuntu Bioregional Economic Commons DAO</h1>
+                    <p>· Living Labs Initiative ·</p>
+                </div>
+            </div>
+            <div class="language-switcher">
+                <a href="/impressum-en.html" class="lang-btn">English</a>
+                <a href="/impressum-de.html" class="lang-btn active">Deutsch</a>
             </div>
         </div>
     </header>
@@ -295,7 +346,7 @@
         <p>Soweit nicht anders angegeben, sind alle Bilder und grafischen Darstellungen Eigentum der Living Science Initiative bzw. wurden mit entsprechender Lizenz verwendet.</p>
 
         <h2>Datenschutz</h2>
-        <p>Informationen zur Verarbeitung personenbezogener Daten finden Sie in unserer <a href="/datenschutz">Datenschutzerklärung</a>.</p>
+        <p>Informationen zur Verarbeitung personenbezogener Daten finden Sie in unserer <a href="/datenschutz-de.html">Datenschutzerklärung</a>.</p>
 
         <h2>Blockchain & Token-Technologie</h2>
         <h3>Hinweis zu UBECrc-Tokens</h3>

@@ -218,8 +218,8 @@ async def lifespan(app: FastAPI):
         logger.info(f"    Steward-Registrierung: http://localhost:{config.API_PORT}/steward-de.html")
         logger.info(f"    Geräteregistrierung: http://localhost:{config.API_PORT}/sensebox-de.html")
         logger.info(f"    Netzwerkstatus: http://localhost:{config.API_PORT}/status-de.html")
-        logger.info(f"    Impressum: http://localhost:{config.API_PORT}/impressum")
-        logger.info(f"    Datenschutz: http://localhost:{config.API_PORT}/datenschutz")
+        logger.info(f"    Impressum: http://localhost:{config.API_PORT}/impressum-de.html")
+        logger.info(f"    Datenschutz: http://localhost:{config.API_PORT}/datenschutz-de.html")
         logger.info("")
         logger.info(f"  API Docs: http://localhost:{config.API_PORT}/docs")
         logger.info(f"  Reciprocal Economy: ACTIVE")
@@ -342,9 +342,9 @@ logger.info("✓ Legal compliance routes defined in main.py")
 async def root():
     """Landing page - Beautiful animated home page (English)"""
     # Try English version first
-    index_path = Path("register_portal/index.html")
+    index_path = Path("register_portal/index-en.html")
     if index_path.exists():
-        return FileResponse("register_portal/index.html")
+        return FileResponse("register_portal/index-en.html")
     
     # Try index-en.html as alternative
     index_en_path = Path("register_portal/index-en.html")
@@ -474,9 +474,9 @@ async def sensebox_registration():
         return FileResponse("register_portal/sensebox-en.html")
     
     # Try sensebox.html as alternative
-    sensebox_path = Path("register_portal/sensebox.html")
+    sensebox_path = Path("register_portal/sensebox-en.html")
     if sensebox_path.exists():
-        return FileResponse("register_portal/sensebox.html")
+        return FileResponse("register_portal/sensebox-en.html")
     
     # Fallback to German version if no English found
     sensebox_de_path = Path("register_portal/sensebox-de.html")
@@ -573,13 +573,13 @@ async def status_de():
 # LEGAL PAGES - GERMAN (PRIMARY)
 # ==================================================
 
-@app.get("/impressum")
+@app.get("/impressum-de.html")
 async def impressum():
     """Impressum (German legal requirement) - German version"""
     # Try impressum.html first (primary German version)
-    impressum_path = Path("register_portal/impressum.html")
+    impressum_path = Path("register_portal/impressum-de.html")
     if impressum_path.exists():
-        return FileResponse("register_portal/impressum.html")
+        return FileResponse("register_portal/impressum-de.html")
     
     # Fallback to impressum-de.html
     impressum_de_path = Path("register_portal/impressum-de.html")
@@ -591,13 +591,13 @@ async def impressum():
         status_code=404
     )
 
-@app.get("/datenschutz")
+@app.get("/datenschutz-de.html")
 async def datenschutz():
     """Datenschutzerklärung (Privacy Policy) - German version"""
     # Try datenschutz.html first (primary German version)
-    datenschutz_path = Path("register_portal/datenschutz.html")
+    datenschutz_path = Path("register_portal/datenschutz-de.html")
     if datenschutz_path.exists():
-        return FileResponse("register_portal/datenschutz.html")
+        return FileResponse("register_portal/datenschutz-de.html")
     
     # Fallback to datenschutz-de.html
     datenschutz_de_path = Path("register_portal/datenschutz-de.html")
@@ -643,38 +643,33 @@ async def datenschutz_en():
 # DIRECT HTML FILE ROUTES (for .html requests)
 # ==================================================
 
-@app.get("/index.html")
-async def index_html():
-    """Direct HTML file request for English index page"""
-    return await root()
-
 @app.get("/index-en.html")
 async def index_en_html():
     """Direct HTML file request for English index page (alternative naming)"""
     return await root()
 
-@app.get("/steward.html")
-async def steward_html():
+@app.get("/steward-en.html")
+async def steward_en_html():
     """Direct HTML file request for steward page"""
     return await steward_registration()
 
-@app.get("/sensebox.html")
-async def sensebox_html():
+@app.get("/sensebox-en.html")
+async def sensebox_en_html():
     """Direct HTML file request for sensebox page"""
     return await sensebox_registration()
 
-@app.get("/status.html")
+@app.get("/status-en.html")
 async def status_html():
     """Direct HTML file request for status page"""
     return await network_status()
 
-@app.get("/impressum.html")
-async def impressum_html():
+@app.get("/impressum-en.html")
+async def impressum__en_html():
     """Direct HTML file request for impressum page"""
     return await impressum()
 
-@app.get("/datenschutz.html")
-async def datenschutz_html():
+@app.get("/datenschutz-en.html")
+async def datenschutz_en_html():
     """Direct HTML file request for datenschutz page"""
     return await datenschutz()
 
@@ -733,9 +728,9 @@ async def status():
         },
         "legal_compliance": {
             "impressum_en": "/impressum-en.html",
-            "impressum_de": "/impressum",
+            "impressum_de": "/impressum-de.html",
             "datenschutz_en": "/datenschutz-en.html",
-            "datenschutz_de": "/datenschutz",
+            "datenschutz_de": "/datenschutz-de.html",
             "gdpr_compliant": True
         },
         "environment": config.ENVIRONMENT,

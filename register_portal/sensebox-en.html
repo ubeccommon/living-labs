@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SenseBox-Registrierung - UBEC Living Science Initiative</title>
+    <title>SenseBox Registration - UBEC Living Science Initiative</title>
     
-    <meta name="attribution" content="Dieses Projekt nutzt die Dienste von Claude und Anthropic PBC für fundierte Entscheidungen und Empfehlungen.">
+    <meta name="attribution" content="This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations.">
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -94,7 +94,7 @@
 
         .hint { font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem; }
 
-        /* Auto-Fetch Bereich */
+        /* Auto-fetch section */
         .fetch-section {
             display: flex; gap: 1rem; align-items: flex-start;
         }
@@ -122,7 +122,7 @@
             transform: none;
         }
 
-        /* Geräteinformationen anzeigen */
+        /* Device info display */
         .device-info {
             background: #F5F5F5;
             padding: 1.5rem;
@@ -151,7 +151,7 @@
             color: var(--text-light);
         }
 
-        /* Sensorauswahl */
+        /* Sensor selection */
         .sensor-grid {
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -260,95 +260,95 @@
 </head>
 <body>
     <div class="language-switcher">
-        <a href="/sensebox-en.html" class="lang-btn">English</a>
-        <a href="/sensebox-de.html" class="lang-btn active">Deutsch</a>
+        <a href="/sensebox.html" class="lang-btn active">English</a>
+        <a href="/sensebox-de.html" class="lang-btn">Deutsch</a>
     </div>
 
     <div class="container">
-        <a href="/index-de.html" class="back-link">← Zurück zur Startseite</a>
+        <a href="/index.html" class="back-link">← Back to Home</a>
         
         <div class="header">
             <div class="logo">📡</div>
-            <h1>SenseBox-Gerät registrieren</h1>
-            <p class="subtitle">Verbinde deinen Umweltsensor mit unserem Netzwerk</p>
+            <h1>Register SenseBox Device</h1>
+            <p class="subtitle">Connect your environmental sensor to our network</p>
         </div>
 
         <div class="card">
             <div class="info-box">
-                <strong>🚀 Automatischer Import von OpenSenseMap</strong><br>
-                Gib unten deine OpenSenseMap Box-ID ein, und wir laden automatisch deine Gerätekonfiguration inklusive aller registrierten Sensoren. Anschließend kannst du auswählen, welche Sensoren du in unserem UBEC-Netzwerk registrieren möchtest.
+                <strong>🚀 Auto-Import from OpenSenseMap</strong><br>
+                Enter your OpenSenseMap Box ID below, and we'll automatically fetch your device configuration including all registered sensors. You can then select which sensors to register with our UBEC network.
             </div>
 
             <div class="error-box" id="errorBox"></div>
 
             <form id="deviceForm">
-                <!-- Schritt 1: Von OpenSenseMap abrufen -->
+                <!-- Step 1: Fetch from OpenSenseMap -->
                 <div class="form-group">
-                    <label for="boxId">OpenSenseMap Box-ID *</label>
+                    <label for="boxId">OpenSenseMap Box ID *</label>
                     <div class="fetch-section">
                         <input 
                             type="text" 
                             id="boxId" 
                             name="box_id" 
                             required 
-                            placeholder="z.B. 68b11e9c48183d0008742820"
+                            placeholder="e.g., 68b11e9c48183d0008742820"
                         >
                         <button type="button" class="fetch-btn" id="fetchBtn">
-                            🔍 Gerät laden
+                            🔍 Fetch Device
                         </button>
                     </div>
-                    <div class="hint">Deine 24-stellige OpenSenseMap Box-ID</div>
+                    <div class="hint">Your 24-character OpenSenseMap Box ID</div>
                 </div>
 
-                <!-- Geräteinformationen (nach Abruf ausgefüllt) -->
+                <!-- Device Information (populated after fetch) -->
                 <div class="device-info" id="deviceInfo">
-                    <h3>📋 Geräteinformationen</h3>
+                    <h3>📋 Device Information</h3>
                     <div class="device-detail">
                         <strong>Name:</strong>
                         <span id="deviceName">-</span>
                     </div>
                     <div class="device-detail">
-                        <strong>Standort:</strong>
+                        <strong>Location:</strong>
                         <span id="deviceLocation">-</span>
                     </div>
                     <div class="device-detail">
-                        <strong>Koordinaten:</strong>
+                        <strong>Coordinates:</strong>
                         <span id="deviceCoords">-</span>
                     </div>
                     <div class="device-detail">
-                        <strong>Erstellt am:</strong>
+                        <strong>Created:</strong>
                         <span id="deviceCreated">-</span>
                     </div>
                     <div class="device-detail">
-                        <strong>Anzahl Sensoren:</strong>
+                        <strong>Total Sensors:</strong>
                         <span id="deviceSensorCount">-</span>
                     </div>
                 </div>
 
-                <!-- Schritt 2: Sensoren auswählen -->
+                <!-- Step 2: Select Sensors -->
                 <div class="form-group" id="sensorsSection" style="display: none;">
-                    <label>Verfügbare Sensoren</label>
-                    <div class="hint">Wähle die Sensoren aus, die du im UBEC-Netzwerk registrieren möchtest</div>
+                    <label>Available Sensors</label>
+                    <div class="hint">Select the sensors you want to register with our UBEC network</div>
                     <div class="sensor-grid" id="sensorGrid">
-                        <!-- Wird dynamisch ausgefüllt -->
+                        <!-- Dynamically populated -->
                     </div>
                 </div>
 
-                <!-- Schritt 3: Zusätzliche Konfiguration -->
+                <!-- Step 3: Additional Configuration -->
                 <div id="additionalConfig" style="display: none;">
                     <div class="form-group">
-                        <label for="stewardEmail">Steward E-Mail (Optional)</label>
+                        <label for="stewardEmail">Steward Email (Optional)</label>
                         <input 
                             type="email" 
                             id="stewardEmail" 
                             name="steward_email" 
-                            placeholder="steward@beispiel.de"
+                            placeholder="steward@example.com"
                         >
-                        <div class="hint">E-Mail des verantwortlichen Stewards für dieses Gerät</div>
+                        <div class="hint">Email of the responsible steward for this device</div>
                     </div>
 
                     <div class="form-group">
-                        <label for="stellarAddress">Stellar Wallet-Adresse (Optional)</label>
+                        <label for="stellarAddress">Stellar Wallet Address (Optional)</label>
                         <input 
                             type="text" 
                             id="stellarAddress" 
@@ -356,11 +356,11 @@
                             placeholder="GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
                             pattern="G[A-Z0-9]{55}"
                         >
-                        <div class="hint">Deine öffentliche Stellar-Adresse für UBEC-Belohnungen (56 Zeichen, beginnt mit G)</div>
+                        <div class="hint">Your Stellar public address for UBEC rewards (56 characters starting with G)</div>
                     </div>
 
                     <button type="submit" class="submit-btn" id="submitBtn" disabled>
-                        Ausgewählte Sensoren registrieren
+                        Register Selected Sensors
                     </button>
                 </div>
             </form>
@@ -371,7 +371,7 @@
         const OPENSENSEMAP_API = 'https://api.opensensemap.org';
         let fetchedBoxData = null;
 
-        // Sensor-Icon-Zuordnung
+        // Sensor icon mapping
         const sensorIcons = {
             'temperature': '🌡️',
             'humidity': '💧',
@@ -388,87 +388,87 @@
         function getSensorIcon(title, unit) {
             const lowerTitle = title.toLowerCase();
             if (lowerTitle.includes('temp')) return sensorIcons.temperature;
-            if (lowerTitle.includes('feuchte') || lowerTitle.includes('humid')) return sensorIcons.humidity;
-            if (lowerTitle.includes('druck') || lowerTitle.includes('pressure')) return sensorIcons.pressure;
-            if (lowerTitle.includes('licht') || lowerTitle.includes('light') || lowerTitle.includes('lux') || lowerTitle.includes('illumin')) return sensorIcons.illuminance;
+            if (lowerTitle.includes('humid')) return sensorIcons.humidity;
+            if (lowerTitle.includes('pressure') || lowerTitle.includes('druck')) return sensorIcons.pressure;
+            if (lowerTitle.includes('light') || lowerTitle.includes('lux') || lowerTitle.includes('illumin')) return sensorIcons.illuminance;
             if (lowerTitle.includes('uv')) return sensorIcons.uv;
             if (lowerTitle.includes('pm10') || lowerTitle.includes('particulate')) return sensorIcons.pm10;
             if (lowerTitle.includes('pm2.5') || lowerTitle.includes('pm25')) return sensorIcons.pm25;
-            if (lowerTitle.includes('boden') && lowerTitle.includes('feuchte')) return sensorIcons.soil_moisture;
-            if (lowerTitle.includes('boden') && lowerTitle.includes('temp')) return sensorIcons.soil_temperature;
+            if (lowerTitle.includes('soil') && lowerTitle.includes('moist')) return sensorIcons.soil_moisture;
+            if (lowerTitle.includes('soil') && lowerTitle.includes('temp')) return sensorIcons.soil_temperature;
             return sensorIcons.default;
         }
 
-        // Gerätedaten von OpenSenseMap abrufen
+        // Fetch device data from OpenSenseMap
         document.getElementById('fetchBtn').addEventListener('click', async function() {
             const boxId = document.getElementById('boxId').value.trim();
             
             if (!boxId || boxId.length !== 24) {
-                showError('Bitte gib eine gültige 24-stellige Box-ID ein');
+                showError('Please enter a valid 24-character Box ID');
                 return;
             }
 
-            // Ladezustand anzeigen
+            // Show loading state
             this.disabled = true;
-            this.innerHTML = '⏳ Wird geladen... <span class="loading-spinner"></span>';
+            this.innerHTML = '⏳ Fetching... <span class="loading-spinner"></span>';
             hideError();
 
             try {
                 const response = await fetch(`${OPENSENSEMAP_API}/boxes/${boxId}`);
                 
                 if (!response.ok) {
-                    throw new Error(`Box nicht gefunden (HTTP ${response.status})`);
+                    throw new Error(`Box not found (HTTP ${response.status})`);
                 }
 
                 const boxData = await response.json();
                 fetchedBoxData = boxData;
 
-                // Geräteinformationen anzeigen
+                // Display device information
                 displayDeviceInfo(boxData);
 
-                // Sensoren anzeigen
+                // Display sensors
                 displaySensors(boxData.sensors);
 
-                // Zusätzliche Konfiguration anzeigen
+                // Show additional configuration
                 document.getElementById('additionalConfig').style.display = 'block';
 
-                // Submit-Button aktivieren, wenn Sensoren ausgewählt sind
+                // Enable submit button after at least one sensor is selected
                 enableSubmitWhenSensorsSelected();
 
             } catch (error) {
-                showError(`Fehler beim Laden des Geräts: ${error.message}`);
-                console.error('Ladefehler:', error);
+                showError(`Failed to fetch device: ${error.message}`);
+                console.error('Fetch error:', error);
             } finally {
                 this.disabled = false;
-                this.innerHTML = '🔍 Gerät laden';
+                this.innerHTML = '🔍 Fetch Device';
             }
         });
 
         function displayDeviceInfo(boxData) {
             const infoDiv = document.getElementById('deviceInfo');
             
-            document.getElementById('deviceName').textContent = boxData.name || 'Unbekannt';
+            document.getElementById('deviceName').textContent = boxData.name || 'Unknown';
             
-            // Standort
+            // Location
             const loc = boxData.currentLocation;
             if (loc && loc.coordinates) {
                 const [lon, lat, height] = loc.coordinates;
                 document.getElementById('deviceLocation').textContent = 
-                    `${lat.toFixed(4)}°N, ${lon.toFixed(4)}°O`;
+                    `${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E`;
                 document.getElementById('deviceCoords').textContent = 
-                    `Breite: ${lat.toFixed(6)}, Länge: ${lon.toFixed(6)}${height ? `, Höhe: ${height}m` : ''}`;
+                    `Lat: ${lat.toFixed(6)}, Lon: ${lon.toFixed(6)}${height ? `, Height: ${height}m` : ''}`;
             } else {
-                document.getElementById('deviceLocation').textContent = 'Nicht angegeben';
-                document.getElementById('deviceCoords').textContent = 'Nicht angegeben';
+                document.getElementById('deviceLocation').textContent = 'Not specified';
+                document.getElementById('deviceCoords').textContent = 'Not specified';
             }
             
-            // Erstellungsdatum
+            // Created date
             if (boxData.createdAt) {
                 const date = new Date(boxData.createdAt);
-                document.getElementById('deviceCreated').textContent = date.toLocaleDateString('de-DE');
+                document.getElementById('deviceCreated').textContent = date.toLocaleDateString();
             }
             
-            // Sensoranzahl
+            // Sensor count
             document.getElementById('deviceSensorCount').textContent = 
                 boxData.sensors ? boxData.sensors.length : 0;
             
@@ -482,7 +482,7 @@
             sensorGrid.innerHTML = '';
             
             if (!sensors || sensors.length === 0) {
-                sensorGrid.innerHTML = '<p class="hint">Keine Sensoren für dieses Gerät gefunden.</p>';
+                sensorGrid.innerHTML = '<p class="hint">No sensors found for this device.</p>';
                 return;
             }
 
@@ -507,8 +507,8 @@
                     <div class="sensor-info">
                         <span class="sensor-title">${icon} ${sensor.title}</span>
                         <div class="sensor-meta">
-                            ${sensor.unit ? `Einheit: ${sensor.unit}` : ''}
-                            ${sensor.sensorType ? `<br>Typ: ${sensor.sensorType}` : ''}
+                            ${sensor.unit ? `Unit: ${sensor.unit}` : ''}
+                            ${sensor.sensorType ? `<br>Type: ${sensor.sensorType}` : ''}
                             <br><span class="sensor-id">${sensor._id}</span>
                         </div>
                     </div>
@@ -519,7 +519,7 @@
 
             sensorsSection.style.display = 'block';
 
-            // Event-Listener für visuelles Feedback hinzufügen
+            // Add event listeners for visual feedback
             document.querySelectorAll('.sensor-checkbox input[type="checkbox"]').forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
                     this.closest('.sensor-checkbox').classList.toggle('selected', this.checked);
@@ -538,9 +538,9 @@
             submitBtn.disabled = checkedSensors.length === 0;
             
             if (checkedSensors.length > 0) {
-                submitBtn.textContent = `${checkedSensors.length} ausgewählte${checkedSensors.length > 1 ? '' : 'n'} Sensor${checkedSensors.length > 1 ? 'en' : ''} registrieren`;
+                submitBtn.textContent = `Register ${checkedSensors.length} Selected Sensor${checkedSensors.length > 1 ? 's' : ''}`;
             } else {
-                submitBtn.textContent = 'Mindestens einen Sensor auswählen';
+                submitBtn.textContent = 'Select at least one sensor';
             }
         }
 
@@ -554,12 +554,12 @@
             document.getElementById('errorBox').style.display = 'none';
         }
 
-        // Formular-Übermittlung
+        // Form submission
         document.getElementById('deviceForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             if (!fetchedBoxData) {
-                showError('Bitte lade zuerst die Gerätedaten');
+                showError('Please fetch device data first');
                 return;
             }
 
@@ -569,11 +569,11 @@
             ).map(checkbox => JSON.parse(checkbox.dataset.sensorInfo));
 
             if (selectedSensors.length === 0) {
-                showError('Bitte wähle mindestens einen Sensor aus');
+                showError('Please select at least one sensor');
                 return;
             }
 
-            // Registrierungsdaten zusammenstellen
+            // Build registration data
             const loc = fetchedBoxData.currentLocation;
             const [lon, lat, height] = loc ? loc.coordinates : [0, 0, 0];
 
@@ -608,7 +608,7 @@
                 }
             };
 
-            // Optionale Felder hinzufügen
+            // Add optional fields
             const stewardEmail = formData.get('steward_email');
             if (stewardEmail) {
                 registrationData.essence.steward_email = stewardEmail;
@@ -629,18 +629,18 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    alert(`✅ Erfolg! Gerät "${fetchedBoxData.name}" mit ${selectedSensors.length} Sensor${selectedSensors.length > 1 ? 'en' : ''} registriert.`);
+                    alert(`✅ Success! Device "${fetchedBoxData.name}" registered with ${selectedSensors.length} sensor${selectedSensors.length > 1 ? 's' : ''}.`);
                     this.reset();
                     document.getElementById('deviceInfo').classList.remove('active');
                     document.getElementById('sensorsSection').style.display = 'none';
                     document.getElementById('additionalConfig').style.display = 'none';
                     fetchedBoxData = null;
                 } else {
-                    throw new Error(result.detail || 'Registrierung fehlgeschlagen');
+                    throw new Error(result.detail || 'Registration failed');
                 }
             } catch (error) {
-                showError(`Registrierung fehlgeschlagen: ${error.message}`);
-                console.error('Registrierungsfehler:', error);
+                showError(`Registration failed: ${error.message}`);
+                console.error('Registration error:', error);
             }
         });
     </script>
