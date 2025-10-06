@@ -7,6 +7,9 @@
     
     <meta name="attribution" content="This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations. This project was made possible with the assistance of Claude and Anthropic PBC.">
     
+    <!-- Stellar Wallet Creator Styles -->
+    <link rel="stylesheet" href="styles/stellar-wallet-creator.css">
+    
     <style>
         :root {
             --primary: #2c5f2d;
@@ -200,6 +203,34 @@
             background: var(--secondary);
         }
 
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+        }
+
+        .wallet-creation-link {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(151, 188, 98, 0.05);
+            border: 1px dashed var(--secondary);
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .wallet-creation-link p {
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        .wallet-creation-link .btn {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
         .footer {
             text-align: center;
             padding: 2rem 1rem;
@@ -250,7 +281,7 @@
 
     <div class="header">
         <div class="header-content">
-            <h1>🌍 Steward-Registrierung - Living Science Initiative</h1>
+            <h1>🌱 Steward-Registrierung - Living Science Initiative</h1>
             <p>Ubuntu Bioregional Economic Commons DAO</p>
         </div>
     </div>
@@ -296,9 +327,22 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="stellarWallet">Stellar Wallet-Adresse (Optional)</label>
+                    <label for="stellarWallet">Stellar Wallet-Adresse</label>
                     <input type="text" id="stellarWallet" name="stellar_address" placeholder="G..." pattern="^G[A-Z2-7]{55}$">
-                    <small>Deine UBECrc-Token werden hierher gesendet. Du kannst dies später hinzufügen.</small>
+                    <small>Deine UBECrc-Token werden hierher gesendet.</small>
+                    
+                    <!-- NEU: Wallet-Erstellungsoption -->
+                    <div class="wallet-creation-link">
+                        <p>🪴 <strong>Noch kein Stellar Wallet?</strong></p>
+                        <p style="font-size: 0.9rem; margin-bottom: 0.75rem;">Wir können automatisch eines für dich erstellen mit 5 XLM und bereits eingerichtetem UBECrc Trustline!</p>
+                        <button 
+                            type="button" 
+                            class="btn btn-secondary" 
+                            onclick="showWalletCreator()"
+                        >
+                            ✨ Wallet für mich erstellen
+                        </button>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -348,6 +392,9 @@
         </div>
     </div>
 
+    <!-- NEU: Wallet Creator Container (standardmäßig versteckt) -->
+    <div id="wallet-creator-container" style="display: none;"></div>
+
     <div class="footer">
         <p><strong>Attribution:</strong> This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations. This project was made possible with the assistance of Claude and Anthropic PBC.</p>
         <p style="margin-top: 1rem;">
@@ -356,15 +403,90 @@
         </p>
     </div>
 
+    <!-- Stellar Wallet Creator Component -->
+    <script src="scripts/components/stellar-wallet-creator.component.js"></script>
+
     <script>
-        // Toggle sensor checkbox visual state
+        // Einfacher API-Service für Wallet Creator
+        const apiService = {
+            async post(endpoint, data) {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Anfrage fehlgeschlagen');
+                }
+                return response.json();
+            },
+            async get(endpoint) {
+                const response = await fetch(endpoint);
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Anfrage fehlgeschlagen');
+                }
+                return response.json();
+            }
+        };
+
+        // Einfacher Debug-Service
+        const debugService = {
+            log: (message, data) => console.log(message, data),
+            error: (message, error) => console.error(message, error)
+        };
+
+        // Wallet Creator initialisieren
+        let walletCreator;
+        try {
+            walletCreator = new StellarWalletCreator(
+                'wallet-creator-container',
+                apiService,
+                debugService
+            );
+            walletCreator.init();
+        } catch (error) {
+            console.error('Wallet Creator nicht verfügbar:', error);
+        }
+
+        // Funktion zum Anzeigen des Wallet Creators
+        function showWalletCreator() {
+            if (!walletCreator) {
+                alert('Der Wallet-Erstellungsdienst ist momentan nicht verfügbar. Bitte gib deine Stellar-Adresse manuell ein oder versuche es später erneut.');
+                return;
+            }
+            
+            const container = document.getElementById('wallet-creator-container');
+            container.style.display = 'block';
+            container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Steward-Info für Wallet-Erstellung setzen
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            
+            if (name && email) {
+                walletCreator.setStewardInfo(name, email);
+            }
+        }
+
+        // Auf Wallet-Erstellt-Event hören
+        document.addEventListener('walletCreated', function(event) {
+            const { publicKey } = event.detail;
+            // Stellar Wallet-Feld automatisch ausfüllen
+            document.getElementById('stellarWallet').value = publicKey;
+            // Zurück zum Formular scrollen
+            document.getElementById('stellarWallet').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Sensor-Checkbox visuellen Zustand umschalten
         document.querySelectorAll('.sensor-checkbox input[type="checkbox"]').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 this.closest('.sensor-checkbox').classList.toggle('selected', this.checked);
             });
         });
 
-        // Form submission
+        // Formular-Übermittlung
         document.getElementById('stewardForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -402,7 +524,7 @@
                 if (response.ok) {
                     alert(`✅ Erfolg! Steward ${formData.get('name')} registriert. Du erhältst eine Bestätigungs-E-Mail.`);
                     this.reset();
-                    // Reset visual state of checkboxes
+                    // Visuellen Zustand der Checkboxen zurücksetzen
                     document.querySelectorAll('.sensor-checkbox').forEach(cb => {
                         const input = cb.querySelector('input[type="checkbox"]');
                         cb.classList.toggle('selected', input.checked);

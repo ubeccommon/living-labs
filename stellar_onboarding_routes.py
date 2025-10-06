@@ -16,13 +16,12 @@ Claude and Anthropic PBC.
 
 import logging
 from typing import Dict, Optional
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel, EmailStr, Field
-from stellar_onboarding_service import StellarOnboardingService
 
 logger = logging.getLogger(__name__)
 
-# Create router
+# Create router with prefix
 router = APIRouter(prefix="/api/v2/stellar", tags=["stellar-onboarding"])
 
 
@@ -80,22 +79,25 @@ class FundingStatusResponse(BaseModel):
     error: Optional[str] = None
 
 
-# Dependency: Get onboarding service from registry
-async def get_onboarding_service() -> StellarOnboardingService:
+# Dependency: Get onboarding service from app state
+async def get_onboarding_service(request: Request):
     """
-    Retrieve onboarding service from service registry
+    Retrieve onboarding service from app state
     Following Principle #3: Service registry for dependencies
     """
-    from service_registry import ServiceRegistry
-    
-    registry = ServiceRegistry()
-    service = registry.get('stellar_onboarding')
-    
-    if not service:
-        logger.error("Stellar onboarding service not registered")
+    if not hasattr(request.app.state, 'stellar_onboarding'):
+        logger.error("Stellar onboarding service not initialized in app.state")
         raise HTTPException(
             status_code=503,
-            detail="Stellar onboarding service unavailable"
+            detail="Stellar onboarding service unavailable. Please check server configuration."
+        )
+    
+    service = request.app.state.stellar_onboarding
+    if service is None:
+        logger.error("Stellar onboarding service is None")
+        raise HTTPException(
+            status_code=503,
+            detail="Stellar onboarding service not configured. Please contact administrator."
         )
     
     return service
@@ -106,7 +108,7 @@ async def get_onboarding_service() -> StellarOnboardingService:
 @router.post("/create-wallet", response_model=WalletCreationResponse)
 async def create_wallet(
     request: WalletCreationRequest,
-    service: StellarOnboardingService = Depends(get_onboarding_service)
+    service = Depends(get_onboarding_service)
 ):
     """
     Create a new Stellar wallet for a steward
@@ -118,104 +120,165 @@ async def create_wallet(
     """
     logger.info(f"Creating wallet for {request.steward_name} ({request.steward_email})")
     
-    result = await service.create_and_fund_account(
-        steward_email=request.steward_email,
-        steward_name=request.steward_name
-    )
-    
-    if not result or not result.get('success'):
+    try:
+        result = await service.create_and_fund_account(
+            steward_email=request.steward_email,
+            steward_name=request.steward_name
+        )
+        
+        if not result or not result.get('success'):
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to create and fund wallet. Please try again or contact support."
+            )
+        
+        # Add warning if trustline creation failed
+        warning = None
+        if not result.get('trustline_created'):
+            warning = "Account funded but UBECrc trustline failed. You can add it later."
+            logger.warning(f"Trustline creation failed for {request.steward_email}")
+        
+        logger.info(f"✓ Wallet created successfully for {request.steward_email}")
+        logger.info(f"  Public key: {result['public_key']}")
+        logger.info(f"  XLM balance: {result['xlm_balance']}")
+        logger.info(f"  Trustline: {result['trustline_created']}")
+        
+        return WalletCreationResponse(
+            success=True,
+            public_key=result['public_key'],
+            secret_key=result['secret_key'],
+            xlm_balance=result['xlm_balance'],
+            trustline_created=result['trustline_created'],
+            network=result.get('network', 'public'),
+            warning=warning
+        )
+        
+    except Exception as e:
+        logger.error(f"Error creating wallet: {e}", exc_info=True)
         raise HTTPException(
             status_code=500,
-            detail="Failed to create and fund wallet. Please try again or contact support."
+            detail=f"Wallet creation failed: {str(e)}"
         )
-    
-    # Add warning if trustline creation failed
-    warning = None
-    if not result.get('trustline_created'):
-        warning = "Account funded but UBECrc trustline failed. You can add it later."
-    
-    return WalletCreationResponse(
-        success=True,
-        public_key=result['public_key'],
-        secret_key=result['secret_key'],
-        xlm_balance=float(result['xlm_balance']),
-        trustline_created=result['trustline_created'],
-        network=result['network'],
-        warning=warning
-    )
+
+
+@router.post("/onboarding/create", response_model=WalletCreationResponse)
+async def create_wallet_alt(
+    request: WalletCreationRequest,
+    service = Depends(get_onboarding_service)
+):
+    """
+    Alternative endpoint path for wallet creation (for compatibility)
+    Redirects to main create-wallet endpoint
+    """
+    return await create_wallet(request, service)
 
 
 @router.post("/add-trustline")
 async def add_trustline(
     request: TrustlineRequest,
-    service: StellarOnboardingService = Depends(get_onboarding_service)
+    service = Depends(get_onboarding_service)
 ):
     """
-    Add UBECrc trustline to an existing Stellar account
+    Add UBECrc trustline to existing Stellar wallet
     
-    Use this if a steward already has a wallet but needs the UBECrc trustline.
+    Use this if:
+    - You already have a Stellar account
+    - Trustline creation failed during wallet creation
+    - You want to receive UBECrc tokens
     """
-    logger.info(f"Adding trustline for {request.public_key[:8]}...")
+    logger.info(f"Adding trustline for account: {request.public_key[:8]}...")
     
-    success = await service.add_trustline_to_existing_account(
-        public_key=request.public_key,
-        secret_key=request.secret_key
-    )
-    
-    if not success:
+    try:
+        success = await service.add_trustline_to_existing_account(
+            public_key=request.public_key,
+            secret_key=request.secret_key
+        )
+        
+        if success:
+            logger.info(f"✓ Trustline added successfully for {request.public_key[:8]}...")
+            return {
+                "success": True,
+                "message": "UBECrc trustline added successfully",
+                "public_key": request.public_key
+            }
+        else:
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to add trustline. Account may not exist or may already have the trustline."
+            )
+            
+    except Exception as e:
+        logger.error(f"Error adding trustline: {e}", exc_info=True)
         raise HTTPException(
             status_code=500,
-            detail="Failed to add trustline. Verify account exists and credentials are correct."
+            detail=f"Trustline creation failed: {str(e)}"
         )
-    
-    return {
-        "success": True,
-        "public_key": request.public_key,
-        "trustline_created": True,
-        "message": "UBECrc trustline added successfully"
-    }
 
 
 @router.get("/funding-status", response_model=FundingStatusResponse)
-async def get_funding_status(
-    service: StellarOnboardingService = Depends(get_onboarding_service)
-):
+async def get_funding_status(service = Depends(get_onboarding_service)):
     """
-    Check funding account balance and capacity
+    Check the funding account status
     
-    Returns how many new accounts can be created with current funding balance.
-    Useful for monitoring and alerting.
+    Returns:
+    - Current XLM balance
+    - Number of accounts that can be created
+    - Warnings if balance is low
     """
-    status = await service.check_funding_account_balance()
-    
-    return FundingStatusResponse(
-        configured=status.get('configured', False),
-        xlm_balance=status.get('xlm_balance'),
-        accounts_possible=status.get('accounts_possible'),
-        warning=status.get('warning'),
-        error=status.get('error')
-    )
+    try:
+        status = await service.check_funding_capacity()
+        
+        return FundingStatusResponse(
+            configured=True,
+            xlm_balance=status.get('xlm_balance'),
+            accounts_possible=status.get('wallets_can_create'),
+            warning=status.get('warning'),
+            error=None
+        )
+        
+    except Exception as e:
+        logger.error(f"Error checking funding status: {e}", exc_info=True)
+        return FundingStatusResponse(
+            configured=False,
+            xlm_balance=None,
+            accounts_possible=None,
+            warning=None,
+            error=str(e)
+        )
 
 
 @router.get("/check-account/{public_key}")
 async def check_account_exists(
     public_key: str,
-    service: StellarOnboardingService = Depends(get_onboarding_service)
+    service = Depends(get_onboarding_service)
 ):
     """
-    Check if a Stellar public key has an active account
+    Check if a Stellar account exists
     
-    Useful for validating user input before attempting operations.
+    Useful for:
+    - Verifying wallet creation success
+    - Checking if account is already funded
+    - Validating public keys
     """
-    if not public_key.startswith('G') or len(public_key) != 56:
+    try:
+        exists = await service.has_stellar_account(public_key)
+        
+        return {
+            "public_key": public_key,
+            "exists": exists,
+            "message": "Account found" if exists else "Account not found"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error checking account: {e}", exc_info=True)
         raise HTTPException(
-            status_code=400,
-            detail="Invalid Stellar public key format"
+            status_code=500,
+            detail=f"Failed to check account: {str(e)}"
         )
-    
-    exists = await service.has_stellar_account(public_key)
-    
-    return {
-        "public_key": public_key,
-        "exists": exists
-    }
+
+
+"""
+Attribution: This project uses the services of Claude and Anthropic PBC
+to inform our decisions and recommendations. This project was made
+possible with the assistance of Claude and Anthropic PBC.
+"""

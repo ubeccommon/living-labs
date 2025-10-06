@@ -5,6 +5,8 @@
  * Follows Design Principle #12 (Method Singularity)
  * 
  * Attribution: This project uses the services of Claude and Anthropic PBC.
+ * 
+ * Version: 1.0.1 (Fixed API endpoint path)
  */
 
 class StellarWalletCreator {
@@ -14,6 +16,7 @@ class StellarWalletCreator {
         this.debugService = debugService;
         this.currentStep = 'initial';
         this.walletData = null;
+        this.errorMessage = null;
     }
     
     /**
@@ -31,76 +34,85 @@ class StellarWalletCreator {
     }
     
     /**
+     * Set steward info for wallet creation
+     */
+    setStewardInfo(name, email) {
+        this.stewardName = name;
+        this.stewardEmail = email;
+    }
+    
+    /**
      * Render the wallet creation interface
      */
     render() {
         const container = document.getElementById(this.containerId);
         
-        const html = `
+        let content = '';
+        switch(this.currentStep) {
+            case 'initial':
+                content = this.renderInitial();
+                break;
+            case 'creating':
+                content = this.renderCreating();
+                break;
+            case 'success':
+                content = this.renderSuccess();
+                break;
+            case 'error':
+                content = this.renderError();
+                break;
+        }
+        
+        container.innerHTML = `
             <div class="wallet-creator">
                 <div class="wallet-creator-header">
                     <h3>🔐 Stellar Wallet Setup</h3>
                     <p>Don't have a Stellar wallet? We'll create one for you!</p>
                 </div>
-                
-                <div id="wallet-creator-content">
-                    ${this.renderContent()}
+                <div class="wallet-creator-body">
+                    ${content}
                 </div>
             </div>
         `;
-        
-        container.innerHTML = html;
     }
     
     /**
-     * Render content based on current step
+     * Render initial screen
      */
-    renderContent() {
-        switch (this.currentStep) {
-            case 'initial':
-                return this.renderInitialChoice();
-            case 'creating':
-                return this.renderCreating();
-            case 'success':
-                return this.renderSuccess();
-            case 'error':
-                return this.renderError();
-            default:
-                return this.renderInitialChoice();
-        }
-    }
-    
-    /**
-     * Render initial choice screen
-     */
-    renderInitialChoice() {
+    renderInitial() {
         return `
-            <div class="wallet-choice">
-                <div class="choice-card">
-                    <div class="choice-icon">✨</div>
-                    <h4>I don't have a Stellar wallet</h4>
-                    <p>We'll create a new wallet for you, fund it with 5 XLM, and add the UBECrc token.</p>
+            <div class="wallet-initial">
+                <h4>What is a Stellar Wallet?</h4>
+                <p>A Stellar wallet lets you receive UBECrc tokens for your environmental stewardship contributions.</p>
+                
+                <div class="wallet-features">
+                    <div class="feature">
+                        <span class="feature-icon">💰</span>
+                        <span class="feature-text">We'll fund it with 5 XLM</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🎫</span>
+                        <span class="feature-text">UBECrc trustline already set up</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🔐</span>
+                        <span class="feature-text">Secure keypair generation</span>
+                    </div>
+                </div>
+                
+                <div class="wallet-actions">
                     <button id="btn-create-wallet" class="btn btn-primary">
-                        Create Wallet for Me
+                        ✨ Create My Wallet
                     </button>
-                </div>
-                
-                <div class="choice-divider">OR</div>
-                
-                <div class="choice-card">
-                    <div class="choice-icon">👛</div>
-                    <h4>I already have a Stellar wallet</h4>
-                    <p>Enter your public key in the registration form above.</p>
                     <button id="btn-have-wallet" class="btn btn-secondary">
-                        I'll Enter My Own
+                        I Already Have a Wallet
                     </button>
                 </div>
-            </div>
-            
-            <div class="info-box" style="margin-top: 2rem;">
-                <strong>What is a Stellar wallet?</strong>
-                <p>A Stellar wallet is your gateway to receiving UBECrc tokens as rewards for your environmental observations. 
-                It consists of a public key (like an email address) and a secret key (like a password).</p>
+                
+                <div class="wallet-info">
+                    <p class="text-muted"><strong>What you'll receive:</strong></p>
+                    <p class="text-muted">A public key (like an email address) and a secret key (like a password) that you'll need to save securely.</p>
+                </div>
             </div>
         `;
     }
@@ -161,40 +173,30 @@ class StellarWalletCreator {
                     </div>
                     <div class="info-row">
                         <span>🎫 UBECrc Trustline:</span>
-                        <strong>${this.walletData.trustline_created ? '✓ Active' : '⚠️ Not created'}</strong>
+                        <strong>${this.walletData.trustline_created ? '✓ Active' : '⏳ Pending'}</strong>
                     </div>
                     <div class="info-row">
                         <span>🌐 Network:</span>
-                        <strong>${this.walletData.network === 'testnet' ? 'Testnet' : 'Mainnet'}</strong>
+                        <strong>${this.walletData.network}</strong>
                     </div>
                 </div>
                 
-                ${this.walletData.warning ? `
-                    <div class="warning-box">⚠️ ${this.walletData.warning}</div>
-                ` : ''}
-                
-                <div class="security-notice">
-                    <h5>🔒 Critical Security Instructions</h5>
-                    <ul>
-                        <li><strong>Save your secret key NOW</strong> - Write it down or save it in a password manager</li>
-                        <li><strong>NEVER share your secret key</strong> with anyone - Not even support staff</li>
-                        <li><strong>This is your only chance</strong> to see your secret key - We cannot recover it</li>
-                        <li><strong>Public key is safe to share</strong> - Use it to receive tokens</li>
-                    </ul>
+                <div class="security-warning">
+                    <strong>⚠️ CRITICAL: Save Your Keys Now!</strong>
+                    <p>This is the ONLY time you'll see your secret key. Save it securely or you'll lose access to your funds forever.</p>
                 </div>
                 
-                <div class="action-buttons">
-                    <button id="btn-downloaded" class="btn btn-primary" disabled>
-                        ✓ I've Saved My Secret Key
-                    </button>
-                    <button id="btn-download-keys" class="btn btn-secondary">
+                <div class="wallet-actions">
+                    <button id="btn-download-keys" class="btn btn-primary">
                         📥 Download Credentials
                     </button>
+                    <button id="btn-downloaded" class="btn btn-success" disabled>
+                        ✓ I've Saved My Keys, Continue
+                    </button>
                 </div>
                 
-                <div class="next-steps">
-                    <p>Your public key has been automatically filled in the registration form above. 
-                    Once you've saved your secret key, complete the registration form to become a steward!</p>
+                <div class="wallet-next-steps">
+                    <p class="text-muted">Once you've saved your secret key, complete the registration form to become a steward!</p>
                 </div>
             </div>
         `;
@@ -250,6 +252,7 @@ class StellarWalletCreator {
     
     /**
      * Create new wallet via API
+     * FIXED: Now uses correct endpoint /api/v2/stellar/onboarding/create
      */
     async createWallet() {
         // Get steward info from main form
@@ -268,39 +271,45 @@ class StellarWalletCreator {
             return;
         }
         
-        // Show creating screen
+        // Set creating state
         this.currentStep = 'creating';
         this.render();
         
         try {
-            const response = await fetch('/api/v2/stellar/create-wallet', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    steward_name: name,
-                    steward_email: email
-                })
+            // FIXED: Correct endpoint path
+            const response = await this.apiService.post('/api/v2/stellar/onboarding/create', {
+                steward_email: email,
+                steward_name: name
             });
             
-            const data = await response.json();
+            // Store wallet data
+            this.walletData = response;
             
-            if (response.ok && data.success) {
-                this.walletData = data;
-                this.currentStep = 'success';
-                this.debugService.log('✅ Wallet created successfully', 'success');
-            } else {
-                throw new Error(data.detail || 'Wallet creation failed');
-            }
+            // Emit custom event that wallet was created
+            const event = new CustomEvent('walletCreated', { 
+                detail: { 
+                    publicKey: response.public_key,
+                    secretKey: response.secret_key
+                } 
+            });
+            document.dispatchEvent(event);
+            
+            // Show success
+            this.currentStep = 'success';
+            this.render();
+            this.attachEventListeners();
+            
+            this.debugService.log('✓ Wallet created successfully', 'success');
+            
         } catch (error) {
-            this.errorMessage = error.message;
+            console.error('Wallet creation failed:', error);
+            this.errorMessage = error.message || 'Failed to create wallet. Please try again.';
             this.currentStep = 'error';
-            this.debugService.log(`❌ Wallet creation error: ${error.message}`, 'error');
+            this.render();
+            this.attachEventListeners();
+            
+            this.debugService.log('✗ Wallet creation failed: ' + error.message, 'error');
         }
-        
-        this.render();
-        this.attachEventListeners();
     }
     
     /**
@@ -308,15 +317,17 @@ class StellarWalletCreator {
      */
     copyToClipboard(elementId) {
         const element = document.getElementById(elementId);
-        const text = element.textContent;
+        if (!element) return;
         
+        const text = element.textContent;
         navigator.clipboard.writeText(text).then(() => {
+            this.debugService.log('📋 Copied to clipboard', 'success');
+            
             // Visual feedback
-            const btn = event.target;
-            const originalText = btn.textContent;
-            btn.textContent = '✓';
+            const originalText = element.parentElement.querySelector('.btn-copy').textContent;
+            element.parentElement.querySelector('.btn-copy').textContent = '✓';
             setTimeout(() => {
-                btn.textContent = originalText;
+                element.parentElement.querySelector('.btn-copy').textContent = originalText;
             }, 2000);
         }).catch(err => {
             console.error('Failed to copy:', err);
@@ -328,9 +339,11 @@ class StellarWalletCreator {
      */
     toggleSecretVisibility() {
         const secretElement = document.getElementById('wallet-secret');
+        if (!secretElement) return;
+        
         secretElement.classList.toggle('secret-blur');
         
-        const btn = event.target;
+        const btn = secretElement.parentElement.querySelector('.btn-toggle');
         btn.textContent = secretElement.classList.contains('secret-blur') ? '👁️' : '🙈';
     }
     

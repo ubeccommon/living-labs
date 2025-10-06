@@ -13,7 +13,7 @@ Design Principles Applied:
 
 Attribution: This project uses the services of Claude and Anthropic PBC.
 
-Version: 3.0.6 (Fixed Multilingual Routing - Exact Files Only)
+Version: 3.0.7 (Added Static Mounts for Scripts/Styles)
 """
 
 import os
@@ -68,8 +68,8 @@ async def lifespan(app: FastAPI):
     logger.info("║" + "    Freie Waldorfschule Frankfurt (Oder)".center(58) + "║")
     logger.info("║" + "    Living Science Initiative".center(58) + "║")
     logger.info("║" + " "*58 + "║")
-    logger.info("║" + "    Single Entry Point Architecture v3.0.6".center(58) + "║")
-    logger.info("║" + "    🌍 EN + 🇩🇪 DE + 🇵🇱 PL Support".center(58) + "║")
+    logger.info("║" + "    Single Entry Point Architecture v3.0.7".center(58) + "║")
+    logger.info("║" + "    🌐 EN + 🇩🇪 DE + 🇵🇱 PL Support".center(58) + "║")
     logger.info("║" + " "*58 + "║")
     logger.info("╚" + "═"*58 + "╝")
     
@@ -135,10 +135,10 @@ async def lifespan(app: FastAPI):
                     logger.info("✓ Stellar network connected (view only mode)")
             except Exception as e:
                 logger.warning(f"Stellar initialization failed: {e}")
-                logger.info("⚠  Continuing without Stellar integration")
+                logger.info("⚠️  Continuing without Stellar integration")
                 app.state.stellar = None
         else:
-            logger.info("⚠  Stellar integration disabled (no distributor key)")
+            logger.info("⚠️  Stellar integration disabled (no distributor key)")
         
         # 3. IPFS Service
         app.state.ipfs = None
@@ -171,10 +171,10 @@ async def lifespan(app: FastAPI):
                     
             except Exception as e:
                 logger.warning(f"IPFS initialization failed: {e}")
-                logger.info("⚠  Continuing without IPFS")
+                logger.info("⚠️  Continuing without IPFS")
                 app.state.ipfs = None
         else:
-            logger.info("⚠  IPFS disabled (no configuration)")
+            logger.info("⚠️  IPFS disabled (no configuration)")
         
         # 4. Observation Service
         logger.info("Initializing observation service...")
@@ -224,10 +224,10 @@ async def lifespan(app: FastAPI):
                 
             except Exception as e:
                 logger.warning(f"Stellar onboarding initialization failed: {e}")
-                logger.info("⚠  Continuing without onboarding service")
+                logger.info("⚠️  Continuing without onboarding service")
                 app.state.stellar_onboarding = None
         else:
-            logger.info("⚠  Stellar onboarding disabled (no funding account)")
+            logger.info("⚠️  Stellar onboarding disabled (no funding account)")
         
         # 6. Pattern Recognition
         app.state.pattern_engine = None
@@ -248,7 +248,7 @@ async def lifespan(app: FastAPI):
         logger.info("  UBEC RECIPROCAL SYSTEM READY")
         logger.info("="*60)
         logger.info("")
-        logger.info(f"  🌍 English Pages:")
+        logger.info(f"  🌐 English Pages:")
         logger.info(f"    Landing Page: http://localhost:{config.API_PORT}/")
         logger.info(f"    Steward Registration: http://localhost:{config.API_PORT}/steward")
         logger.info(f"    Device Registration: http://localhost:{config.API_PORT}/sensebox")
@@ -283,6 +283,7 @@ async def lifespan(app: FastAPI):
         logger.info(f"    - Multilingual: ✓")
         logger.info(f"    - Legal Pages: ✓")
         logger.info(f"    - Favicon Support: ✓")
+        logger.info(f"    - Static Assets: ✓")
         logger.info("")
         logger.info("="*60)
         
@@ -331,7 +332,7 @@ app = FastAPI(
     - **Automated wallet creation for new users**
     
     ### Multilingual Support:
-    - 🌍 English (Primary)
+    - 🌐 English (Primary)
     - 🇩🇪 Deutsch (German)
     - 🇵🇱 Polski (Polish)
     
@@ -346,7 +347,7 @@ app = FastAPI(
     - German TMG § 5 compliant (Impressum)
     - Blockchain data protection considerations
     """,
-    version="3.0.6",
+    version="3.0.7",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json",
@@ -375,8 +376,24 @@ portal_path = Path("register_portal")
 if portal_path.exists():
     app.mount("/portal", StaticFiles(directory="register_portal"), name="portal")
     logger.info(f"✓ Registration portal mounted at /portal")
+    
+    # Mount scripts directory for JavaScript components
+    scripts_path = portal_path / "scripts"
+    if scripts_path.exists():
+        app.mount("/scripts", StaticFiles(directory=str(scripts_path)), name="scripts")
+        logger.info(f"✓ Scripts directory mounted at /scripts")
+    else:
+        logger.warning(f"⚠️  Scripts directory not found at {scripts_path}")
+    
+    # Mount styles directory for CSS files
+    styles_path = portal_path / "styles"
+    if styles_path.exists():
+        app.mount("/styles", StaticFiles(directory=str(styles_path)), name="styles")
+        logger.info(f"✓ Styles directory mounted at /styles")
+    else:
+        logger.warning(f"⚠️  Styles directory not found at {styles_path}")
 else:
-    logger.warning(f"⚠  Registration portal not found at {portal_path}")
+    logger.warning(f"⚠️  Registration portal not found at {portal_path}")
 
 # ==================================================
 # IMPORT AND MOUNT ROUTERS
@@ -394,7 +411,7 @@ try:
     app.include_router(onboarding_router)
     logger.info("✓ Stellar onboarding routes mounted")
 except ImportError as e:
-    logger.info(f"⚠  Stellar onboarding routes not available: {e}")
+    logger.info(f"⚠️  Stellar onboarding routes not available: {e}")
 
 logger.info("✓ Multilingual routes loaded")
 
@@ -557,7 +574,7 @@ async def status():
         "api": {
             "host": config.API_HOST,
             "port": config.API_PORT,
-            "version": "3.0.6"
+            "version": "3.0.7"
         },
         "database": {
             "schema": PHENOMENOLOGICAL_SCHEMA,
@@ -942,10 +959,10 @@ def main():
     ║    "From Seeds to Blockchain: Growing the Future        ║
     ║        through Reciprocal Value Exchange"               ║
     ║                                                          ║
-    ║      🌍 English + 🇩🇪 Deutsch + 🇵🇱 Polski Support        ║
+    ║      🌐 English + 🇩🇪 Deutsch + 🇵🇱 Polski Support        ║
     ║              + Automated Wallet Creation                 ║
     ║              + EU Legal Compliance                       ║
-    ║              + Exact File Routing                        ║
+    ║              + Static Asset Serving                      ║
     ║                                                          ║
     ╚══════════════════════════════════════════════════════════╝
     
@@ -957,9 +974,9 @@ def main():
     - Multilingual Support (EN/DE/PL)
     - Automated Stellar Wallet Creation
     - EU GDPR & German TMG Compliance
-    - EXACT routes for existing files only
+    - Static asset serving for JS/CSS
     
-    Version: 3.0.6 (Fixed Multilingual Routing - Exact Files Only)
+    Version: 3.0.7 (Added Static Mounts for Scripts/Styles)
     
     Starting system...
     """)
