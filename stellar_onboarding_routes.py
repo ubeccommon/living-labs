@@ -1,279 +1,423 @@
 #!/usr/bin/env python3
 """
-Stellar Onboarding API Routes
-Handles wallet creation and funding requests from registration portal
+Stellar Onboarding API Routes - WITH SECURITY
+Integrates wallet security system to prevent abuse
+
+New Features:
+- Rate limiting by IP and email
+- CAPTCHA validation
+- Suspicious pattern detection
+- Manual approval queue for high-risk requests
+- Comprehensive logging
 
 Design Principles Applied:
-- Principle #2: Service pattern - router only, no standalone execution
+- Principle #2: Service pattern with centralized execution
 - Principle #3: Service registry for dependencies
 - Principle #5: Strict async operations
 - Principle #10: Clear separation of concerns
 
-Attribution: This project uses the services of Claude and Anthropic PBC to inform our 
-decisions and recommendations. This project was made possible with the assistance of 
-Claude and Anthropic PBC.
+Attribution: This project uses the services of Claude and Anthropic PBC.
 """
 
-import logging
-from typing import Dict, Optional
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Request, Depends
 from pydantic import BaseModel, EmailStr, Field
+from typing import Optional
+import logging
 
 logger = logging.getLogger(__name__)
 
-# Create router with prefix
-router = APIRouter(prefix="/api/v2/stellar", tags=["stellar-onboarding"])
+# Create router
+router = APIRouter(prefix="/api/v2/stellar", tags=["stellar", "onboarding"])
 
 
-# Request/Response Models
-class WalletCreationRequest(BaseModel):
-    """Request to create a new Stellar wallet"""
-    steward_email: EmailStr
-    steward_name: str = Field(..., min_length=2, max_length=100)
-    
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "steward_email": "steward@school.edu",
-                "steward_name": "Maria Schmidt"
-            }
-        }
+# ==================================================
+# REQUEST MODELS
+# ==================================================
+
+class CreateWalletRequest(BaseModel):
+    """Request to create new Stellar wallet"""
+    steward_email: EmailStr = Field(..., description="Steward email address")
+    steward_name: str = Field(..., min_length=2, max_length=255, description="Steward name")
+    organization: Optional[str] = Field(None, max_length=255, description="Organization/School name")
+    captcha_token: Optional[str] = Field(None, description="CAPTCHA token from frontend")
 
 
-class WalletCreationResponse(BaseModel):
-    """Response with new wallet credentials"""
-    success: bool
-    public_key: str
-    secret_key: str  # CRITICAL: Only send over HTTPS!
-    xlm_balance: float
-    trustline_created: bool
-    network: str
-    warning: Optional[str] = None
-    
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "success": True,
-                "public_key": "GABC...XYZ",
-                "secret_key": "SABC...XYZ",
-                "xlm_balance": 5.5,
-                "trustline_created": True,
-                "network": "public",
-                "warning": None
-            }
-        }
-
-
-class TrustlineRequest(BaseModel):
-    """Request to add UBECrc trustline to existing wallet"""
+class AddTrustlineRequest(BaseModel):
+    """Request to add UBECrc trustline to existing account"""
     public_key: str = Field(..., min_length=56, max_length=56, pattern="^G[A-Z2-7]{55}$")
     secret_key: str = Field(..., min_length=56, max_length=56, pattern="^S[A-Z2-7]{55}$")
 
 
-class FundingStatusResponse(BaseModel):
-    """Response with funding account status"""
-    configured: bool
+# ==================================================
+# RESPONSE MODELS
+# ==================================================
+
+class WalletCreationResponse(BaseModel):
+    """Response from wallet creation"""
+    success: bool
+    public_key: Optional[str] = None
+    secret_key: Optional[str] = None
     xlm_balance: Optional[float] = None
-    accounts_possible: Optional[int] = None
-    warning: Optional[str] = None
+    trustline_created: Optional[bool] = None
+    network: Optional[str] = None
+    creation_transaction: Optional[str] = None  # NEW: metadata support
+    immutable_memo: Optional[str] = None  # NEW: metadata support
+    metadata_added: Optional[bool] = None  # NEW: metadata support
+    message: Optional[str] = None
     error: Optional[str] = None
+    requires_approval: Optional[bool] = False  # NEW: security
+    risk_score: Optional[int] = None  # NEW: security
 
 
-# Dependency: Get onboarding service from app state
+class SecurityStatusResponse(BaseModel):
+    """Security check status"""
+    allowed: bool
+    reason: str
+    risk_score: int
+    requires_approval: bool = False
+
+
+# ==================================================
+# DEPENDENCY INJECTION
+# ==================================================
+
 async def get_onboarding_service(request: Request):
-    """
-    Retrieve onboarding service from app state
-    Following Principle #3: Service registry for dependencies
-    """
-    if not hasattr(request.app.state, 'stellar_onboarding'):
-        logger.error("Stellar onboarding service not initialized in app.state")
+    """Get onboarding service from request state"""
+    if not hasattr(request.app.state, 'stellar_onboarding_service'):
         raise HTTPException(
             status_code=503,
-            detail="Stellar onboarding service unavailable. Please check server configuration."
+            detail="Stellar onboarding service not available"
         )
-    
-    service = request.app.state.stellar_onboarding
-    if service is None:
-        logger.error("Stellar onboarding service is None")
+    return request.app.state.stellar_onboarding_service
+
+
+async def get_security_service(request: Request):
+    """Get security service from request state"""
+    if not hasattr(request.app.state, 'wallet_security_service'):
         raise HTTPException(
             status_code=503,
-            detail="Stellar onboarding service not configured. Please contact administrator."
+            detail="Security service not available"
         )
+    return request.app.state.wallet_security_service
+
+
+async def get_client_ip(request: Request) -> str:
+    """
+    Get client IP address, handling proxies correctly
     
-    return service
+    Checks headers in order:
+    1. X-Forwarded-For (behind proxy)
+    2. X-Real-IP (nginx)
+    3. request.client.host (direct)
+    """
+    # Check if behind proxy
+    forwarded = request.headers.get('X-Forwarded-For')
+    if forwarded:
+        # X-Forwarded-For can contain multiple IPs, take the first (client)
+        return forwarded.split(',')[0].strip()
+    
+    # Check X-Real-IP (nginx)
+    real_ip = request.headers.get('X-Real-IP')
+    if real_ip:
+        return real_ip
+    
+    # Direct connection
+    return request.client.host if request.client else 'unknown'
 
 
-# API Routes
+# ==================================================
+# ROUTES
+# ==================================================
 
 @router.post("/create-wallet", response_model=WalletCreationResponse)
 async def create_wallet(
-    request: WalletCreationRequest,
-    service = Depends(get_onboarding_service)
+    wallet_request: CreateWalletRequest,
+    request: Request,
+    onboarding_service = Depends(get_onboarding_service),
+    security_service = Depends(get_security_service)
 ):
     """
-    Create a new Stellar wallet for a steward
-    - Generates keypair
-    - Funds account with 5+ XLM
-    - Adds UBECrc trustline
+    Create new Stellar wallet with funding and trustline
     
-    **IMPORTANT**: Secret key is returned ONCE. Store it securely!
+    **Security Features:**
+    - Rate limiting by IP and email
+    - CAPTCHA validation (optional but recommended)
+    - Suspicious pattern detection
+    - Manual approval for high-risk requests
+    
+    **Process:**
+    1. Security validation
+    2. Generate keypair
+    3. Fund account (5+ XLM)
+    4. Add metadata (attribution)
+    5. Add UBECrc trustline
+    6. Return credentials
+    
+    **Rate Limits:**
+    - 1 wallet per email (ever)
+    - 1 wallet per IP per hour
+    - 3 wallets per IP per day
     """
-    logger.info(f"Creating wallet for {request.steward_name} ({request.steward_email})")
-    
     try:
-        result = await service.create_and_fund_account(
-            steward_email=request.steward_email,
-            steward_name=request.steward_name
+        # Get client IP
+        client_ip = await get_client_ip(request)
+        
+        logger.info(f"Wallet creation request from {client_ip}: {wallet_request.steward_email}")
+        
+        # ==================================================
+        # SECURITY VALIDATION (NEW!)
+        # ==================================================
+        
+        security_check = await security_service.validate_wallet_request(
+            email=wallet_request.steward_email,
+            name=wallet_request.steward_name,
+            ip_address=client_ip,
+            captcha_token=wallet_request.captcha_token,
+            organization=wallet_request.organization
         )
         
-        if not result or not result.get('success'):
-            raise HTTPException(
-                status_code=500,
-                detail="Failed to create and fund wallet. Please try again or contact support."
+        # Handle high-risk requests
+        if not security_check.allowed:
+            # Record failed attempt
+            await security_service.record_failed_attempt(
+                email=wallet_request.steward_email,
+                ip_address=client_ip,
+                reason=security_check.reason,
+                risk_score=security_check.risk_score
             )
+            
+            # Return appropriate response
+            if security_check.requires_manual_approval:
+                logger.warning(
+                    f"Wallet request requires approval: {wallet_request.steward_email} "
+                    f"(risk: {security_check.risk_score})"
+                )
+                return WalletCreationResponse(
+                    success=False,
+                    message="Your request requires manual review. You'll be notified via email.",
+                    requires_approval=True,
+                    risk_score=security_check.risk_score
+                )
+            else:
+                logger.warning(
+                    f"Wallet request rejected: {wallet_request.steward_email} - "
+                    f"{security_check.reason}"
+                )
+                return WalletCreationResponse(
+                    success=False,
+                    error=security_check.reason,
+                    risk_score=security_check.risk_score
+                )
         
-        # Add warning if trustline creation failed
-        warning = None
-        if not result.get('trustline_created'):
-            warning = "Account funded but UBECrc trustline failed. You can add it later."
-            logger.warning(f"Trustline creation failed for {request.steward_email}")
+        # ==================================================
+        # CREATE WALLET (Security passed!)
+        # ==================================================
         
-        logger.info(f"✓ Wallet created successfully for {request.steward_email}")
-        logger.info(f"  Public key: {result['public_key']}")
-        logger.info(f"  XLM balance: {result['xlm_balance']}")
-        logger.info(f"  Trustline: {result['trustline_created']}")
-        
-        return WalletCreationResponse(
-            success=True,
-            public_key=result['public_key'],
-            secret_key=result['secret_key'],
-            xlm_balance=result['xlm_balance'],
-            trustline_created=result['trustline_created'],
-            network=result.get('network', 'public'),
-            warning=warning
+        logger.info(
+            f"Creating wallet for {wallet_request.steward_email} "
+            f"(risk: {security_check.risk_score})"
         )
         
+        result = await onboarding_service.create_and_fund_account(
+            steward_email=wallet_request.steward_email,
+            steward_name=wallet_request.steward_name
+        )
+        
+        if result and result.get('success'):
+            # Record successful creation
+            await security_service.record_wallet_creation(
+                email=wallet_request.steward_email,
+                ip_address=client_ip,
+                public_key=result['public_key'],
+                risk_score=security_check.risk_score
+            )
+            
+            logger.info(
+                f"✓ Wallet created successfully: {result['public_key'][:8]}... "
+                f"for {wallet_request.steward_email}"
+            )
+            
+            return WalletCreationResponse(
+                success=True,
+                public_key=result['public_key'],
+                secret_key=result['secret_key'],
+                xlm_balance=result.get('xlm_balance'),
+                trustline_created=result.get('trustline_created'),
+                network=result.get('network'),
+                creation_transaction=result.get('creation_transaction'),
+                immutable_memo=result.get('immutable_memo'),
+                metadata_added=result.get('metadata_added'),
+                message="Wallet created successfully!",
+                risk_score=security_check.risk_score
+            )
+        else:
+            # Creation failed
+            error_msg = result.get('error', 'Wallet creation failed') if result else 'Wallet creation failed'
+            
+            await security_service.record_failed_attempt(
+                email=wallet_request.steward_email,
+                ip_address=client_ip,
+                reason=f"Creation failed: {error_msg}",
+                risk_score=security_check.risk_score
+            )
+            
+            logger.error(f"Wallet creation failed: {error_msg}")
+            
+            return WalletCreationResponse(
+                success=False,
+                error=error_msg
+            )
+            
     except Exception as e:
-        logger.error(f"Error creating wallet: {e}", exc_info=True)
+        logger.error(f"Wallet creation error: {e}", exc_info=True)
         raise HTTPException(
             status_code=500,
             detail=f"Wallet creation failed: {str(e)}"
         )
 
 
-@router.post("/onboarding/create", response_model=WalletCreationResponse)
-async def create_wallet_alt(
-    request: WalletCreationRequest,
-    service = Depends(get_onboarding_service)
-):
-    """
-    Alternative endpoint path for wallet creation (for compatibility)
-    Redirects to main create-wallet endpoint
-    """
-    return await create_wallet(request, service)
-
-
 @router.post("/add-trustline")
 async def add_trustline(
-    request: TrustlineRequest,
-    service = Depends(get_onboarding_service)
+    trustline_request: AddTrustlineRequest,
+    request: Request,
+    onboarding_service = Depends(get_onboarding_service)
 ):
     """
-    Add UBECrc trustline to existing Stellar wallet
+    Add UBECrc trustline to existing Stellar account
     
-    Use this if:
-    - You already have a Stellar account
-    - Trustline creation failed during wallet creation
-    - You want to receive UBECrc tokens
+    **Note:** This doesn't require the same security checks as wallet creation
+    since the user already has an account and is just adding a trustline.
     """
-    logger.info(f"Adding trustline for account: {request.public_key[:8]}...")
-    
     try:
-        success = await service.add_trustline_to_existing_account(
-            public_key=request.public_key,
-            secret_key=request.secret_key
+        success = await onboarding_service.add_trustline_to_existing_account(
+            public_key=trustline_request.public_key,
+            secret_key=trustline_request.secret_key
         )
         
         if success:
-            logger.info(f"✓ Trustline added successfully for {request.public_key[:8]}...")
+            logger.info(f"✓ Trustline added: {trustline_request.public_key[:8]}...")
             return {
                 "success": True,
-                "message": "UBECrc trustline added successfully",
-                "public_key": request.public_key
+                "message": "UBECrc trustline added successfully"
             }
         else:
-            raise HTTPException(
-                status_code=500,
-                detail="Failed to add trustline. Account may not exist or may already have the trustline."
-            )
+            return {
+                "success": False,
+                "error": "Failed to add trustline"
+            }
             
     except Exception as e:
-        logger.error(f"Error adding trustline: {e}", exc_info=True)
+        logger.error(f"Trustline error: {e}", exc_info=True)
         raise HTTPException(
             status_code=500,
             detail=f"Trustline creation failed: {str(e)}"
         )
 
 
-@router.get("/funding-status", response_model=FundingStatusResponse)
-async def get_funding_status(service = Depends(get_onboarding_service)):
+@router.get("/funding-status")
+async def get_funding_status(
+    request: Request,
+    onboarding_service = Depends(get_onboarding_service)
+):
     """
-    Check the funding account status
+    Check funding account status
     
     Returns:
     - Current XLM balance
-    - Number of accounts that can be created
-    - Warnings if balance is low
+    - Number of wallets that can be created
+    - Warning if balance is low
     """
     try:
-        status = await service.check_funding_capacity()
-        
-        return FundingStatusResponse(
-            configured=True,
-            xlm_balance=status.get('xlm_balance'),
-            accounts_possible=status.get('wallets_can_create'),
-            warning=status.get('warning'),
-            error=None
-        )
+        status = await onboarding_service.check_funding_capacity()
+        return status
         
     except Exception as e:
-        logger.error(f"Error checking funding status: {e}", exc_info=True)
-        return FundingStatusResponse(
-            configured=False,
-            xlm_balance=None,
-            accounts_possible=None,
-            warning=None,
-            error=str(e)
+        logger.error(f"Funding status error: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to check funding status: {str(e)}"
         )
 
 
 @router.get("/check-account/{public_key}")
 async def check_account_exists(
     public_key: str,
-    service = Depends(get_onboarding_service)
+    request: Request,
+    onboarding_service = Depends(get_onboarding_service)
 ):
     """
-    Check if a Stellar account exists
+    Check if a Stellar account exists on the network
     
-    Useful for:
-    - Verifying wallet creation success
-    - Checking if account is already funded
-    - Validating public keys
+    Args:
+        public_key: Stellar public key (G...)
+    
+    Returns:
+        exists: boolean indicating if account exists
     """
     try:
-        exists = await service.has_stellar_account(public_key)
+        # Validate public key format
+        if not public_key.startswith('G') or len(public_key) != 56:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid Stellar public key format"
+            )
+        
+        exists = await onboarding_service.has_stellar_account(public_key)
         
         return {
-            "public_key": public_key,
             "exists": exists,
-            "message": "Account found" if exists else "Account not found"
+            "public_key": public_key
         }
         
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Error checking account: {e}", exc_info=True)
+        logger.error(f"Account check error: {e}", exc_info=True)
         raise HTTPException(
             status_code=500,
             detail=f"Failed to check account: {str(e)}"
+        )
+
+
+@router.get("/security-check")
+async def security_status_check(
+    request: Request,
+    email: str,
+    security_service = Depends(get_security_service)
+):
+    """
+    Check security status for an email/IP without creating wallet
+    
+    **Admin use only** - helps debug security issues
+    
+    Args:
+        email: Email to check
+    
+    Returns:
+        Security check result with risk score and reasons
+    """
+    try:
+        client_ip = await get_client_ip(request)
+        
+        security_check = await security_service.validate_wallet_request(
+            email=email,
+            name="Security Check",
+            ip_address=client_ip,
+            captcha_token=None
+        )
+        
+        return SecurityStatusResponse(
+            allowed=security_check.allowed,
+            reason=security_check.reason,
+            risk_score=security_check.risk_score,
+            requires_approval=security_check.requires_manual_approval
+        )
+        
+    except Exception as e:
+        logger.error(f"Security check error: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Security check failed: {str(e)}"
         )
 
 

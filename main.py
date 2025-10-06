@@ -13,7 +13,7 @@ Design Principles Applied:
 
 Attribution: This project uses the services of Claude and Anthropic PBC.
 
-Version: 3.0.7 (Added Static Mounts for Scripts/Styles)
+Version: 3.1.0 (Added Wallet Security System)
 """
 
 import os
@@ -68,8 +68,9 @@ async def lifespan(app: FastAPI):
     logger.info("║" + "    Freie Waldorfschule Frankfurt (Oder)".center(58) + "║")
     logger.info("║" + "    Living Science Initiative".center(58) + "║")
     logger.info("║" + " "*58 + "║")
-    logger.info("║" + "    Single Entry Point Architecture v3.0.7".center(58) + "║")
+    logger.info("║" + "    Single Entry Point Architecture v3.1.0".center(58) + "║")
     logger.info("║" + "    🌐 EN + 🇩🇪 DE + 🇵🇱 PL Support".center(58) + "║")
+    logger.info("║" + "    🛡️  Multi-Layer Security System".center(58) + "║")
     logger.info("║" + " "*58 + "║")
     logger.info("╚" + "═"*58 + "╝")
     
@@ -109,7 +110,28 @@ async def lifespan(app: FastAPI):
         logger.info(f"  Schema: {PHENOMENOLOGICAL_SCHEMA}")
         logger.info(f"  Mode: Reciprocal Economy")
         
-        # 2. Stellar Reciprocal Network
+        # 2. Wallet Security Service (NEW!)
+        app.state.wallet_security_service = None
+        if app.state.db:
+            try:
+                logger.info("Initializing wallet security service...")
+                from wallet_security_system import WalletSecurityService
+                
+                app.state.wallet_security_service = WalletSecurityService(app.state.db)
+                logger.info("✓ Wallet Security Service initialized")
+                logger.info("  🛡️  Multi-layer protection active")
+                logger.info("  📊 Rate limiting: 1/email, 3/IP/day")
+                logger.info("  🔍 Risk scoring: 0-100 algorithm")
+                logger.info("  ⏸️  Manual approval queue ready")
+                logger.info("  ✅ School whitelist configured")
+            except Exception as e:
+                logger.error(f"Failed to initialize security service: {e}")
+                logger.warning("⚠️  Continuing without security service - WALLET CREATION AT RISK")
+                app.state.wallet_security_service = None
+        else:
+            logger.warning("⚠️  Wallet security service not available (no database)")
+        
+        # 3. Stellar Reciprocal Network
         app.state.stellar = None
         if config.stellar.is_configured:
             try:
@@ -140,7 +162,7 @@ async def lifespan(app: FastAPI):
         else:
             logger.info("⚠️  Stellar integration disabled (no distributor key)")
         
-        # 3. IPFS Service
+        # 4. IPFS Service
         app.state.ipfs = None
         if has_ipfs:
             try:
@@ -176,7 +198,7 @@ async def lifespan(app: FastAPI):
         else:
             logger.info("⚠️  IPFS disabled (no configuration)")
         
-        # 4. Observation Service
+        # 5. Observation Service
         logger.info("Initializing observation service...")
         from observation_service import ObservationService
         
@@ -188,7 +210,7 @@ async def lifespan(app: FastAPI):
         )
         logger.info("✓ Observation service initialized")
         
-        # 5. Stellar Onboarding Service (Wallet Creation)
+        # 6. Stellar Onboarding Service (Wallet Creation)
         app.state.stellar_onboarding = None
         if hasattr(config, 'stellar_onboarding') and config.stellar_onboarding.is_configured:
             try:
@@ -222,6 +244,12 @@ async def lifespan(app: FastAPI):
                 logger.info(f"  Funding balance: {capacity['xlm_balance']} XLM")
                 logger.info(f"  Can create: {capacity['wallets_can_create']} wallets")
                 
+                # Security integration check
+                if app.state.wallet_security_service:
+                    logger.info("  🛡️  Protected by security system")
+                else:
+                    logger.warning("  ⚠️  NO SECURITY - Vulnerable to abuse!")
+                
             except Exception as e:
                 logger.warning(f"Stellar onboarding initialization failed: {e}")
                 logger.info("⚠️  Continuing without onboarding service")
@@ -229,7 +257,7 @@ async def lifespan(app: FastAPI):
         else:
             logger.info("⚠️  Stellar onboarding disabled (no funding account)")
         
-        # 6. Pattern Recognition
+        # 7. Pattern Recognition
         app.state.pattern_engine = None
         logger.info("✓ Pattern recognition ready")
         
@@ -242,6 +270,8 @@ async def lifespan(app: FastAPI):
         registry.register("observation_service", app.state.observation_service)
         if app.state.stellar_onboarding:
             registry.register("stellar_onboarding", app.state.stellar_onboarding)
+        if app.state.wallet_security_service:
+            registry.register("wallet_security", app.state.wallet_security_service)
         
         logger.info("")
         logger.info("="*60)
@@ -280,11 +310,22 @@ async def lifespan(app: FastAPI):
         logger.info(f"    - Stellar: {'✓' if app.state.stellar else '✗'}")
         logger.info(f"    - IPFS: {'✓' if app.state.ipfs else '✗'}")
         logger.info(f"    - Wallet Creation: {'✓' if app.state.stellar_onboarding else '✗'}")
+        logger.info(f"    - Security System: {'✓' if app.state.wallet_security_service else '✗ VULNERABLE!'}")
         logger.info(f"    - Multilingual: ✓")
         logger.info(f"    - Legal Pages: ✓")
         logger.info(f"    - Favicon Support: ✓")
         logger.info(f"    - Static Assets: ✓")
         logger.info("")
+        
+        # Security warning if not enabled
+        if not app.state.wallet_security_service:
+            logger.warning("="*60)
+            logger.warning("  ⚠️  WARNING: WALLET SECURITY NOT ACTIVE")
+            logger.warning("  System is vulnerable to bot attacks!")
+            logger.warning("  Run wallet_security_migration.sql to enable")
+            logger.warning("="*60)
+            logger.warning("")
+        
         logger.info("="*60)
         
     except Exception as e:
@@ -295,6 +336,10 @@ async def lifespan(app: FastAPI):
     
     # Graceful shutdown
     logger.info("Shutting down UBEC reciprocal system...")
+    
+    if hasattr(app.state, 'wallet_security_service') and app.state.wallet_security_service:
+        await app.state.wallet_security_service.close()
+        logger.info("✓ Wallet security service closed")
     
     if hasattr(app.state, 'db'):
         await app.state.db.close()
@@ -330,6 +375,7 @@ app = FastAPI(
     - Blockchain verification of contributions
     - UBECrc token distribution for stewardship
     - **Automated wallet creation for new users**
+    - **Multi-layer security against bot abuse**
     
     ### Multilingual Support:
     - 🌐 English (Primary)
@@ -341,13 +387,22 @@ app = FastAPI(
     - Account funding with 5+ XLM
     - UBECrc trustline creation
     - Secure credential delivery
+    - **7-layer security system**
+    - **Rate limiting and abuse prevention**
+    
+    ### Security:
+    - Rate limiting (1/email, 3/IP/day)
+    - Disposable email detection
+    - Suspicious pattern analysis
+    - Manual approval queue
+    - Complete audit trail
     
     ### Legal Compliance:
     - EU GDPR compliant
     - German TMG § 5 compliant (Impressum)
     - Blockchain data protection considerations
     """,
-    version="3.0.7",
+    version="3.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json",
@@ -574,7 +629,7 @@ async def status():
         "api": {
             "host": config.API_HOST,
             "port": config.API_PORT,
-            "version": "3.0.7"
+            "version": "3.1.0"
         },
         "database": {
             "schema": PHENOMENOLOGICAL_SCHEMA,
@@ -591,6 +646,12 @@ async def status():
             "enabled": hasattr(app.state, 'stellar_onboarding') and app.state.stellar_onboarding is not None,
             "funding_available": hasattr(app.state, 'stellar_onboarding') and 
                                 app.state.stellar_onboarding is not None
+        },
+        "security": {
+            "enabled": hasattr(app.state, 'wallet_security_service') and app.state.wallet_security_service is not None,
+            "rate_limiting": "1/email, 3/IP/day",
+            "risk_scoring": "0-100 algorithm",
+            "manual_approval": "high-risk queue"
         },
         "ipfs": {
             "configured": ipfs_configured,
@@ -629,6 +690,7 @@ async def awareness_check():
         "reciprocal_economy": "active",
         "stewardship": "engaged",
         "wallet_creation": "enabled" if hasattr(app.state, 'stellar_onboarding') and app.state.stellar_onboarding else "disabled",
+        "security_system": "active" if hasattr(app.state, 'wallet_security_service') and app.state.wallet_security_service else "VULNERABLE",
         "multilingual": "enabled",
         "languages": ["en", "de", "pl"],
         "legal_compliance": "enabled",
@@ -649,7 +711,12 @@ async def get_system_stats():
             "total_observations": 0,
             "total_devices": 0,
             "total_ubec": 0,
-            "active_patterns": 0
+            "active_patterns": 0,
+            "security_stats": {
+                "total_wallets_created": 0,
+                "total_blocked_attempts": 0,
+                "pending_approvals": 0
+            }
         }
         
         # Check if database is available
@@ -704,8 +771,36 @@ async def get_system_stats():
                 if result:
                     stats["active_patterns"] = result['count']
             except Exception:
-                # Patterns table might not exist yet
                 stats["active_patterns"] = 0
+            
+            # Security stats (if security tables exist)
+            try:
+                wallet_count_query = """
+                    SELECT COUNT(*) as count 
+                    FROM phenomenological.wallet_security_log
+                """
+                result = await conn.fetchrow(wallet_count_query)
+                if result:
+                    stats["security_stats"]["total_wallets_created"] = result['count']
+                
+                blocked_query = """
+                    SELECT COUNT(*) as count 
+                    FROM phenomenological.wallet_failed_attempts
+                """
+                result = await conn.fetchrow(blocked_query)
+                if result:
+                    stats["security_stats"]["total_blocked_attempts"] = result['count']
+                
+                pending_query = """
+                    SELECT COUNT(*) as count 
+                    FROM phenomenological.wallet_approval_queue
+                    WHERE status = 'pending'
+                """
+                result = await conn.fetchrow(pending_query)
+                if result:
+                    stats["security_stats"]["pending_approvals"] = result['count']
+            except Exception:
+                pass  # Security tables don't exist yet
         
         logger.info(f"System stats retrieved: {stats}")
         return stats
@@ -718,7 +813,12 @@ async def get_system_stats():
             "total_observations": 0,
             "total_devices": 0,
             "total_ubec": 0,
-            "active_patterns": 0
+            "active_patterns": 0,
+            "security_stats": {
+                "total_wallets_created": 0,
+                "total_blocked_attempts": 0,
+                "pending_approvals": 0
+            }
         }
 
 # ==================================================
@@ -743,7 +843,8 @@ async def diagnostics():
             "stellar": False,
             "ipfs": False,
             "observation_service": False,
-            "stellar_onboarding": False
+            "stellar_onboarding": False,
+            "wallet_security": False
         },
         "multilingual": {
             "enabled": True,
@@ -837,6 +938,7 @@ async def diagnostics():
     diagnostics_result["services"]["ipfs"] = hasattr(app.state, 'ipfs') and app.state.ipfs is not None
     diagnostics_result["services"]["observation_service"] = hasattr(app.state, 'observation_service')
     diagnostics_result["services"]["stellar_onboarding"] = hasattr(app.state, 'stellar_onboarding') and app.state.stellar_onboarding is not None
+    diagnostics_result["services"]["wallet_security"] = hasattr(app.state, 'wallet_security_service') and app.state.wallet_security_service is not None
     
     return diagnostics_result
 
@@ -961,6 +1063,7 @@ def main():
     ║                                                          ║
     ║      🌐 English + 🇩🇪 Deutsch + 🇵🇱 Polski Support        ║
     ║              + Automated Wallet Creation                 ║
+    ║              + Multi-Layer Security System               ║
     ║              + EU Legal Compliance                       ║
     ║              + Static Asset Serving                      ║
     ║                                                          ║
@@ -973,10 +1076,11 @@ def main():
     - Single Entry Point Architecture
     - Multilingual Support (EN/DE/PL)
     - Automated Stellar Wallet Creation
+    - 7-Layer Security System (NEW!)
     - EU GDPR & German TMG Compliance
     - Static asset serving for JS/CSS
     
-    Version: 3.0.7 (Added Static Mounts for Scripts/Styles)
+    Version: 3.1.0 (Added Wallet Security System)
     
     Starting system...
     """)
