@@ -8,6 +8,12 @@ Handles:
 - Account funding via Create Account operation
 - UBECrc trustline creation
 - Funding account balance monitoring
+- Wallet attribution via immutable transaction memos
+- Searchable metadata for wallet discovery
+
+Two-Layer Metadata Strategy:
+- Layer 1: Immutable transaction memo (permanent proof)
+- Layer 2: Account data entries (searchable, user-modifiable)
 
 Design Principles Applied:
 - Principle #5: Strict async operations throughout
@@ -23,6 +29,7 @@ import asyncio
 import aiohttp
 from typing import Dict, Optional
 from decimal import Decimal
+from datetime import datetime  # ADDED: For metadata timestamps
 from stellar_sdk import (
     Keypair,
     Server,
@@ -106,9 +113,14 @@ class StellarOnboardingService:
         
         Steps:
         1. Generate new keypair
-        2. Fund account with Create Account operation
-        3. Add UBECrc trustline
-        4. Log creation in database (if available)
+        2. Fund account with Create Account operation (with immutable memo)
+        3. Add searchable metadata to account (UBEC attribution)
+        4. Add UBECrc trustline
+        5. Log creation in database (if available)
+        
+        The wallet is marked with:
+        - Immutable memo in creation transaction (permanent proof)
+        - Searchable data entries on account (convenient discovery)
         
         Args:
             steward_email: Email of the steward (for logging)
@@ -125,7 +137,10 @@ class StellarOnboardingService:
                 'xlm_balance': 5.5,
                 'network': 'public',
                 'steward_email': '...',
-                'steward_name': '...'
+                'steward_name': '...',
+                'creation_transaction': 'hash...',  # NEW
+                'immutable_memo': 'UBEC:v1:20251006',  # NEW
+                'metadata_added': True  # NEW
             }
         """
         try:
@@ -138,19 +153,34 @@ class StellarOnboardingService:
             
             logger.info(f"  Generated keypair: {public_key[:8]}...")
             
-            # Step 2: Fund the account
-            funded = await self._fund_new_account(public_key)
+            # Step 2: Fund the account (with immutable memo)
+            fund_result = await self._fund_new_account(public_key)
             
-            if not funded:
+            if not fund_result['success']:
                 logger.error("Failed to fund account")
                 return {
                     'success': False,
-                    'error': 'Failed to fund account',
+                    'error': fund_result.get('error', 'Failed to fund account'),
                     'public_key': public_key,
                     'secret_key': secret_key
                 }
             
+            creation_tx_hash = fund_result['transaction_hash']
+            immutable_memo = fund_result['memo']
+            
             logger.info(f"  ✓ Account funded with {self.min_funding_amount} XLM")
+            logger.info(f"  ✓ Immutable memo: {immutable_memo}")
+            
+            # Step 2.5: Add searchable metadata (ADDED)
+            metadata_added = await self._add_wallet_metadata(
+                Keypair.from_secret(secret_key),
+                creation_tx_hash
+            )
+            
+            if metadata_added:
+                logger.info(f"  ✓ Metadata entries added")
+            else:
+                logger.warning(f"  ⚠ Metadata entries failed (not critical)")
             
             # Small delay to let the network process
             await asyncio.sleep(1)
@@ -188,22 +218,31 @@ class StellarOnboardingService:
                 'xlm_balance': self._get_xlm_balance(account_info),
                 'steward_email': steward_email,
                 'steward_name': steward_name,
-                'network': self.network
+                'network': self.network,
+                'creation_transaction': creation_tx_hash,  # ADDED
+                'immutable_memo': immutable_memo,          # ADDED
+                'metadata_added': metadata_added            # ADDED
             }
             
         except Exception as e:
             logger.error(f"Onboarding failed: {e}", exc_info=True)
             return None
     
-    async def _fund_new_account(self, destination_public: str) -> bool:
+    async def _fund_new_account(self, destination_public: str) -> dict:
         """
         Fund a new account with minimum XLM using Create Account operation
+        Embeds immutable creator tag in transaction memo
         
         Args:
             destination_public: Public key of account to fund
             
         Returns:
-            True if funding successful
+            Dict with funding result:
+            {
+                'success': bool,
+                'transaction_hash': str,
+                'memo': str
+            }
         """
         try:
             async with self._rate_limit_semaphore:
@@ -216,7 +255,7 @@ class StellarOnboardingService:
                     async with session.get(url) as response:
                         if response.status != 200:
                             logger.error("Failed to get funding account")
-                            return False
+                            return {'success': False, 'error': 'Cannot access funding account'}
                         account_data = await response.json()
                 
                 # Create source account object
@@ -224,6 +263,12 @@ class StellarOnboardingService:
                     self.funding_public,
                     int(account_data['sequence'])
                 )
+                
+                # ADDED: Generate immutable memo tag for permanent attribution
+                date_tag = datetime.utcnow().strftime("%Y%m%d")
+                memo_text = f"UBEC:v1:{date_tag}"
+                
+                logger.info(f"    Creating with memo: {memo_text}")
                 
                 # Build Create Account transaction
                 transaction = (
@@ -236,6 +281,7 @@ class StellarOnboardingService:
                         destination=destination_public,
                         starting_balance=str(self.min_funding_amount)
                     )
+                    .add_text_memo(memo_text)  # ADDED: Immutable creator tag
                     .set_timeout(30)
                     .build()
                 )
@@ -249,13 +295,112 @@ class StellarOnboardingService:
                 
                 if response.get('successful'):
                     logger.info(f"✓ Account created and funded: {destination_public[:8]}...")
-                    return True
+                    # CHANGED: Return dict with transaction details
+                    return {
+                        'success': True,
+                        'transaction_hash': response['hash'],
+                        'memo': memo_text
+                    }
                 else:
                     logger.error(f"Transaction failed: {response}")
-                    return False
+                    return {'success': False, 'error': 'Transaction failed'}
                     
         except Exception as e:
             logger.error(f"Error funding account: {e}", exc_info=True)
+            return {'success': False, 'error': str(e)}
+    
+    async def _add_wallet_metadata(
+        self,
+        account_keypair: Keypair,
+        creation_tx_hash: str
+    ) -> bool:
+        """
+        Add searchable metadata to newly created wallet
+        
+        ADDED: New method for two-layer metadata strategy.
+        Adds data entries that can be queried but also modified by user.
+        Links back to immutable creation transaction for verification.
+        
+        Args:
+            account_keypair: Keypair of the newly created account
+            creation_tx_hash: Hash of the account creation transaction
+            
+        Returns:
+            True if metadata successfully added
+        """
+        try:
+            # Wait for account to settle on network
+            await asyncio.sleep(2)
+            
+            # Get account info for sequence number
+            public_key = account_keypair.public_key
+            url = f"{self.horizon_url}/accounts/{public_key}"
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    if response.status != 200:
+                        logger.error("New account not found for metadata")
+                        return False
+                    account_data = await response.json()
+            
+            # Create source account object
+            source_account = Account(
+                public_key,
+                int(account_data['sequence'])
+            )
+            
+            # Prepare metadata values
+            timestamp = datetime.utcnow().isoformat()
+            project_id = "waldorfschule-frankfurt-oder"
+            
+            # Build metadata transaction
+            transaction = (
+                TransactionBuilder(
+                    source_account=source_account,
+                    network_passphrase=self.network_passphrase,
+                    base_fee=100
+                )
+                .append_manage_data_op(
+                    data_name="ubec:creator",
+                    data_value="ubec-onboarding-v1"
+                )
+                .append_manage_data_op(
+                    data_name="ubec:created",
+                    data_value=timestamp[:64]  # Max 64 bytes
+                )
+                .append_manage_data_op(
+                    data_name="ubec:project",
+                    data_value=project_id[:64]
+                )
+                .append_manage_data_op(
+                    data_name="ubec:creation_tx",
+                    data_value=creation_tx_hash[:64]
+                )
+                .append_manage_data_op(
+                    data_name="ubec:version",
+                    data_value="1.0"
+                )
+                .set_timeout(30)
+                .build()
+            )
+            
+            # Sign with new account's keypair
+            transaction.sign(account_keypair)
+            
+            # Submit transaction
+            server = Server(horizon_url=self.horizon_url)
+            response = server.submit_transaction(transaction)
+            
+            if response.get('successful'):
+                logger.info(f"    ✓ Metadata added: {response['hash'][:8]}...")
+                return True
+            else:
+                logger.error(f"Metadata transaction failed: {response}")
+                return False
+            
+        except Exception as e:
+            logger.error(f"Metadata addition failed: {e}")
+            # Don't fail the whole process if metadata fails
             return False
     
     async def _create_trustline(self, account_secret: str) -> bool:
@@ -450,6 +595,87 @@ class StellarOnboardingService:
         
         # Create trustline
         return await self._create_trustline(secret_key)
+    
+    async def verify_wallet_origin(self, public_key: str) -> dict:
+        """
+        Verify if a wallet was created by our onboarding system
+        
+        ADDED: New method to check wallet attribution.
+        Checks both current data entries and creation transaction memo.
+        Even if user deletes data entries, creation memo proves origin.
+        
+        Args:
+            public_key: Stellar public key to verify
+            
+        Returns:
+            Dict with verification results:
+            {
+                'verified': bool,
+                'has_metadata_entries': bool,
+                'has_creation_memo': bool,
+                'creation_memo': str,
+                'metadata': dict
+            }
+        """
+        try:
+            # Check current account data entries
+            url = f"{self.horizon_url}/accounts/{public_key}"
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    if response.status != 200:
+                        return {
+                            'verified': False,
+                            'error': 'Account not found'
+                        }
+                    account_data = await response.json()
+            
+            # Extract UBEC metadata entries
+            data_entries = account_data.get('data', {})
+            ubec_metadata = {
+                k: v.get('value', '') 
+                for k, v in data_entries.items() 
+                if k.startswith('ubec:')
+            }
+            
+            has_metadata = bool(ubec_metadata)
+            
+            # Get creation transaction to verify memo
+            tx_url = f"{self.horizon_url}/accounts/{public_key}/transactions"
+            tx_params = {'order': 'asc', 'limit': 1}
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.get(tx_url, params=tx_params) as response:
+                    if response.status == 200:
+                        tx_data = await response.json()
+                        records = tx_data.get('_embedded', {}).get('records', [])
+                        if records:
+                            creation_tx = records[0]
+                            creation_memo = creation_tx.get('memo', '')
+                            has_creation_memo = creation_memo.startswith('UBEC:')
+                        else:
+                            creation_memo = ''
+                            has_creation_memo = False
+                    else:
+                        creation_memo = ''
+                        has_creation_memo = False
+            
+            # Wallet is verified if either check passes
+            verified = has_metadata or has_creation_memo
+            
+            return {
+                'verified': verified,
+                'has_metadata_entries': has_metadata,
+                'has_creation_memo': has_creation_memo,
+                'creation_memo': creation_memo,
+                'metadata': ubec_metadata
+            }
+            
+        except Exception as e:
+            logger.error(f"Verification failed: {e}")
+            return {
+                'verified': False,
+                'error': str(e)
+            }
     
     async def _log_wallet_creation(
         self,
