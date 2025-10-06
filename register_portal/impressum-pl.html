@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopka Prawna - Living Labs Initiative</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #4CAF50;
+            --deep-green: #2E7D32;
+            --light-green: #81C784;
+            --text-dark: #212121;
+            --text-light: #757575;
+            --light-bg: #F5F5F5;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            background: var(--light-bg);
+        }
+
+        header {
+            background: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--light-green), var(--primary-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            color: var(--deep-green);
+            margin-bottom: 0.25rem;
+        }
+
+        .logo-text p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 8px;
+            border-radius: 25px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--primary-green);
+            background: white;
+            color: var(--deep-green);
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .lang-btn:hover {
+            background: var(--light-green);
+            color: white;
+        }
+
+        .lang-btn.active {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 3rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--deep-green);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--light-bg);
+        }
+
+        h2 {
+            color: var(--deep-green);
+            font-size: 1.5rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            color: var(--primary-green);
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .contact-info {
+            background: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .contact-info p {
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-info strong {
+            color: var(--deep-green);
+            display: inline-block;
+            min-width: 150px;
+        }
+
+        a {
+            color: var(--primary-green);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: var(--deep-green);
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-green);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .back-link:hover {
+            background: var(--deep-green);
+            text-decoration: none;
+        }
+
+        .note {
+            background: #FFF9C4;
+            border-left: 4px solid #FBC02D;
+            padding: 1rem;
+            margin: 2rem 0;
+            border-radius: 4px;
+        }
+
+        .note strong {
+            color: #F57C00;
+        }
+
+        footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 2rem;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .attribution {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #D7CCC8;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .contact-info strong {
+                display: block;
+                margin-bottom: 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">🌱</div>
+                <div class="logo-text">
+                    <h1>Ubuntu Bioregional Economic Commons DAO</h1>
+                    <p>· Living Labs Initiative ·</p>
+                </div>
+            </div>
+            <div class="language-switcher">
+                <a href="/impressum-en.html" class="lang-btn">English</a>
+                <a href="/impressum-de.html" class="lang-btn">Deutsch</a>
+                <a href="/impressum-pl.html" class="lang-btn active">Polski</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Stopka Prawna</h1>
+        <p class="subtitle">Informacje zgodnie z § 5 TMG (Niemiecka Ustawa o Multimediach)</p>
+
+        <div class="note">
+            <strong>Uwaga:</strong> Proszę zastąpić informacje zastępcze rzeczywistymi danymi prawnymi. Kompletna stopka prawna jest wymagana prawnie.
+        </div>
+
+        <h2>Operator Strony</h2>
+        <div class="contact-info">
+            <p><strong>Organizacja:</strong> Ubuntu Economic Commons DAO</p>
+            <p><strong>Nazwa Projektu:</strong> Living Lab Initiative - Erdpuls Müllrose Environmental Education Center</p>
+            <p><strong>Adres:</strong> [Ulica i numer]<br>
+            [Kod pocztowy] [Miasto]<br>
+            Niemcy</p>
+        </div>
+
+        <h2>Kontakt</h2>
+        <div class="contact-info">
+            <p><strong>Telefon:</strong> [+49 XXX XXXXXXX]</p>
+            <p><strong>Email:</strong> <a href="mailto:hello@ubec.network">hello@ubec.network</a></p>
+            <p><strong>Strona:</strong> <a href="/">https://living-labs.ubec.network</a></p>
+        </div>
+
+        <h2>Reprezentowany przez</h2>
+        <div class="contact-info">
+            <p><strong>Kierownictwo DAO:</strong> [Imię i nazwisko kierownika DAO]</p>
+            <p><strong>Kierownictwo Projektu:</strong> [Imię i nazwisko kierownika projektu]</p>
+        </div>
+
+        <h2>Wpis do Rejestru</h2>
+        <div class="contact-info">
+            <p><strong>Sąd Rejestrowy:</strong> [np. Amtsgericht Frankfurt/Oder]</p>
+            <p><strong>Numer Rejestracyjny:</strong> [jeśli dotyczy]</p>
+        </div>
+
+        <h2>Numer VAT</h2>
+        <div class="contact-info">
+            <p><strong>Numer identyfikacji VAT zgodnie z § 27a UStG:</strong><br>
+            [DE XXXXXXXXX] (jeśli dostępny)</p>
+        </div>
+
+        <h2>Organ Nadzorczy</h2>
+        <div class="contact-info">
+            <p><strong>Odpowiedzialny Organ Nadzorczy:</strong><br>
+            [Nazwa Organu Nadzorczego]<br>
+            [Adres Organu]</p>
+        </div>
+
+        <h2>Odpowiedzialny za Treść zgodnie z § 55 Para. 2 RStV</h2>
+        <div class="contact-info">
+            <p>[Imię i nazwisko]<br>
+            [Adres]</p>
+        </div>
+
+        <h2>Rozstrzyganie Sporów</h2>
+        <p>Komisja Europejska udostępnia platformę do internetowego rozstrzygania sporów (ODR): <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a></p>
+        <p>Nasz adres email można znaleźć powyżej w stopce prawnej.</p>
+        <p>Nie jesteśmy skłonni ani zobowiązani do uczestniczenia w postępowaniu rozstrzygania sporów przed komisją arbitrażową konsumencką.</p>
+
+        <h2>Odpowiedzialność za Treść</h2>
+        <p>Jako dostawca usług jesteśmy odpowiedzialni za własne treści na tych stronach zgodnie z § 7 Para. 1 TMG zgodnie z prawem ogólnym. Zgodnie z §§ 8 do 10 TMG, jako dostawca usług nie jesteśmy jednak zobowiązani do monitorowania przekazywanych lub przechowywanych informacji stron trzecich ani do badania okoliczności wskazujących na nielegalną działalność.</p>
+
+        <h2>Odpowiedzialność za Linki</h2>
+        <p>Nasza strona zawiera linki do zewnętrznych stron trzecich, nad których treścią nie mamy kontroli. Dlatego nie możemy przyjąć żadnej odpowiedzialności za tę zewnętrzną treść. Za treść stron podlinkowanych zawsze odpowiada odpowiedni dostawca lub operator stron.</p>
+
+        <h2>Prawa Autorskie</h2>
+        <p>Treści i prace utworzone przez operatorów witryny na tych stronach podlegają niemieckiemu prawu autorskiemu. Reprodukcja, edycja, dystrybucja i wszelkiego rodzaju wykorzystanie poza granicami prawa autorskiego wymagają pisemnej zgody odpowiedniego autora lub twórcy.</p>
+
+        <h2>Źródła Obrazów</h2>
+        <p>O ile nie określono inaczej, wszystkie obrazy i przedstawienia graficzne są własnością Living Science Initiative lub były używane z odpowiednią licencją.</p>
+
+        <h2>Ochrona Danych</h2>
+        <p>Informacje o przetwarzaniu danych osobowych można znaleźć w naszej <a href="/datenschutz-pl.html">Polityce Prywatności</a>.</p>
+
+        <h2>Blockchain i Technologia Tokenów</h2>
+        <h3>Informacja o Tokenach UBECrc</h3>
+        <p>Living Labs Initiative wykorzystuje technologię blockchain (Stellar Network) do dokumentowania obserwacji środowiskowych. Wydawanie tokenów UBECrc (Universal Basic Environmental Contribution) służy jako mechanizm uznania za wkład w zbieranie danych środowiskowych.</p>
+        <p><strong>Ważne:</strong> Tokeny UBECrc to tokeny użytkowe, które służą wyłącznie jako mechanizm uznania za wkład w zbieranie danych środowiskowych. Nie stanowią papierów wartościowych i nie są zaprojektowane jako środek płatniczy. Służą wyłącznie wewnętrznym celom projektu w ramach zbierania danych naukowych, edukacji i podejścia obywatelskiej nauki.</p>
+
+        <h2>Open Source i Partnerzy Technologiczni</h2>
+        <p>Ten projekt wykorzystuje technologie open-source i został opracowany przy użyciu następujących usług:</p>
+        <ul style="margin-left: 2rem; margin-top: 1rem;">
+            <li>Stellar Blockchain Network (rozproszona księga rachunkowa Open-Source)</li>
+            <li>SenseBox / OpenSenseMap (czujniki środowiskowe)</li>
+            <li>Claude (Anthropic PBC) – wsparcie AI w zakresie rozwoju i podejmowania decyzji</li>
+        </ul>
+
+        <a href="/" class="back-link">← Powrót do strony głównej</a>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="attribution">
+                <p><strong>Atrybucja:</strong> Ten projekt korzysta z usług Claude i Anthropic PBC w celu wsparcia naszych decyzji i rekomendacji. Ten projekt został umożliwiony dzięki wsparciu Claude i Anthropic PBC.</p>
+                <p style="margin-top: 1rem;">Living Science Initiative · Erdpuls Müllrose · Freie Waldorfschule Frankfurt (Oder)</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

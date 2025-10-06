@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polityka Prywatności - Ubuntu Economic Commons DAO - Living Labs Initiative</title>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-green: #4CAF50;
+            --deep-green: #2E7D32;
+            --light-green: #81C784;
+            --sand: #D7CCC8;
+            --light-bg: #F5F5F5;
+            --text-dark: #212121;
+            --text-light: #757575;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            background: var(--light-bg);
+        }
+
+        /* Header Navigation */
+        header {
+            background: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--light-green), var(--primary-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            color: var(--deep-green);
+            margin-bottom: 0.25rem;
+        }
+
+        .logo-text p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 8px;
+            border-radius: 25px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--primary-green);
+            background: white;
+            color: var(--deep-green);
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .lang-btn:hover {
+            background: var(--light-green);
+            color: white;
+        }
+
+        .lang-btn.active {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .container {
+            max-width: 900px; margin: 0 auto; padding: 0 2rem 4rem;
+            background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem; padding: 3rem; margin-top: 3rem;
+        }
+
+        h1 { color: var(--deep-green); font-size: 2.5rem; margin-bottom: 1rem; }
+        h2 { color: var(--deep-green); margin-top: 2.5rem; margin-bottom: 1rem; }
+        h3 { color: var(--deep-green); margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .subtitle { color: var(--text-light); font-size: 1.1rem; margin-bottom: 2rem; }
+
+        .info-box {
+            background: #FFF3E0; border-left: 4px solid #FF9800;
+            padding: 1.5rem; margin: 2rem 0; border-radius: 4px;
+        }
+
+        .contact-info {
+            background: var(--light-bg); padding: 1.5rem; border-radius: 8px;
+            margin: 1.5rem 0; border-left: 4px solid var(--primary-green);
+        }
+
+        ul { margin-left: 2rem; margin-top: 1rem; line-height: 1.8; }
+
+        table {
+            width: 100%; border-collapse: collapse; margin: 1.5rem 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #E0E0E0; }
+        th { background: var(--deep-green); color: white; }
+
+        a {
+            color: var(--primary-green);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: var(--deep-green);
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-green);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .back-link:hover {
+            background: var(--deep-green);
+            text-decoration: none;
+        }
+
+        footer {
+            background: var(--text-dark); color: white;
+            padding: 3rem 2rem; text-align: center; margin-top: 4rem;
+        }
+
+        .attribution {
+            margin-top: 1rem; padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: var(--sand); font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">🌱</div>
+                <div class="logo-text">
+                    <h1>Ubuntu Bioregional Economic Commons DAO</h1>
+                    <p>· Living Labs Initiative ·</p>
+                </div>
+            </div>
+            <div class="language-switcher">
+                <a href="/datenschutz-en.html" class="lang-btn">English</a>
+                <a href="/datenschutz-de.html" class="lang-btn">Deutsch</a>
+                <a href="/datenschutz-pl.html" class="lang-btn active">Polski</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Polityka Prywatności</h1>
+        <p class="subtitle">Informacje o przetwarzaniu danych zgodnie z RODO</p>
+
+        <div class="info-box">
+            <strong>Ważna uwaga:</strong> Niniejsza polityka prywatności jest szablonem i musi zostać dostosowana do konkretnych działań związanych z przetwarzaniem danych. Prosimy skonsultować się z inspektorem ochrony danych lub prawnikiem w celu uzyskania prawnie wiążących sformułowań.
+        </div>
+
+        <h2>1. Ochrona Danych w Skrócie</h2>
+        
+        <h3>Informacje Ogólne</h3>
+        <p>Poniższe informacje zawierają prosty przegląd tego, co dzieje się z Twoimi danymi osobowymi, gdy odwiedzasz tę stronę internetową. Dane osobowe to wszelkie dane, za pomocą których można Cię osobiście zidentyfikować.</p>
+
+        <h3>Zbieranie Danych na tej Stronie</h3>
+        <p><strong>Kto jest odpowiedzialny za zbieranie danych na tej stronie?</strong></p>
+        <p>Przetwarzanie danych na tej stronie jest przeprowadzane przez operatora strony. Dane kontaktowe można znaleźć w <a href="/impressum-pl.html">stopce prawnej</a> tej strony.</p>
+
+        <h2>2. Informacje Ogólne i Obowiązkowe</h2>
+
+        <h3>Ochrona Danych</h3>
+        <p>Operatorzy tej strony traktują ochronę Twoich danych osobowych bardzo poważnie. Traktujemy Twoje dane osobowe poufnie i zgodnie z przepisami o ochronie danych oraz niniejszą polityką prywatności.</p>
+
+        <h3>Administrator zgodnie z RODO</h3>
+        <div class="contact-info">
+            <strong>Living Labs Initiative – Erdpuls Müllrose</strong><br>
+            [Adres]<br>
+            Niemcy<br><br>
+            <strong>Email:</strong> hello@ubec.network<br>
+            <strong>Telefon:</strong> [Do uzupełnienia]
+        </div>
+
+        <h2>3. Zbieranie Danych na tej Stronie</h2>
+
+        <h3>Pliki Dziennika Serwera</h3>
+        <p>Dostawca stron automatycznie zbiera i przechowuje informacje w tak zwanych plikach dziennika serwera, które Twoja przeglądarka automatycznie przekazuje nam. Są to:</p>
+        <ul>
+            <li>Typ i wersja przeglądarki</li>
+            <li>Używany system operacyjny</li>
+            <li>Adres URL odsyłający</li>
+            <li>Nazwa hosta komputera uzyskującego dostęp</li>
+            <li>Czas żądania serwera</li>
+            <li>Adres IP</li>
+        </ul>
+        <p><strong>Podstawa prawna:</strong> Art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes w bezpiecznym i efektywnym udostępnianiu naszej strony internetowej)</p>
+
+        <h2>4. Rejestracja Zarządcy</h2>
+        <p>Podczas rejestracji jako zarządca środowiska zbieramy następujące dane:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Typ Danych</th>
+                    <th>Cel</th>
+                    <th>Podstawa Prawna</th>
+                    <th>Okres Przechowywania</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Imię i nazwisko, Email</td>
+                    <td>Identyfikacja użytkownika, kontakt</td>
+                    <td>Art. 6 ust. 1 lit. a RODO</td>
+                    <td>Do cofnięcia</td>
+                </tr>
+                <tr>
+                    <td>Organizacja/Szkoła</td>
+                    <td>Przypisanie do sieci</td>
+                    <td>Art. 6 ust. 1 lit. a RODO</td>
+                    <td>Do cofnięcia</td>
+                </tr>
+                <tr>
+                    <td>Adres Portfela Stellar</td>
+                    <td>Dystrybucja tokenów UBECrc</td>
+                    <td>Art. 6 ust. 1 lit. b RODO</td>
+                    <td>Do cofnięcia</td>
+                </tr>
+                <tr>
+                    <td>Dane Obserwacyjne</td>
+                    <td>Badania naukowe</td>
+                    <td>Art. 6 ust. 1 lit. a, f RODO</td>
+                    <td>Anonimowe przechowywanie</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>5. Rejestracja Urządzeń (senseBox)</h2>
+        <p>Podczas rejestracji czujników środowiskowych:</p>
+        <ul>
+            <li>Numer seryjny urządzenia</li>
+            <li>Lokalizacja geograficzna (szerokość/długość geograficzna)</li>
+            <li>Typy czujników</li>
+            <li>Znaczniki czasu pomiarów</li>
+            <li>Przypisanie do zarejestrowanego zarządcy (opcjonalnie)</li>
+        </ul>
+        <p><strong>Podstawa prawna:</strong> Art. 6 ust. 1 lit. a RODO (zgoda) i Art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes w badaniach naukowych)</p>
+
+        <h2>6. Integracja Blockchain</h2>
+        <p>Ten projekt wykorzystuje blockchain Stellar do:</p>
+        <ul>
+            <li>Dystrybucji UBEC Reciprocity Credits (UBECrc)</li>
+            <li>Weryfikacji wkładu danych</li>
+            <li>Przejrzystej dokumentacji wzajemnych wymian</li>
+        </ul>
+
+        <div class="info-box">
+            <strong>Ważne:</strong> Dane przechowywane w blockchain są niezmienne i publicznie dostępne. Przechowujemy tylko hashe i identyfikatory transakcji w blockchain, a nie dane osobowe.
+        </div>
+
+        <h2>7. Twoje Prawa Dotyczące Danych</h2>
+        <p>W każdej chwili przysługują Ci następujące prawa:</p>
+        <ul>
+            <li><strong>Prawo dostępu (Art. 15 RODO)</strong></li>
+            <li><strong>Prawo do sprostowania (Art. 16 RODO)</strong></li>
+            <li><strong>Prawo do usunięcia (Art. 17 RODO)</strong></li>
+            <li><strong>Prawo do ograniczenia przetwarzania (Art. 18 RODO)</strong></li>
+            <li><strong>Prawo do przenoszenia danych (Art. 20 RODO)</strong></li>
+            <li><strong>Prawo do sprzeciwu (Art. 21 RODO)</strong></li>
+            <li><strong>Prawo do wniesienia skargi (Art. 77 RODO)</strong></li>
+        </ul>
+
+        <h2>8. Usługi Stron Trzecich</h2>
+        <p>Możemy udostępniać dane:</p>
+        <ul>
+            <li>OpenSenseMap (dla integracji senseBox)</li>
+            <li>Stellar Network (dla transakcji blockchain)</li>
+            <li>Instytucjom badawczym (tylko zanonimizowane dane do celów naukowych)</li>
+        </ul>
+
+        <h2>9. Bezpieczeństwo Danych</h2>
+        <p>Chronimy Twoje dane poprzez środki techniczne i organizacyjne:</p>
+        <ul>
+            <li>Szyfrowana transmisja danych (HTTPS)</li>
+            <li>Ograniczenia dostępu do serwerów</li>
+            <li>Regularne audyty bezpieczeństwa</li>
+            <li>Szyfrowane przechowywanie wrażliwych informacji</li>
+            <li>Pseudonimizacja/anonimizacja tam, gdzie to możliwe</li>
+        </ul>
+
+        <h2>10. Kontakt w Sprawach Prywatności</h2>
+        <p>W przypadku pytań dotyczących ochrony danych prosimy o kontakt:</p>
+        <div class="contact-info">
+            <strong>Inspektor Ochrony Danych</strong><br>
+            Living Science Initiative<br>
+            Email: privacy@living-science-initiative.org
+        </div>
+
+        <p style="margin-top: 2rem; color: var(--text-light); font-style: italic;">Ostatnia aktualizacja: Październik 2025</p>
+
+        <a href="/" class="back-link">← Powrót do strony głównej</a>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="attribution">
+                Ten projekt korzysta z usług Claude i Anthropic PBC w celu wsparcia naszych decyzji i rekomendacji.<br>
+                Ten projekt został umożliwiony dzięki wsparciu Claude i Anthropic PBC.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

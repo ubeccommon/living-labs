@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejestracja Zarządcy - UBEC Living Science Initiative</title>
+    
+    <meta name="attribution" content="This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations.">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-green: #4CAF50;
+            --deep-green: #2E7D32;
+            --light-green: #81C784;
+            --warm-brown: #8D6E63;
+            --light-bg: #F5F5F5;
+            --text-dark: #212121;
+            --text-light: #757575;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            background: var(--light-bg);
+        }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+
+        .back-link {
+            display: inline-block; color: var(--deep-green);
+            text-decoration: none; margin-bottom: 2rem; font-weight: 600;
+        }
+
+        .language-switcher {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            display: flex; gap: 8px; background: white; padding: 8px;
+            border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .lang-btn {
+            padding: 8px 14px; border: 2px solid var(--primary-green);
+            background: white; color: var(--deep-green); border-radius: 20px;
+            cursor: pointer; font-weight: 600; transition: all 0.3s;
+            text-decoration: none; display: inline-block; font-size: 0.85rem;
+        }
+
+        .lang-btn:hover { background: var(--light-green); color: white; transform: translateY(-2px); }
+        .lang-btn.active { background: var(--primary-green); color: white; }
+
+        .header { text-align: center; margin-bottom: 3rem; }
+        .logo { font-size: 4rem; margin-bottom: 1rem; }
+        h1 { color: var(--deep-green); font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .subtitle { color: var(--text-light); font-size: 1.2rem; }
+
+        .card {
+            background: white; padding: 2.5rem; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 2rem;
+        }
+
+        .info-box {
+            background: #E8F5E9; border-left: 4px solid var(--primary-green);
+            padding: 1.5rem; margin-bottom: 2rem; border-radius: 4px;
+        }
+
+        .form-group { margin-bottom: 1.5rem; }
+
+        label {
+            display: block; margin-bottom: 0.5rem;
+            color: var(--deep-green); font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%; padding: 12px; border: 2px solid #E0E0E0;
+            border-radius: 8px; font-size: 1rem; transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none; border-color: var(--primary-green);
+        }
+
+        .hint { font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem; }
+
+        .sensor-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem; margin-top: 1rem;
+        }
+
+        .sensor-checkbox {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem; border: 2px solid #E0E0E0; border-radius: 8px;
+            cursor: pointer; transition: all 0.3s;
+        }
+
+        .sensor-checkbox:hover { border-color: var(--light-green); }
+        .sensor-checkbox.selected { border-color: var(--primary-green); background: #E8F5E9; }
+        .sensor-checkbox input[type="checkbox"] { width: auto; margin: 0; }
+
+        .submit-btn {
+            width: 100%; padding: 15px;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            color: white; border: none; border-radius: 25px;
+            font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            h1 { font-size: 2rem; }
+            .card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="language-switcher">
+        <a href="/steward-en.html" class="lang-btn">English</a>
+        <a href="/steward-de.html" class="lang-btn">Deutsch</a>
+        <a href="/steward-pl.html" class="lang-btn active">Polski</a>
+    </div>
+
+    <div class="container">
+        <a href="/index-pl.html" class="back-link">← Powrót do strony głównej</a>
+        
+        <div class="header">
+            <div class="logo">🌍</div>
+            <h1>Zostań Zarządcą</h1>
+            <p class="subtitle">Dołącz do naszej sieci obserwatorów środowiska</p>
+        </div>
+
+        <div class="card">
+            <div class="info-box">
+                <strong>Zarządzanie Środowiskiem</strong><br>
+                Jako zarządca, przyczyniasz się obserwacjami fenomenologicznymi do naszej gospodarki wzajemności. Każda obserwacja przynosi Ci tokeny UBECrc jako uznanie Twojego wkładu w zrozumienie naszego żywego świata.
+            </div>
+
+            <form id="stewardForm">
+                <div class="form-group">
+                    <label for="name">Imię Zarządcy *</label>
+                    <input type="text" id="name" name="name" required placeholder="Twoje imię lub wybrana tożsamość zarządcy">
+                    <div class="hint">To będzie Twoja tożsamość zarządcy w sieci</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Adres Email *</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="hint">Będziemy wysyłać aktualizacje dotyczące Twoich obserwacji</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="organization">Organizacja/Szkoła</label>
+                    <input type="text" id="organization" name="organization" placeholder="np. Freie Waldorfschule Frankfurt (Oder)">
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Rola Zarządcy *</label>
+                    <select id="role" name="role" required>
+                        <option value="">Wybierz swoją rolę...</option>
+                        <option value="steward">Zarządca Środowiska</option>
+                        <option value="guardian">Strażnik Ziemi</option>
+                        <option value="observer">Obserwator Zjawisk</option>
+                        <option value="student">Student-Badacz</option>
+                        <option value="teacher">Nauczyciel-Przewodnik</option>
+                        <option value="researcher">Badacz Naukowy</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="stellarWallet">Adres Portfela Stellar (Opcjonalnie)</label>
+                    <input type="text" id="stellarWallet" name="stellar_address" placeholder="G..." pattern="^G[A-Z2-7]{55}$">
+                    <div class="hint">Twoje tokeny UBECrc zostaną wysłane tutaj. Możesz dodać to później.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="landRelationship">Relacja z Ziemią</label>
+                    <input type="text" id="landRelationship" name="land_relationship" placeholder="Opisz swoją relację z ziemią">
+                </div>
+
+                <div class="form-group">
+                    <label>Zdolności Sensoryczne</label>
+                    <div class="hint">Wybierz zmysły, które używasz do obserwacji środowiska</div>
+                    <div class="sensor-grid">
+                        <label class="sensor-checkbox selected">
+                            <input type="checkbox" name="capacities" value="sight" checked>
+                            <span>👁️ Wzrok</span>
+                        </label>
+                        <label class="sensor-checkbox selected">
+                            <input type="checkbox" name="capacities" value="hearing" checked>
+                            <span>👂 Słuch</span>
+                        </label>
+                        <label class="sensor-checkbox selected">
+                            <input type="checkbox" name="capacities" value="touch" checked>
+                            <span>✋ Dotyk</span>
+                        </label>
+                        <label class="sensor-checkbox selected">
+                            <input type="checkbox" name="capacities" value="smell" checked>
+                            <span>👃 Węch</span>
+                        </label>
+                        <label class="sensor-checkbox selected">
+                            <input type="checkbox" name="capacities" value="taste" checked>
+                            <span>👅 Smak</span>
+                        </label>
+                        <label class="sensor-checkbox">
+                            <input type="checkbox" name="capacities" value="intuition">
+                            <span>✨ Intuicja</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Zarejestruj jako Zarządca</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.sensor-checkbox input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                this.closest('.sensor-checkbox').classList.toggle('selected', this.checked);
+            });
+        });
+
+        document.getElementById('stewardForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                organization: formData.get('organization'),
+                role: formData.get('role'),
+                stellar_address: formData.get('stellar_address'),
+                land_relationship: formData.get('land_relationship'),
+                sensory_capacities: formData.getAll('capacities')
+            };
+
+            try {
+                const response = await fetch('/api/v1/stewards', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`Sukces! Zarządca ${result.name} zarejestrowany. Otrzymasz email potwierdzający.`);
+                    this.reset();
+                } else {
+                    throw new Error(result.detail || 'Rejestracja nie powiodła się');
+                }
+            } catch (error) {
+                alert(`Błąd: ${error.message}`);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -13,7 +13,7 @@ Design Principles Applied:
 
 Attribution: This project uses the services of Claude and Anthropic PBC.
 
-Version: 3.0.3 (Fixed Routes for Existing Files)
+Version: 3.0.4 (Added Polish Language Support)
 """
 
 import os
@@ -68,8 +68,8 @@ async def lifespan(app: FastAPI):
     logger.info("║" + "    Freie Waldorfschule Frankfurt (Oder)".center(58) + "║")
     logger.info("║" + "    Living Science Initiative".center(58) + "║")
     logger.info("║" + " "*58 + "║")
-    logger.info("║" + "    Single Entry Point Architecture v3.0.3".center(58) + "║")
-    logger.info("║" + "    🌍 English + 🇩🇪 Deutsch Support".center(58) + "║")
+    logger.info("║" + "    Single Entry Point Architecture v3.0.4".center(58) + "║")
+    logger.info("║" + "    🌍 EN + 🇩🇪 DE + 🇵🇱 PL Support".center(58) + "║")
     logger.info("║" + " "*58 + "║")
     logger.info("╚" + "═"*58 + "╝")
     
@@ -90,7 +90,7 @@ async def lifespan(app: FastAPI):
     
     logger.info(f"  IPFS configured: {has_ipfs}")
     logger.info(f"  Stellar configured: {config.stellar.is_configured}")
-    logger.info(f"  Multilingual: English + Deutsch")
+    logger.info(f"  Multilingual: English + Deutsch + Polski")
     
     # Initialize services
     try:
@@ -221,6 +221,14 @@ async def lifespan(app: FastAPI):
         logger.info(f"    Impressum: http://localhost:{config.API_PORT}/impressum-de.html")
         logger.info(f"    Datenschutz: http://localhost:{config.API_PORT}/datenschutz-de.html")
         logger.info("")
+        logger.info(f"  🇵🇱 Polskie Strony:")
+        logger.info(f"    Strona główna: http://localhost:{config.API_PORT}/index-pl.html")
+        logger.info(f"    Rejestracja Zarządcy: http://localhost:{config.API_PORT}/steward-pl.html")
+        logger.info(f"    Rejestracja Urządzenia: http://localhost:{config.API_PORT}/sensebox-pl.html")
+        logger.info(f"    Status Sieci: http://localhost:{config.API_PORT}/status-pl.html")
+        logger.info(f"    Stopka Prawna: http://localhost:{config.API_PORT}/impressum-pl.html")
+        logger.info(f"    Polityka Prywatności: http://localhost:{config.API_PORT}/datenschutz-pl.html")
+        logger.info("")
         logger.info(f"  API Docs: http://localhost:{config.API_PORT}/docs")
         logger.info(f"  Reciprocal Economy: ACTIVE")
         logger.info("")
@@ -275,13 +283,14 @@ app = FastAPI(
     ### Multilingual Support:
     - 🌍 English (Primary)
     - 🇩🇪 Deutsch (German)
+    - 🇵🇱 Polski (Polish)
     
     ### Legal Compliance:
     - EU GDPR compliant
     - German TMG § 5 compliant (Impressum)
     - Blockchain data protection considerations
     """,
-    version="3.0.3",
+    version="3.0.4",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json",
@@ -323,15 +332,6 @@ from phenomenological_api import pheno_router
 # Mount the phenomenological API router
 app.include_router(pheno_router)
 
-# Import and mount legal pages router (EU compliance)
-# NOTE: Commenting out because routes are defined directly in main.py
-# If you have additional legal routes in legal_routes.py, uncomment this
-# try:
-#     from legal_routes import router as legal_router
-#     app.include_router(legal_router, tags=['legal'])
-#     logger.info("✓ Legal compliance routes loaded from legal_routes.py")
-# except ImportError as e:
-#     logger.info(f"  Legal routes defined in main.py (legal_routes.py not found)")
 logger.info("✓ Legal compliance routes defined in main.py")
 
 # ==================================================
@@ -344,11 +344,6 @@ async def root():
     # Try English version first
     index_path = Path("register_portal/index-en.html")
     if index_path.exists():
-        return FileResponse("register_portal/index-en.html")
-    
-    # Try index-en.html as alternative
-    index_en_path = Path("register_portal/index-en.html")
-    if index_en_path.exists():
         return FileResponse("register_portal/index-en.html")
     
     # Fallback to simple HTML if landing page not found
@@ -444,21 +439,13 @@ async def root():
 @app.get("/steward")
 async def steward_registration():
     """Steward/Observer registration page (English)"""
-    # Try steward-en.html first (English version)
     steward_en_path = Path("register_portal/steward-en.html")
     if steward_en_path.exists():
         return FileResponse("register_portal/steward-en.html")
     
-    # Try steward.html as alternative
     steward_path = Path("register_portal/steward.html")
     if steward_path.exists():
         return FileResponse("register_portal/steward.html")
-    
-    # Fallback to German version if no English found
-    steward_de_path = Path("register_portal/steward-de.html")
-    if steward_de_path.exists():
-        logger.warning("English steward page not found, serving German version")
-        return FileResponse("register_portal/steward-de.html")
     
     return HTMLResponse(
         content="<h1>Steward Registration Page Not Found</h1><p>Please ensure steward-en.html or steward.html exists in register_portal/</p>",
@@ -468,48 +455,32 @@ async def steward_registration():
 @app.get("/sensebox")
 async def sensebox_registration():
     """SenseBox/Device registration page (English)"""
-    # Try sensebox-en.html first (English version)
     sensebox_en_path = Path("register_portal/sensebox-en.html")
     if sensebox_en_path.exists():
         return FileResponse("register_portal/sensebox-en.html")
     
-    # Try sensebox.html as alternative
-    sensebox_path = Path("register_portal/sensebox-en.html")
+    sensebox_path = Path("register_portal/sensebox.html")
     if sensebox_path.exists():
-        return FileResponse("register_portal/sensebox-en.html")
-    
-    # Fallback to German version if no English found
-    sensebox_de_path = Path("register_portal/sensebox-de.html")
-    if sensebox_de_path.exists():
-        logger.warning("English sensebox page not found, serving German version")
-        return FileResponse("register_portal/sensebox-de.html")
+        return FileResponse("register_portal/sensebox.html")
     
     return HTMLResponse(
-        content="<h1>Device Registration Page Not Found</h1><p>Please ensure sensebox-en.html or sensebox.html exists in register_portal/</p>",
+        content="<h1>Device Registration Page Not Found</h1><p>Please ensure sensebox-en.html exists in register_portal/</p>",
         status_code=404
     )
 
 @app.get("/network-status")
 async def network_status():
     """Network status dashboard page (English)"""
-    # Try status-en.html first (English version)
     status_en_path = Path("register_portal/status-en.html")
     if status_en_path.exists():
         return FileResponse("register_portal/status-en.html")
     
-    # Try status.html as alternative
     status_path = Path("register_portal/status.html")
     if status_path.exists():
         return FileResponse("register_portal/status.html")
     
-    # Fallback to German version if no English found
-    status_de_path = Path("register_portal/status-de.html")
-    if status_de_path.exists():
-        logger.warning("English status page not found, serving German version")
-        return FileResponse("register_portal/status-de.html")
-    
     return HTMLResponse(
-        content="<h1>Network Status Page Not Found</h1><p>Please ensure status-en.html or status.html exists in register_portal/</p>",
+        content="<h1>Network Status Page Not Found</h1><p>Please ensure status-en.html exists in register_portal/</p>",
         status_code=404
     )
 
@@ -570,42 +541,112 @@ async def status_de():
         )
 
 # ==================================================
+# POLISH PAGES (POLSKIE STRONY)
+# ==================================================
+
+@app.get("/index-pl.html")
+async def index_pl():
+    """Strona główna - Polska wersja"""
+    index_pl_path = Path("register_portal/index-pl.html")
+    
+    if index_pl_path.exists():
+        return FileResponse("register_portal/index-pl.html")
+    else:
+        return HTMLResponse(
+            content="<h1>Polska strona główna nie została znaleziona</h1><p>Upewnij się, że index-pl.html istnieje w katalogu register_portal/</p>",
+            status_code=404
+        )
+
+@app.get("/steward-pl.html")
+async def steward_pl():
+    """Rejestracja Zarządcy - Polska wersja"""
+    steward_pl_path = Path("register_portal/steward-pl.html")
+    
+    if steward_pl_path.exists():
+        return FileResponse("register_portal/steward-pl.html")
+    else:
+        return HTMLResponse(
+            content="<h1>Strona rejestracji zarządcy nie została znaleziona</h1><p>Upewnij się, że steward-pl.html istnieje w katalogu register_portal/</p>",
+            status_code=404
+        )
+
+@app.get("/sensebox-pl.html")
+async def sensebox_pl():
+    """Rejestracja Urządzenia - Polska wersja"""
+    sensebox_pl_path = Path("register_portal/sensebox-pl.html")
+    
+    if sensebox_pl_path.exists():
+        return FileResponse("register_portal/sensebox-pl.html")
+    else:
+        return HTMLResponse(
+            content="<h1>Strona rejestracji urządzenia nie została znaleziona</h1><p>Upewnij się, że sensebox-pl.html istnieje w katalogu register_portal/</p>",
+            status_code=404
+        )
+
+@app.get("/status-pl.html")
+async def status_pl():
+    """Status Sieci - Polska wersja"""
+    status_pl_path = Path("register_portal/status-pl.html")
+    
+    if status_pl_path.exists():
+        return FileResponse("register_portal/status-pl.html")
+    else:
+        return HTMLResponse(
+            content="<h1>Strona statusu sieci nie została znaleziona</h1><p>Upewnij się, że status-pl.html istnieje w katalogu register_portal/</p>",
+            status_code=404
+        )
+
+@app.get("/impressum-pl.html")
+async def impressum_pl():
+    """Stopka Prawna (Impressum) - Polska wersja"""
+    impressum_pl_path = Path("register_portal/impressum-pl.html")
+    
+    if impressum_pl_path.exists():
+        return FileResponse("register_portal/impressum-pl.html")
+    else:
+        return HTMLResponse(
+            content="<h1>Stopka prawna nie została znaleziona</h1><p>Upewnij się, że impressum-pl.html istnieje w katalogu register_portal/</p>",
+            status_code=404
+        )
+
+@app.get("/datenschutz-pl.html")
+async def datenschutz_pl():
+    """Polityka Prywatności - Polska wersja"""
+    datenschutz_pl_path = Path("register_portal/datenschutz-pl.html")
+    
+    if datenschutz_pl_path.exists():
+        return FileResponse("register_portal/datenschutz-pl.html")
+    else:
+        return HTMLResponse(
+            content="<h1>Polityka prywatności nie została znaleziona</h1><p>Upewnij się, że datenschutz-pl.html istnieje w katalogu register_portal/</p>",
+            status_code=404
+        )
+
+# ==================================================
 # LEGAL PAGES - GERMAN (PRIMARY)
 # ==================================================
 
 @app.get("/impressum-de.html")
 async def impressum():
     """Impressum (German legal requirement) - German version"""
-    # Try impressum.html first (primary German version)
     impressum_path = Path("register_portal/impressum-de.html")
     if impressum_path.exists():
         return FileResponse("register_portal/impressum-de.html")
     
-    # Fallback to impressum-de.html
-    impressum_de_path = Path("register_portal/impressum-de.html")
-    if impressum_de_path.exists():
-        return FileResponse("register_portal/impressum-de.html")
-    
     return HTMLResponse(
-        content="<h1>Impressum nicht gefunden</h1><p>Please ensure impressum.html or impressum-de.html exists in register_portal/</p>",
+        content="<h1>Impressum nicht gefunden</h1><p>Please ensure impressum-de.html exists in register_portal/</p>",
         status_code=404
     )
 
 @app.get("/datenschutz-de.html")
 async def datenschutz():
     """Datenschutzerklärung (Privacy Policy) - German version"""
-    # Try datenschutz.html first (primary German version)
     datenschutz_path = Path("register_portal/datenschutz-de.html")
     if datenschutz_path.exists():
         return FileResponse("register_portal/datenschutz-de.html")
     
-    # Fallback to datenschutz-de.html
-    datenschutz_de_path = Path("register_portal/datenschutz-de.html")
-    if datenschutz_de_path.exists():
-        return FileResponse("register_portal/datenschutz-de.html")
-    
     return HTMLResponse(
-        content="<h1>Datenschutzerklärung nicht gefunden</h1><p>Please ensure datenschutz.html or datenschutz-de.html exists in register_portal/</p>",
+        content="<h1>Datenschutzerklärung nicht gefunden</h1><p>Please ensure datenschutz-de.html exists in register_portal/</p>",
         status_code=404
     )
 
@@ -645,7 +686,7 @@ async def datenschutz_en():
 
 @app.get("/index-en.html")
 async def index_en_html():
-    """Direct HTML file request for English index page (alternative naming)"""
+    """Direct HTML file request for English index page"""
     return await root()
 
 @app.get("/steward-en.html")
@@ -662,16 +703,6 @@ async def sensebox_en_html():
 async def status_html():
     """Direct HTML file request for status page"""
     return await network_status()
-
-@app.get("/impressum-en.html")
-async def impressum__en_html():
-    """Direct HTML file request for impressum page"""
-    return await impressum()
-
-@app.get("/datenschutz-en.html")
-async def datenschutz_en_html():
-    """Direct HTML file request for datenschutz page"""
-    return await datenschutz()
 
 # ==================================================
 # LEGACY/COMPATIBILITY ENDPOINTS
@@ -700,7 +731,7 @@ async def status():
         "api": {
             "host": config.API_HOST,
             "port": config.API_PORT,
-            "version": "3.0.3"
+            "version": "3.0.4"
         },
         "database": {
             "schema": PHENOMENOLOGICAL_SCHEMA,
@@ -723,14 +754,16 @@ async def status():
             "stewardship_model": True
         },
         "multilingual": {
-            "supported_languages": ["en", "de"],
+            "supported_languages": ["en", "de", "pl"],
             "default_language": "en"
         },
         "legal_compliance": {
             "impressum_en": "/impressum-en.html",
             "impressum_de": "/impressum-de.html",
+            "impressum_pl": "/impressum-pl.html",
             "datenschutz_en": "/datenschutz-en.html",
             "datenschutz_de": "/datenschutz-de.html",
+            "datenschutz_pl": "/datenschutz-pl.html",
             "gdpr_compliant": True
         },
         "environment": config.ENVIRONMENT,
@@ -748,7 +781,7 @@ async def awareness_check():
         "reciprocal_economy": "active",
         "stewardship": "engaged",
         "multilingual": "enabled",
-        "languages": ["en", "de"],
+        "languages": ["en", "de", "pl"],
         "legal_compliance": "enabled",
         "timestamp": datetime.utcnow().isoformat()
     }
@@ -863,7 +896,7 @@ async def diagnostics():
         },
         "multilingual": {
             "enabled": True,
-            "languages": ["en", "de"]
+            "languages": ["en", "de", "pl"]
         },
         "errors": []
     }
@@ -1074,7 +1107,7 @@ def main():
     ║    "From Seeds to Blockchain: Growing the Future        ║
     ║        through Reciprocal Value Exchange"               ║
     ║                                                          ║
-    ║         🌍 English + 🇩🇪 Deutsch Support                 ║
+    ║      🌍 English + 🇩🇪 Deutsch + 🇵🇱 Polski Support        ║
     ║              + EU Legal Compliance                       ║
     ║                                                          ║
     ╚══════════════════════════════════════════════════════════╝
@@ -1084,10 +1117,10 @@ def main():
     - Reciprocal Economy Model
     - Blockchain Verification
     - Single Entry Point Architecture
-    - Multilingual Support (EN/DE)
+    - Multilingual Support (EN/DE/PL)
     - EU GDPR & German TMG Compliance
     
-    Version: 3.0.3 (Fixed Routes for Existing Files)
+    Version: 3.0.4 (Added Polish Language Support)
     
     Starting system...
     """)

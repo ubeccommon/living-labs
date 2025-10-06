@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejestracja SenseBox - UBEC Living Science Initiative</title>
+    
+    <meta name="attribution" content="This project uses the services of Claude and Anthropic PBC to inform our decisions and recommendations.">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-green: #4CAF50;
+            --deep-green: #2E7D32;
+            --light-green: #81C784;
+            --light-bg: #F5F5F5;
+            --text-dark: #212121;
+            --text-light: #757575;
+            --error-red: #f44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            background: var(--light-bg);
+        }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+
+        .language-switcher {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            display: flex; gap: 8px; background: white; padding: 8px;
+            border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .lang-btn {
+            padding: 8px 14px; border: 2px solid var(--primary-green);
+            background: white; color: var(--deep-green); border-radius: 20px;
+            cursor: pointer; font-weight: 600; transition: all 0.3s;
+            text-decoration: none; display: inline-block; font-size: 0.85rem;
+        }
+
+        .lang-btn:hover { background: var(--light-green); color: white; transform: translateY(-2px); }
+        .lang-btn.active { background: var(--primary-green); color: white; }
+
+        .back-link {
+            display: inline-block; color: var(--deep-green);
+            text-decoration: none; margin-bottom: 2rem; font-weight: 600;
+        }
+
+        .header { text-align: center; margin-bottom: 3rem; }
+        .logo { font-size: 4rem; margin-bottom: 1rem; }
+        h1 { color: var(--deep-green); font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .subtitle { color: var(--text-light); font-size: 1.2rem; }
+
+        .card {
+            background: white; padding: 2.5rem; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 2rem;
+        }
+
+        .info-box {
+            background: #E8F5E9; border-left: 4px solid var(--primary-green);
+            padding: 1.5rem; margin-bottom: 2rem; border-radius: 4px;
+        }
+
+        .warning-box {
+            background: #FFF3E0; border-left: 4px solid #FF9800;
+            padding: 1.5rem; margin-bottom: 2rem; border-radius: 4px;
+        }
+
+        .error-box {
+            background: #FFEBEE; border-left: 4px solid var(--error-red);
+            padding: 1.5rem; margin-bottom: 2rem; border-radius: 4px;
+            display: none;
+        }
+
+        .form-group { margin-bottom: 1.5rem; }
+
+        label {
+            display: block; margin-bottom: 0.5rem;
+            color: var(--deep-green); font-weight: 600;
+        }
+
+        input, select {
+            width: 100%; padding: 12px; border: 2px solid #E0E0E0;
+            border-radius: 8px; font-size: 1rem; transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none; border-color: var(--primary-green);
+        }
+
+        .hint { font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem; }
+
+        .fetch-section {
+            display: flex; gap: 1rem; align-items: flex-start;
+        }
+
+        .fetch-section input {
+            flex: 1;
+        }
+
+        .fetch-btn {
+            padding: 12px 24px;
+            background: var(--primary-green);
+            color: white; border: none; border-radius: 8px;
+            font-weight: 600; cursor: pointer; transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .fetch-btn:hover {
+            background: var(--deep-green);
+            transform: translateY(-2px);
+        }
+
+        .fetch-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .device-info {
+            background: #F5F5F5;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .device-info.active {
+            display: block;
+        }
+
+        .device-info h3 {
+            color: var(--deep-green);
+            margin-bottom: 1rem;
+        }
+
+        .device-detail {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .device-detail strong {
+            color: var(--text-light);
+        }
+
+        .sensor-grid {
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem; 
+            margin-top: 1rem;
+        }
+
+        .sensor-checkbox {
+            display: flex; 
+            align-items: flex-start; 
+            gap: 0.75rem;
+            padding: 1rem; 
+            border: 2px solid #E0E0E0; 
+            border-radius: 8px;
+            cursor: pointer; 
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .sensor-checkbox:hover { 
+            border-color: var(--light-green); 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .sensor-checkbox.selected { 
+            border-color: var(--primary-green); 
+            background: #E8F5E9; 
+        }
+
+        .sensor-checkbox input[type="checkbox"] {
+            margin-top: 0.25rem;
+            width: auto;
+        }
+
+        .sensor-info {
+            flex: 1;
+        }
+
+        .sensor-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .sensor-meta {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .sensor-id {
+            font-family: monospace;
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .submit-btn {
+            width: 100%; padding: 15px;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            color: white; border: none; border-radius: 25px;
+            font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .fetch-section { flex-direction: column; }
+            .fetch-btn { width: 100%; }
+            .sensor-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="language-switcher">
+        <a href="/sensebox-en.html" class="lang-btn">English</a>
+        <a href="/sensebox-de.html" class="lang-btn">Deutsch</a>
+        <a href="/sensebox-pl.html" class="lang-btn active">Polski</a>
+    </div>
+
+    <div class="container">
+        <a href="/index-pl.html" class="back-link">← Powrót do strony głównej</a>
+        
+        <div class="header">
+            <div class="logo">📡</div>
+            <h1>Zarejestruj Urządzenie SenseBox</h1>
+            <p class="subtitle">Podłącz swój czujnik środowiskowy do naszej sieci</p>
+        </div>
+
+        <div class="card">
+            <div class="info-box">
+                <strong>🚀 Automatyczny Import z OpenSenseMap</strong><br>
+                Wprowadź swój OpenSenseMap Box ID poniżej, a automatycznie pobierzemy konfigurację urządzenia wraz ze wszystkimi zarejestrowanymi czujnikami. Następnie możesz wybrać, które czujniki zarejestrować w naszej sieci UBEC.
+            </div>
+
+            <div class="error-box" id="errorBox"></div>
+
+            <form id="deviceForm">
+                <div class="form-group">
+                    <label for="boxId">OpenSenseMap Box ID *</label>
+                    <div class="fetch-section">
+                        <input 
+                            type="text" 
+                            id="boxId" 
+                            name="box_id" 
+                            required 
+                            placeholder="np. 68b11e9c48183d0008742820"
+                        >
+                        <button type="button" class="fetch-btn" id="fetchBtn">
+                            🔍 Pobierz Urządzenie
+                        </button>
+                    </div>
+                    <div class="hint">Twój 24-znakowy OpenSenseMap Box ID</div>
+                </div>
+
+                <div class="device-info" id="deviceInfo">
+                    <h3>📋 Informacje o Urządzeniu</h3>
+                    <div class="device-detail">
+                        <strong>Nazwa:</strong>
+                        <span id="deviceName">-</span>
+                    </div>
+                    <div class="device-detail">
+                        <strong>Lokalizacja:</strong>
+                        <span id="deviceLocation">-</span>
+                    </div>
+                    <div class="device-detail">
+                        <strong>Współrzędne:</strong>
+                        <span id="deviceCoords">-</span>
+                    </div>
+                    <div class="device-detail">
+                        <strong>Utworzono:</strong>
+                        <span id="deviceCreated">-</span>
+                    </div>
+                    <div class="device-detail">
+                        <strong>Liczba Czujników:</strong>
+                        <span id="deviceSensorCount">-</span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="sensorsSection" style="display: none;">
+                    <label>Dostępne Czujniki</label>
+                    <div class="hint">Wybierz czujniki, które chcesz zarejestrować w naszej sieci UBEC</div>
+                    <div class="sensor-grid" id="sensorGrid"></div>
+                </div>
+
+                <div id="additionalConfig" style="display: none;">
+                    <div class="form-group">
+                        <label for="stewardEmail">Email Zarządcy (Opcjonalnie)</label>
+                        <input 
+                            type="email" 
+                            id="stewardEmail" 
+                            name="steward_email" 
+                            placeholder="zaradca@example.com"
+                        >
+                        <div class="hint">Email odpowiedzialnego zarządcy tego urządzenia</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stellarAddress">Adres Portfela Stellar (Opcjonalnie)</label>
+                        <input 
+                            type="text" 
+                            id="stellarAddress" 
+                            name="stellar_address" 
+                            placeholder="GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                            pattern="G[A-Z0-9]{55}"
+                        >
+                        <div class="hint">Twój publiczny adres Stellar do nagród UBEC (56 znaków zaczynających się od G)</div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                        Zarejestruj Wybrane Czujniki
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/assets/js/sensebox-registration.js"></script>
+</body>
+</html>
