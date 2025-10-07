@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**A Living Lab Initiative at Erdpuls Müllrose**
+**🌱 A Living Lab Initiative at Erdpuls Müllrose 🌍**
 
 *An Anthroposophical Approach to Environmental Monitoring, Citizen Science & Reciprocity*
 
