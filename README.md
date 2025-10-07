@@ -78,7 +78,7 @@ The Erdpuls Müllrose site serves as our primary field laboratory - a living eco
 **Location**: Müllrose, Brandenburg, Germany  
 **Established**: [Year]  
 **Size**: [Area] hectares  
-**Partners**: Freie Waldorfschule Frankfurt (Oder), local community groups, research institutions
+**Partners**: schools, local community groups, research institutions
 
 ---
 
@@ -582,16 +582,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-**Project Lead**: Farmer John]  
+**Project Lead**: Farmer John  
 **Email**: living-labs@ubec.network  
 **Website**: https://living-labs.ubec.network  
 
 
 ### Social Media
 
-- **Twitter**: [@SeedsBlockchain](https://twitter.com/seedsblockchain)
-- **LinkedIn**: [Seeds to Blockchain Project](https://linkedin.com/company/seeds-blockchain)
-- **GitHub**: [@seeds-blockchain](https://github.com/seeds-blockchain)
+- **GitHub**: [@living-labs](https://github.com/living-labs)
 
 ### Community
 
